@@ -56,14 +56,14 @@ public class Test_InformationExtractor {
     @BeforeAll
     @DisplayName("--- Start Unit Test for ExtractionInformation ---")
     void initAllTests() throws LexException, ParserException, IOException {
-        testCasesDirectory = "./vdm_files/";
+        testCasesDirectory = "../../../../vdm_files/";
 
         //preparing instances of InformationExtractor for each test case file.
         ies = new InformationExtractor[testCase.SIZE];
         TestCase[] testCases = TestCase.values();
         for(int i=0; i<testCase.SIZE; i++) {
         	String testCaseName = testCases[i].toString();
-			String tmpVdmFileName = testCaseName + ".vdmpp";
+			String tmpVdmFileName = testCasesDirectory + testCaseName + ".vdmpp";
 			ies[i] = new InformationExtractor(tmpVdmFileName);
 		}
 

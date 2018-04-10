@@ -6,6 +6,7 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
     }
 }
 
@@ -21,9 +22,14 @@ repositories {
     mavenCentral()
 }
 
+apply plugin: 'org.junit.platform.gradle.plugin'
+
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.0.0'
+    testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.0.0'
+    compile fileTree(dir: 'libs', include: '*.jar')
 }
 
 compileKotlin {
@@ -33,3 +39,9 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'bwdm.BwdmMain'
+    }
+    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+}
