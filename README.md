@@ -35,5 +35,5 @@
 ## example
 
 ```bash
-$ java -Djava.library.path=/usr/local/lib -jar BWDM.jar ./vdm_files/probrem.vdmpp 
+$ java -Djava.library.path=./libs -jar BWDM.jar ./vdm_files/probrem.vdmpp 
 ```
