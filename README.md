@@ -31,3 +31,9 @@
 | -f | Output testcase into a file (default:display on console)|
 | -v | Version |
 | -h | Help |
+
+## example
+
+```bash
+$ java -Djava.library.path=/usr/local/lib -jar BWDM.jar ./vdm_files/probrem.vdmpp 
+```
