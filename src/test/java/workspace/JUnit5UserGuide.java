@@ -1,10 +1,10 @@
-package bwdm;
+package workspace;
 
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class JUnit5UserGuide {
+class JUnit5UserGuide {
     
     @BeforeAll
     static void initAll() {

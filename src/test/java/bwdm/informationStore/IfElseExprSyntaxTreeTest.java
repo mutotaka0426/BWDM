@@ -1,6 +1,5 @@
-package bwdm;
+package bwdm.informationStore;
 
-import bwdm.informationStore.IfElseExprSyntaxTree;
 import com.fujitsu.vdmj.ast.definitions.ASTDefinition;
 import com.fujitsu.vdmj.ast.definitions.ASTDefinitionList;
 import com.fujitsu.vdmj.lex.Dialect;
@@ -17,9 +16,10 @@ import org.junit.jupiter.api.*;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.fail;
 
-public class Test_IfElseExprSyntaxTree {
+class IfElseExprSyntaxTreeTest {
+
+	static private IfElseExprSyntaxTree ifElseExprSyntaxTree;
 
 	@BeforeAll
 	static void initAll()
@@ -37,17 +37,14 @@ public class Test_IfElseExprSyntaxTree {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				assert tcFunctionDefinition != null;
 				TCExpression tcExpression = tcFunctionDefinition.body;
 				String ifExpressionBody = tcExpression.toString();
 
-				IfElseExprSyntaxTree ifElseExprSyntaxTree = null;
+				ifElseExprSyntaxTree = null;
 				try {
 					ifElseExprSyntaxTree = new IfElseExprSyntaxTree(ifExpressionBody);
-				} catch (ParserException e) {
-					e.printStackTrace();
-				} catch (LexException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
+				} catch (ParserException | LexException | IOException e) {
 					e.printStackTrace();
 				}
 
@@ -68,7 +65,7 @@ public class Test_IfElseExprSyntaxTree {
 
 	@Test
 	void ほげ() {
-
+		assert IfElseExprSyntaxTree.class.isInstance(ifElseExprSyntaxTree);
 	}
 
 	@AfterEach
