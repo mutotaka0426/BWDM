@@ -294,7 +294,7 @@ object BwdmMain {
      * @args args Command line arguments.
      * @return return Whether it is an available argument or not.
      */
-    private fun hasOnlyOptionChar(_optionStr: String): Boolean {
+    internal fun hasOnlyOptionChar(_optionStr: String): Boolean {
         //オプション文字として使えるものを消していって、最後に何か残っていたらダウト
         var optionStr = _optionStr
 
@@ -308,6 +308,9 @@ object BwdmMain {
         optionStr = optionStr.replace("i", "")
         optionStr = optionStr.replace("h", "")
 
+        //if (optionStr != ""){
+        //    throw IllegalArgumentException()
+        //}
         return optionStr == ""
     }
 
