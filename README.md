@@ -37,3 +37,15 @@
 ```bash
 $ java -Djava.library.path=./libs -jar BWDM.jar ./vdm_files/probrem.vdmpp 
 ```
+
+or
+
+```bash
+$ gradle run -Pargs="./vdm_files/problem.vdmpp" 
+```
+
+## build
+
+```bash
+$ gradle jar
+```
