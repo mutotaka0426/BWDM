@@ -3,10 +3,12 @@ buildscript {
 
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.16"
     }
 }
 
@@ -34,6 +36,8 @@ dependencies {
     testCompileOnly 'org.apiguardian:apiguardian-api:1.0.0'
     compile fileTree(dir: 'libs', include: '*.jar')
 }
+
+apply plugin: 'org.jetbrains.dokka'
 
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
@@ -84,3 +88,13 @@ task junitPlatformJacocoReport(type: JacocoReport) {
 }
 
 task customeTest(dependsOn: [junitPlatformTest, junitPlatformJacocoReport]){}
+
+dokka {
+    outputFormat = 'html'
+    outputDirectory = "$buildDir/javadoc"
+}
+
+task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
+    outputFormat = 'javadoc'
+    outputDirectory = "$buildDir/javadoc"
+}
