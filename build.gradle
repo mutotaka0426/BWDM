@@ -91,10 +91,15 @@ task customeTest(dependsOn: [junitPlatformTest, junitPlatformJacocoReport]){}
 
 dokka {
     outputFormat = 'html'
-    outputDirectory = "$buildDir/javadoc"
+    includeNonPublic = false
 }
 
 task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
     outputFormat = 'javadoc'
     outputDirectory = "$buildDir/javadoc"
 }
+
+javadoc{
+    options.memberLevel = JavadocMemberLevel.PRIVATE
+}
+

@@ -12,12 +12,21 @@ import java.io.IOException
 import java.util.ArrayList
 import java.util.HashMap
 
+/**
+ * main class of BWDM
+ */
 object BwdmMain {
 
-
+    /**
+     * 立山さんが残した謎
+     */
     private const val buildDate = "2018-1-24 PM19:03(JST)"
 
-
+    /**
+     * main method.
+     *
+     * @args args Command line arguments.
+     */
     @Throws(LexException::class, ParserException::class, IOException::class)
     @JvmStatic
     fun main(args: Array<String>) {
@@ -32,7 +41,11 @@ object BwdmMain {
 
     }
 
-
+    /**
+     * processing of BWDM
+     *
+     * @args args Command line arguments.
+     */
     @Throws(IOException::class, LexException::class, ParserException::class)
     private fun exeBWDM(args: Array<String>) {
 
@@ -275,8 +288,12 @@ object BwdmMain {
 
     }
 
-
-    //オプションで使える文字以外のものが含まれていないかの判定
+    /**
+     * It judges whether anything other than characters that can be used as options is not included.
+     *
+     * @args args Command line arguments.
+     * @return return Whether it is an available argument or not.
+     */
     private fun hasOnlyOptionChar(_optionStr: String): Boolean {
         //オプション文字として使えるものを消していって、最後に何か残っていたらダウト
         var optionStr = _optionStr
