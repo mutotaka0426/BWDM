@@ -6,6 +6,7 @@ import bwdm.informationStore.InformationExtractor;
 import bwdm.symbolicExecutionUnit.SeUnitMain;
 import com.fujitsu.vdmj.lex.LexException;
 import com.fujitsu.vdmj.syntax.ParserException;
+import external.TimeMeasure;
 
 import java.io.File;
 import java.io.FileWriter;

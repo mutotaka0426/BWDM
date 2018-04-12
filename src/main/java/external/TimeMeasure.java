@@ -1,4 +1,4 @@
-package bwdm;
+package external;
 
 import java.io.*;
 import java.text.NumberFormat;
@@ -27,7 +27,7 @@ public class TimeMeasure {
 	/**
 	*Constructor.
 	*/
-	TimeMeasure() {
+	public TimeMeasure() {
 		//フォーマットを10桁で指定
 		nf.setMaximumFractionDigits(10);
 	}
