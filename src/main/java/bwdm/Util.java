@@ -17,11 +17,11 @@ public class Util {
 	}
 
 	public static String getOperator(String condition) {
-		if      (condition.indexOf("<=") != -1)  return "<=";
-		else if (condition.indexOf(">=") != -1)  return ">=";
-		else if (condition.indexOf("<") != -1)   return "<";
-		else if (condition.indexOf(">") != -1)   return ">";
-		else if (condition.indexOf("mod") != -1) return "mod";
+		if      (condition.contains("<="))  return "<=";
+		else if (condition.contains(">="))  return ">=";
+		else if (condition.contains("<"))   return "<";
+		else if (condition.contains(">"))   return ">";
+		else if (condition.contains("mod")) return "mod";
 		else                                     return "other";
 	}
 
