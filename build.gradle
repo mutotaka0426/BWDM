@@ -87,8 +87,13 @@ task junitPlatformJacocoReport(type: JacocoReport) {
     reports {
         xml.enabled true
         csv.enabled false
-        html.enabled true
+        html.enabled false
+        xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
     }
 }
 
 task customeTest(dependsOn: [junitPlatformTest, junitPlatformJacocoReport]){}
+
+coveralls {
+    sourceDirs = files(sourceSets.main.allSource.srcDirs).files.absolutePath
+}
