@@ -1,0 +1,128 @@
+buildscript {
+    ext.kotlin_version = '1.2.30'
+
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.16"
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.4.0'
+    }
+}
+
+group 'BWDM'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'application'
+apply plugin: 'jacoco'
+apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'com.github.kt3k.coveralls'
+
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.1.0'
+    testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+    testCompileOnly 'org.apiguardian:apiguardian-api:1.0.0'
+    compile fileTree(dir: 'libs', include: '*.jar')
+}
+
+apply plugin: 'org.jetbrains.dokka'
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'bwdm.BwdmMain'
+    }
+    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
+mainClassName = 'bwdm.BwdmMain'
+applicationDefaultJvmArgs = ["-Djava.library.path=./libs"]
+
+run{
+    // 「args」という引数が存在するかチェック
+    if (project.hasProperty('args')) {
+        // 存在する場合は、半角スペースでsplitして引数に設定する
+        args(project.args.split('\\s+'))
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.0"
+    applyTo junitPlatformTest
+}
+
+
+jacocoTestReport {
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: ['**/Main*'])
+        })
+    }
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.enabled true
+    }
+}
+
+task junitPlatformJacocoReport(type: JacocoReport) {
+    sourceSets sourceSets.main
+    executionData junitPlatformTest
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.enabled false
+        xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+    }
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/external/**',
+                    '**/workspace/**'
+            ])
+        })
+    }
+}
+
+task customeTest(dependsOn: [junitPlatformTest, junitPlatformJacocoReport]){}
+
+dokka {
+    outputFormat = 'html'
+    includeNonPublic = false
+}
+
+task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
+    outputFormat = 'javadoc'
+    outputDirectory = "${buildDir}/javadoc"
+}
+
+javadoc{
+    options.memberLevel = JavadocMemberLevel.PRIVATE
+}
+
+
+
+coveralls {
+    sourceDirs = files(sourceSets.main.allSource.srcDirs).files.absolutePath
+}
