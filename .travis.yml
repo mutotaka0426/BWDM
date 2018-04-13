@@ -1,0 +1,16 @@
+language: java
+
+script:
+  - ./gradlew customTest coveralls
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+env:
+  global:
+    - secure: "bxYtaA5aXrfmTRNR6tiuvNCOgfk1wu7T08mlgGT/QuSuE8D96lM6UcIBXT+tBHKwlXwg5DmdwFiRDd17fQDxnPX7KBUyydrXxRWF030jOagIfkpi5oH61CI+O5KRHYqZ+YByowA6vECkC25/hT26xBoaRmAB8V0zINUtsc3LmF+obDOVioqzE5tweEFseanSBmj7N6Rr0Ge/iTb7TntLsgpQZ1EKGS4NHUVqtG5HFOTqftTItFlW9/ULQZLE4LO5axflFoEB20djPwLBr9AFH5xznH62KcPhxgkFS4nTqEZqxrea6BniMPUD3Uls0+dBa2v3SdoOhKb26pYgCXxkg8qVXqNkcpptfUPCTpNZCmopqSZ6wYeqM7GpfWSdBHok5s1KA6aupQ1OC9zj73DabTbAAN6VJkxfiFBAT6WkBM15rPa3V67QJrETbXwAhND5H41gf4oV3ISywC0sJud+UuwdBg5bfIrXV7KfIXfkfkG/hk2YdJcaypkb7yr4MK4ptMTl8n1F7KRTDGAxq4mpUqzoXOsCbPO6OUbCXoDePGks0b1272e4iQY9XeRrNj+rIYF+8VDVyFZt06EtrNLxKbuKMzjcqLqQPJfebFWAJhY2b52ypaJv7xRb5aa/fR8Fb8DsDHBXprmlRUW4VlP7J7ogsSWZPpIf8b4tD8Sx8Go="
