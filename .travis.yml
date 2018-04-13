@@ -16,7 +16,7 @@ deploy:
   api_key:
     secure: ZXnaWBoLDeeNBJTvaSpcJZYIU+wsPXR2p3UYJjwNBwwew46tcDW4G68/69a85nguFWNeKd2TLuaILJyAfjGhyKztsSFEVVY4kniN1khiBeLCOiw2uZOSiNt+HhyS941RHELXXrvdw+RmD8htywNWJhOeKTwy7vgI5rl7f3HNszMlO70MuEgQyUhKFY+23DBAyIvRI/nj1CrD5+BGM/JgzwSRkHZ7/OAKhp5/OJg62e4VSfKJ+9G6fGjppOYjiCWaoTObALoHTZ6O6LfRVrlHM7Xv/OqGU43TOdoS8jN2IqOfcn2GQRqCJLTv+rqjRa1SSkYx8wXrTKuvvbjsMwsEWGa0ww6nYUHgshMTbdbHzKKx0tSkFZYGr0lK9uxohbVxCeY9NSUuUDFlaYWyoANFALSFVXaj5qbgvpdCnSkHrEdiXQoeWEEaYkXsiS+LOsmQquQh12KSvOwCw0Cu154Vt3yyp/+D+1wU9LcalrDdjZ0nZzdh/qjCDXY8PV9kuQWKINnQonFRM0y8pv+KCdLRyQUZVfBzj73GEQC3Kh1ZuwRtlceKn7v/RebsKcq9d/+7+ssG2Fb1ltHUhnTD2mH5z1e+atf4fNCL5VFkEcTd2VFe7zZuUyWL4jdQWwf1xh/Hil8pWQqiZIdz5teiSjp0lt8TUEmuU9Ou3XPYcr1eJMU=
   file_glob: true
-  file: "$HOME/build/libs/BWDM*"
+  file: "build/libs/BWDM*"
   skip_cleanup: true
   on:
     repo: korosuke613/BWDM
