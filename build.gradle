@@ -4,12 +4,16 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.16"
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.4.0'
+        classpath 'net.researchgate:gradle-release:2.6.0'
     }
 }
 
@@ -22,6 +26,7 @@ apply plugin: 'application'
 apply plugin: 'jacoco'
 apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'net.researchgate.release'
 
 
 sourceCompatibility = 1.8
@@ -125,4 +130,14 @@ javadoc{
 
 coveralls {
     sourceDirs = files(sourceSets.main.allSource.srcDirs).files.absolutePath
+}
+
+release {
+    git {
+        requireBranch = '`/develop|master/`'
+        pushToRemote = 'origin'
+        pushToBranchPrefix = ''
+        commitVersionFileOnly = false
+        signTag = false
+    }
 }
