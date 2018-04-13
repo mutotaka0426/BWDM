@@ -134,7 +134,7 @@ coveralls {
 
 release {
     git {
-        requireBranch = '`/develop|master/`'
+        requireBranch = '/develop|master/'
         pushToRemote = 'origin'
         pushToBranchPrefix = ''
         commitVersionFileOnly = false
