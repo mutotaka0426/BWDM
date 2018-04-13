@@ -1,6 +1,12 @@
 # BWDM - Boundary Value/Vienna Development Method -
 #### Test Cases Auto-Generation from a VDM Specification
+Master 
+[![Build Status](https://travis-ci.org/korosuke613/BWDM.svg?branch=master)](https://travis-ci.org/korosuke613/BWDM)
+[![Coverage Status](https://coveralls.io/repos/github/korosuke613/BWDM/badge.svg?branch=master)](https://coveralls.io/github/korosuke613/BWDM?branch=master)
 
+Build
+[![Build Status](https://travis-ci.org/korosuke613/BWDM.svg?branch=develop)](https://travis-ci.org/korosuke613/BWDM)
+[![Coverage Status](https://coveralls.io/repos/github/korosuke613/BWDM/badge.svg?branch=develop)](https://coveralls.io/github/korosuke613/BWDM?branch=develop)
 
 
 ## Execution Environment, using Libraries,
