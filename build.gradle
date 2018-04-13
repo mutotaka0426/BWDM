@@ -72,6 +72,7 @@ jacoco {
     applyTo junitPlatformTest
 }
 
+
 jacocoTestReport {
     afterEvaluate {
         classDirectories = files(classDirectories.files.collect {
@@ -94,6 +95,14 @@ task junitPlatformJacocoReport(type: JacocoReport) {
         html.enabled false
         xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
     }
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/external/**',
+                    '**/workspace/**'
+            ])
+        })
+    }
 }
 
 task customeTest(dependsOn: [junitPlatformTest, junitPlatformJacocoReport]){}
@@ -105,7 +114,7 @@ dokka {
 
 task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
     outputFormat = 'javadoc'
-    outputDirectory = "$buildDir/javadoc"
+    outputDirectory = "${buildDir}/javadoc"
 }
 
 javadoc{
