@@ -84,6 +84,11 @@ jacocoTestReport {
 task junitPlatformJacocoReport(type: JacocoReport) {
     sourceSets sourceSets.main
     executionData junitPlatformTest
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.enabled true
+    }
 }
 
 task customeTest(dependsOn: [junitPlatformTest, junitPlatformJacocoReport]){}
