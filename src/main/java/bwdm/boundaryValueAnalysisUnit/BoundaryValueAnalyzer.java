@@ -83,70 +83,71 @@ public class BoundaryValueAnalyzer {
 		HashMap<String, ArrayList<Object>> allIfConditions = _information.getIfConditions();
 
 		allIfConditions.forEach( (parameter, ifConditions) ->
-				(ifConditions).forEach(condition -> { //condition : HashMap<String, String>
-			String left   = ((HashMap<String, String>) condition).get("left");
-			String operator = ((HashMap<String, String>) condition).get("operator");
-			String right  = ((HashMap<String, String>) condition).get("right");
-			ArrayList<Long> bvs = boundaryValueList.get(parameter);
+                (ifConditions).forEach(condition -> {
+                    //condition : HashMap<String, String>
+                    String left = ((HashMap<String, String>) condition).get("left");
+                    String operator = ((HashMap<String, String>) condition).get("operator");
+                    String right = ((HashMap<String, String>) condition).get("right");
+                    ArrayList<Long> bvs = boundaryValueList.get(parameter);
 
-			long trueValue=0, falseValue=0, value;
-			if(Util.isNumber(left)) {
-				value = Long.parseLong(left);
-				switch (operator) {
-					case "<":
-						trueValue = value + 1;
-						falseValue = value;
-						break;
-					case "<=":
-						trueValue = value;
-						falseValue = value - 1;
-						break;
-					case ">":
-						trueValue = value - 1;
-						falseValue = value;
-						break;
-					case ">=":
-						trueValue = value;
-						falseValue = value + 1;
-						break;
-					case "mod":
-						trueValue = value + Long.parseLong(((HashMap<String, String>) condition).get("surplus"));
-						falseValue = value + 1;
-						bvs.add(value - 1);
-						break;
-				}
+                    long trueValue = 0, falseValue = 0, value;
+                    if (Util.isNumber(left)) {
+                        value = Long.parseLong(left);
+                        switch (operator) {
+                            case "<":
+                                trueValue = value + 1;
+                                falseValue = value;
+                                break;
+                            case "<=":
+                                trueValue = value;
+                                falseValue = value - 1;
+                                break;
+                            case ">":
+                                trueValue = value - 1;
+                                falseValue = value;
+                                break;
+                            case ">=":
+                                trueValue = value;
+                                falseValue = value + 1;
+                                break;
+                            case "mod":
+                                trueValue = value + Long.parseLong(((HashMap<String, String>) condition).get("surplus"));
+                                falseValue = value + 1;
+                                bvs.add(value - 1);
+                                break;
+                        }
 
-			} else if(Util.isNumber(right)) {
-				value = Long.parseLong(right);
-				switch (operator) {
-					case "<":
-						trueValue = value - 1;
-						falseValue = value;
-						break;
-					case "<=":
-						trueValue = value;
-						falseValue = value + 1;
-						break;
-					case ">":
-						trueValue = value + 1;
-						falseValue = value;
-						break;
-					case ">=":
-						trueValue = value;
-						falseValue = value - 1;
-						break;
-					case "mod":
-						trueValue = value + Long.parseLong(((HashMap<String, String>) condition).get("surplus"));
-						falseValue = value + 1;
-						bvs.add(value - 1);
-						break;
-				}
-			}
+                    } else if (Util.isNumber(right)) {
+                        value = Long.parseLong(right);
+                        switch (operator) {
+                            case "<":
+                                trueValue = value - 1;
+                                falseValue = value;
+                                break;
+                            case "<=":
+                                trueValue = value;
+                                falseValue = value + 1;
+                                break;
+                            case ">":
+                                trueValue = value + 1;
+                                falseValue = value;
+                                break;
+                            case ">=":
+                                trueValue = value;
+                                falseValue = value - 1;
+                                break;
+                            case "mod":
+                                trueValue = value + Long.parseLong(((HashMap<String, String>) condition).get("surplus"));
+                                falseValue = value + 1;
+                                bvs.add(value - 1);
+                                break;
+                        }
+                    }
 
-			bvs.add(trueValue);
-			bvs.add(falseValue);
+                    bvs.add(trueValue);
+                    bvs.add(falseValue);
 
-		}));
+                }));
 	}
 
 	private void makeInputDataList(InformationExtractor _information) {
@@ -157,7 +158,7 @@ public class BoundaryValueAnalyzer {
 		ArrayList<Long> first_bvs = boundaryValueList.get(first_prm);
 		for(int i=0; i<first_bvs.size(); i++) {
 			inputDataList.add(new HashMap());
-			HashMap hm = (HashMap) inputDataList.get(i);
+			HashMap hm = inputDataList.get(i);
 			hm.put(first_prm, first_bvs.get(i));
 		}
 
@@ -174,9 +175,7 @@ public class BoundaryValueAnalyzer {
 					inputDataListInitialState.forEach(inputDataOriginal -> {
 						//inputDataを複製
 						HashMap inputData = new HashMap<String, String>();
-						((HashMap) inputDataOriginal).forEach((k, v) -> {
-							inputData.put(k, v);
-						});
+						((HashMap) inputDataOriginal).forEach(inputData::put);
 						inputDataListTmp.add(inputData);
 					});
 					inputDataList.addAll(inputDataListTmp);
@@ -186,7 +185,7 @@ public class BoundaryValueAnalyzer {
 					long currentBv = (long) current_bv;
 					int offset = repeatTimesOfInsert * inputDataListInitialState.size();
 					for (int k = 0; k < inputDataListInitialState.size(); k++) {
-						HashMap inputData = (HashMap) inputDataList.get(k + offset);
+						HashMap inputData = inputDataList.get(k + offset);
 						inputData.put(p, currentBv);
 					}
 					repeatTimesOfInsert++;
