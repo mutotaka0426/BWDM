@@ -36,7 +36,6 @@ public class InformationExtractor {
     //今回扱うのは仮引数
 
     //file name and path
-	private String vdmFileName;
 	private String vdmFilePath;
 
 	//function name
@@ -76,7 +75,6 @@ public class InformationExtractor {
         /* Initializing fields*/
 		vdmFilePath = _vdmFilePath;
 		File vdmFile = new File(vdmFilePath);
-		vdmFileName = vdmFile.getName();
 
 		/* variableName = init; example */
         argumentTypes = new ArrayList<>(); //int, nat, nat1
@@ -195,19 +193,23 @@ public class InformationExtractor {
 		hm.put("operator", operator);
 
 		//right-hand and surplus need branch depending on mod or other.
-		if(operator.equals("mod")) {
-			int indexOfEqual = condition.indexOf("=");
-			hm.put("right", condition.substring(indexOfoperator+3, indexOfEqual));
-			hm.put("surplus", condition.substring(indexOfEqual+1));
-		} else {
-			hm.put("right", condition.substring(indexOfoperator + operator.length()));
-		}
+        modJudge(condition, operator, indexOfoperator, hm);
 
-		al = ifConditions.get(parameter);
+        al = ifConditions.get(parameter);
 		al.add(hm);
     }
 
-	public IfElseExprSyntaxTree getIfElseExprSyntaxTree() {
+    public static void modJudge(String condition, String operator, int indexOfoperator, HashMap<String, String> hm) {
+        if(operator.equals("mod")) {
+            int indexOfEqual = condition.indexOf("=");
+            hm.put("right", condition.substring(indexOfoperator+3, indexOfEqual));
+            hm.put("surplus", condition.substring(indexOfEqual+1));
+        } else {
+            hm.put("right", condition.substring(indexOfoperator + operator.length()));
+        }
+    }
+
+    public IfElseExprSyntaxTree getIfElseExprSyntaxTree() {
     	return ifElseExprSyntaxTree;
 	}
 	public ArrayList<String> getParameters() {
@@ -223,7 +225,6 @@ public class InformationExtractor {
 		return conditionAndReturnValueList;
 	}
 	public String getFunctionName() { return functionName; }
-	public String getVdmFileName() { return vdmFileName; }
-	public String getVdmFilePath() { return vdmFilePath; }
+    public String getVdmFilePath() { return vdmFilePath; }
 	public String getReturnValue() { return returnValue; }
 }
