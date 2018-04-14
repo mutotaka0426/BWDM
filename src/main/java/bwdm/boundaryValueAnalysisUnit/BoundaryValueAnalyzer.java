@@ -17,13 +17,13 @@ public class BoundaryValueAnalyzer {
 	static final long nat1Min = 1;
 
 	private HashMap<String, ArrayList<Long>> boundaryValueList;
-	private ArrayList inputDataList;
+	private ArrayList<HashMap<String, Long>> inputDataList;
 
 
 	public BoundaryValueAnalyzer(InformationExtractor _information) {
 		//generation of instance of each parameter
 		boundaryValueList = new HashMap<>();
-		inputDataList = new ArrayList();
+		inputDataList = new ArrayList<>();
 		_information.getParameters().forEach(p -> boundaryValueList.put(p, new ArrayList<>()));
 
 		generateTypeBoundaryValue(_information);
