@@ -6,6 +6,6 @@ class ReturnNode internal constructor(returnStr: String, _nodeLevel: Int) : Node
 
     init {
         nodeLevel = _nodeLevel
-        ID = Node.staticID++
+        id = Node.staticID++
     }
 }

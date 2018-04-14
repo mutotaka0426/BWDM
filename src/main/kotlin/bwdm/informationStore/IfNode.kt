@@ -9,6 +9,6 @@ class IfNode(conditionStr: String, _nodeLevel: Int) : Node() {
 
     init {
         nodeLevel = _nodeLevel
-        ID = Node.staticID++
+        id = Node.staticID++
     }
 }

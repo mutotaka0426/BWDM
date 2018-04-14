@@ -7,7 +7,7 @@ abstract class Node {
     var parentNode: Node? = null
 
     var nodeLevel: Int = 0 //このノードのいる階層 rootが0
-    var ID: Int = 0 //このノードのID
+    var id: Int = 0 //このノードのID
     abstract var isIfNode: Boolean //自身がIfNodeなのか
     var isTrueNode: Boolean? = null //自身がconditionTrueNodeなのか
 

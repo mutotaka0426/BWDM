@@ -2,8 +2,6 @@ package bwdm.symbolicExecutionUnit
 
 import bwdm.informationStore.InformationExtractor
 
-import java.util.ArrayList
-import java.util.HashMap
 
 class SeUnitMain(private val ie: InformationExtractor) {
     val se: SymbolicExecutioner = SymbolicExecutioner(ie)
@@ -22,7 +20,7 @@ class SeUnitMain(private val ie: InformationExtractor) {
                 for (prm in parameters) {
                     buf.append(inputData[prm]).append(" ")
                 }
-                buf.append("-> ").append(expectedOutputDataList.get(i)).append("\n")
+                buf.append("-> ").append(expectedOutputDataList[i]).append("\n")
             }
             return buf.toString()
         }
