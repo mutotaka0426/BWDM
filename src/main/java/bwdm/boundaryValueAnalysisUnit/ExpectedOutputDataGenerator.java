@@ -5,7 +5,6 @@ import bwdm.informationStore.Node;
 import bwdm.informationStore.IfNode;
 import bwdm.Util;
 
-import java.io.BufferedOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -13,18 +12,16 @@ import java.util.HashMap;
 public class ExpectedOutputDataGenerator {
 
 	private InformationExtractor ie;
-	private ArrayList<String> expectedOutputDataList;
+	private ArrayList expectedOutputDataList;
 
-	public ExpectedOutputDataGenerator(InformationExtractor _ie,
-									   IfNode _root,
-									   ArrayList<HashMap<String, Long>> _inputDataList) {
+	ExpectedOutputDataGenerator(InformationExtractor _ie,
+                                IfNode _root,
+                                ArrayList<HashMap<String, Long>> _inputDataList) {
 		this.ie = _ie;
 		expectedOutputDataList = new ArrayList();
 
 		//inputData:seq of HashMapの各要素に入力データを挿入
-		_inputDataList.forEach(inputData -> {
-			extractExpectedOutputDataRecursively(_root, inputData);
-		});
+		_inputDataList.forEach(inputData -> extractExpectedOutputDataRecursively(_root, inputData));
 
 		//各要素が型の範囲外の値だった場合、Undefined Actionを期待出力にする
 		makeExpectedOutputDataofOutoftype(_inputDataList);
@@ -32,20 +29,15 @@ public class ExpectedOutputDataGenerator {
 
 	}
 
-	public ArrayList<String> getExpectedOutputDataList() {
+	ArrayList getExpectedOutputDataList() {
 		return expectedOutputDataList;
 	}
 
 	//条件式は両辺のうち片方のみ変数が含まれているという制約付き
-	void extractExpectedOutputDataRecursively(Node _node, HashMap<String, Long> _inputData) {
+    private void extractExpectedOutputDataRecursively(Node _node, HashMap<String, Long> _inputData) {
 
 		if (_node.isIfNode) { //IfNodeである場合
-			HashMap<String, String> parsedCondition = makeParsedCondition(_node.getConditionOrReturnStr());
-			long[] inputDataArray = new long[ie.getParameters().size()];
-			for (int i = 0; i < ie.getParameters().size(); i++) {
-				long currentValue = _inputData.get(ie.getParameters().get(i)).longValue();
-				inputDataArray[i] = currentValue;
-			}
+			HashMap parsedCondition = makeParsedCondition(_node.getConditionOrReturnStr());
 
 			//各条件式には一つの変数(parameter)しか登場しない
 			ie.getParameters().forEach(prm -> {
@@ -72,7 +64,7 @@ public class ExpectedOutputDataGenerator {
 	}
 
 	public static HashMap makeParsedCondition(String _condition) {
-		HashMap<String, String> parsedCondition = new HashMap();
+		HashMap parsedCondition = new HashMap();
 		String operator = Util.getOperator(_condition);
 		int indexOfoperator = _condition.indexOf(operator);
 
@@ -91,26 +83,26 @@ public class ExpectedOutputDataGenerator {
 			if (_parsedCondition.get("operator").equals("mod")) {
 				result = judgeMod(
 						Long.valueOf(_parsedCondition.get("left")), //左辺：数字
-						Long.valueOf(_inputData.get(_parameter)), //右辺：変数
+                        _inputData.get(_parameter), //右辺：変数
 						Long.valueOf(_parsedCondition.get("surplus"))
 				);
 			} else {
 				result = judgeInequality(
 						Long.valueOf(_parsedCondition.get("left")), //左辺：数字
 						_parsedCondition.get("operator"),
-						Long.valueOf(_inputData.get(_parameter)) //右辺：変数
+                        _inputData.get(_parameter) //右辺：変数
 				);
 			}
 		} else { //左辺が変数
 			if (_parsedCondition.get("operator").equals("mod")) {
 				result = judgeMod(
-						Long.valueOf(_inputData.get(_parameter)), //左辺：変数
+                        _inputData.get(_parameter), //左辺：変数
 						Long.valueOf(_parsedCondition.get("right")), //右辺：数字
 						Long.valueOf(_parsedCondition.get("surplus"))
 				);
 			} else {
 				result = judgeInequality(
-						Long.valueOf(_inputData.get(_parameter)), //左辺：変数
+                        _inputData.get(_parameter), //左辺：変数
 						_parsedCondition.get("operator"),
 						Long.valueOf(_parsedCondition.get("right"))//右辺：数字
 				);
@@ -127,22 +119,28 @@ public class ExpectedOutputDataGenerator {
 
 	private boolean judgeInequality(Long _leftHand, String _operator, Long _rightHand) {
 		boolean returnBool;
-		if (_operator.equals("<")) {
-			returnBool = _leftHand < _rightHand;
-		} else if (_operator.equals(">")) {
-			returnBool = _leftHand > _rightHand;
-		} else if (_operator.equals("<=")) {
-			returnBool = _leftHand <= _rightHand;
-		} else if (_operator.equals(">=")) {
-			returnBool = _leftHand >= _rightHand;
-		} else {
-			returnBool = true;
-		}
+        switch (_operator) {
+            case "<":
+                returnBool = _leftHand < _rightHand;
+                break;
+            case ">":
+                returnBool = _leftHand > _rightHand;
+                break;
+            case "<=":
+                returnBool = _leftHand <= _rightHand;
+                break;
+            case ">=":
+                returnBool = _leftHand >= _rightHand;
+                break;
+            default:
+                returnBool = true;
+                break;
+        }
 		return returnBool;
 	}
 
 
-	void makeExpectedOutputDataofOutoftype(ArrayList<HashMap<String, Long>> _inputDataList) {
+	private void makeExpectedOutputDataofOutoftype(ArrayList<HashMap<String, Long>> _inputDataList) {
 
 		for (int i = 0; i < _inputDataList.size(); i++) {
 			HashMap<String, Long> currentInputData = _inputDataList.get(i);
@@ -152,7 +150,6 @@ public class ExpectedOutputDataGenerator {
 				String currentPrm = ie.getParameters().get(j);
 				long currentVl = currentInputData.get(currentPrm);
 
-				long max, min;
 				switch (currentTyp) {
 					case "int":
 						if (currentVl == BoundaryValueAnalyzer.intMax + 1 ||
