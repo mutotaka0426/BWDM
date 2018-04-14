@@ -134,7 +134,7 @@ constructor(
 
         ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody)
 
-        conditionAndReturnValueList = ConditionAndReturnValueList(ifElseExprSyntaxTree!!.root, this)
+        conditionAndReturnValueList = ConditionAndReturnValueList(ifElseExprSyntaxTree!!.root)
 
     }/* Initializing fields*/
 

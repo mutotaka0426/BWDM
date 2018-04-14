@@ -1,9 +1,6 @@
 package bwdm.informationStore;
 
 
-import bwdm.boundaryValueAnalysisUnit.BoundaryValueAnalyzer;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class ConditionAndReturnValueList {
@@ -19,14 +16,14 @@ public class ConditionAndReturnValueList {
 		String returnStr;
 		//conditions[0]の真偽値がbools[0]
 		//conditions[1]の真偽値がbools[1]...
-		ArrayList conditions;
-		ArrayList bools;
+		ArrayList<String> conditions;
+		ArrayList<Boolean> bools;
 
 
 		ConditionAndReturnValue() {
 			size++;
-			conditions = new ArrayList();
-			bools = new ArrayList();
+			conditions = new ArrayList<>();
+			bools = new ArrayList<>();
 		}
 
 		public String getReturnStr() { return returnStr; }
@@ -35,14 +32,9 @@ public class ConditionAndReturnValueList {
 
 	}
 
-	public ConditionAndReturnValueList(IfNode _root, InformationExtractor _ie) {
-		conditionAndReturnValues = new ArrayList();
-		InformationExtractor ie = _ie;
-		recursiveReturnNodeFind(_root);
-
-
-
-
+	public ConditionAndReturnValueList(IfNode _root) {
+		conditionAndReturnValues = new ArrayList<>();
+        recursiveReturnNodeFind(_root);
 
 		/*20180124 制約に引数型の制限が必要だと気づいてささっと実装*/
 		//各制約に、引数型の制限を加える
@@ -91,7 +83,7 @@ public class ConditionAndReturnValueList {
 
 
 	//ReturnNodeの発見とそこに至る為に必要な条件式とその真偽値
-	public void recursiveReturnNodeFind(Node node) {
+    private void recursiveReturnNodeFind(Node node) {
 		if(node.isIfNode) { //IfNodeならば
 			IfNode ifNode = (IfNode)node;
 			recursiveReturnNodeFind(ifNode.conditionTrueNode);
@@ -102,30 +94,13 @@ public class ConditionAndReturnValueList {
 			conditionAndReturnValue.returnStr = node.getConditionOrReturnStr();
 
 			Node tmpNode = node;
-			while(tmpNode != null){ //下のbreak文が
-				conditionAndReturnValue.conditions.add(tmpNode.parentNode.getConditionOrReturnStr());
-				conditionAndReturnValue.bools.add( tmpNode.isTrueNode ); //親ノードからみてTrue側かどうか
+            do { //下のbreak文が
+                conditionAndReturnValue.conditions.add(tmpNode.parentNode.getConditionOrReturnStr());
+                conditionAndReturnValue.bools.add(tmpNode.isTrueNode); //親ノードからみてTrue側かどうか
 
-				tmpNode = tmpNode.parentNode;
-				if(tmpNode.parentNode == null) break;
-			}
+                tmpNode = tmpNode.parentNode;
+            } while (tmpNode.parentNode != null);
 			conditionAndReturnValues.add(conditionAndReturnValue);
 		}
 	}
-
-	public void printAllConditionAndBoolAndReturn() {
-
-		for(int i=0; i<size; i++) {
-			ConditionAndReturnValue current = conditionAndReturnValues.get(i);
-			ArrayList<String> conditions = current.conditions;
-			ArrayList bools = current.bools;
-
-			for(int j=0; j<conditions.size(); j++) {
-				System.out.println( conditions.get(j) + " " + bools.get(j).toString());
-			}
-			System.out.println(current.returnStr);
-			System.out.println();
-		}
-	}
-
 }
