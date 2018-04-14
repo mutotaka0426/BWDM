@@ -52,7 +52,7 @@ public class InformationExtractor {
 
 	private String ifExpressionBody;
 
-    private HashMap ifConditionBodies;
+    private HashMap<String, ArrayList<Object>> ifConditionBodies;
     //a parameter to ArrayList of if-conditions
 	//ArrayList of ifConditions of each parameter
 	//ifConditionBodies.get("a") : "4<a", "a<7"
@@ -62,7 +62,7 @@ public class InformationExtractor {
 	private ArrayList<String> ifConditionBodiesInCameForward;
 
 
-	private HashMap ifConditions;
+	private HashMap<String, ArrayList<Object>> ifConditions;
 	//a parameter to ArrayList of HashMaps that is parsed each if-expression
 	//ArrayList of HashMap of parsed if-expr.
 	//ifConditions.get("a") : 'HashMap of 4<a', 'HashMap of a<7'
@@ -86,9 +86,9 @@ public class InformationExtractor {
         parameters = new ArrayList<>(); //a, b, c
 
 		ifExpressionBody = "";
-		ifConditionBodies = new HashMap();
+		ifConditionBodies = new HashMap<>();
 		ifConditionBodiesInCameForward = new ArrayList<>();
-		ifConditions = new HashMap();
+		ifConditions = new HashMap<>();
         /*Done initializing fields*/
 
 		LexTokenReader lexer = new LexTokenReader(vdmFile, Dialect.VDM_PP);
@@ -185,12 +185,12 @@ public class InformationExtractor {
 	}
 
 	private void parse(String condition, String parameter) {
-		ArrayList al = (ArrayList) ifConditionBodies.get(parameter);
+		ArrayList<Object> al = ifConditionBodies.get(parameter);
 		al.add(condition);
 
 		String operator = Util.getOperator(condition);
 		int indexOfoperator = condition.indexOf(operator);
-		HashMap hm = new HashMap<String, String>();
+		HashMap<String, String> hm = new HashMap<>();
 		hm.put("left", condition.substring(0, indexOfoperator));
 		hm.put("operator", operator);
 
@@ -203,7 +203,7 @@ public class InformationExtractor {
 			hm.put("right", condition.substring(indexOfoperator + operator.length()));
 		}
 
-		al = (ArrayList) ifConditions.get(parameter);
+		al = ifConditions.get(parameter);
 		al.add(hm);
     }
 
@@ -216,7 +216,7 @@ public class InformationExtractor {
 	public ArrayList<String> getArgumentTypes() {
 		return argumentTypes;
 	}
-	public HashMap getIfConditions() {
+	public HashMap<String, ArrayList<Object>> getIfConditions() {
 		return ifConditions;
 	}
 	public ConditionAndReturnValueList getConditionAndReturnValueList() {
