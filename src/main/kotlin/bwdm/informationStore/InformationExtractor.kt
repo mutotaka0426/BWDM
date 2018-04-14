@@ -17,60 +17,49 @@ import java.io.IOException
 import java.util.*
 
 
-/* information what got from VDM++ specification file by syntax analyse with VDMJ */
-
+/**
+ * information what got from VDM++ specification file by syntax analyse with VDMJ
+ */
 class InformationExtractor
-//a parameter to ArrayList of HashMaps that is parsed each if-expression
-//ArrayList of HashMap of parsed if-expr.
-//ifConditions.get("a") : 'HashMap of 4<a', 'HashMap of a<7'
-//ifConditions.get("b") : 'HashMap of -3<b', 'HashMap of b>100', 'HashMap of 0<b'
-//ifConditions.get("c") : 'HashMap of c<10', 'HashMap of 3<c', 'HashMap of c>-29'
 
 
 @Throws(LexException::class, ParserException::class, IOException::class)
-constructor(
-        //argument  実引数
-        //parameter 仮引数
-        //今回扱うのは仮引数
+constructor(val vdmFilePath: String) {
 
-        //file name and path
-        val vdmFilePath: String) {
+    /**
+     * a parameter to ArrayList of if-conditions.
+     * ArrayList of ifConditions of each parameter.
+     */
+    private val ifConditionBodies: HashMap<String, ArrayList<Any>>
+    private var ifExpressionBody: String? = null
+    private val ifConditionBodiesInCameForward: ArrayList<String>
 
     val conditionAndReturnValueList: ConditionAndReturnValueList
-    var ifElseExprSyntaxTree: IfElseExprSyntaxTree? = null
-        private set
-
-    //function name
-    var functionName: String? = null
-        private set
-
     val argumentTypes: ArrayList<String> //int, nat, nat1
-
     val parameters: ArrayList<String> //a, b, c
 
-    //type of return value
+    /**
+     * type of return value
+     */
     var returnValue: String? = null
         private set
 
+    var ifElseExprSyntaxTree: IfElseExprSyntaxTree? = null
+        private set
 
-    private var ifExpressionBody: String? = null
+    var functionName: String? = null
+        private set
 
-    private val ifConditionBodies: HashMap<String, ArrayList<Any>>
-    //a parameter to ArrayList of if-conditions
-    //ArrayList of ifConditions of each parameter
-    //ifConditionBodies.get("a") : "4<a", "a<7"
-    //ifConditionBodies.get("b") : "-3<b","b>100","0<b"
-    //ifConditionBodies.get("c") : "c<10","3<c","c>-29"
-
-    private val ifConditionBodiesInCameForward: ArrayList<String>
-
-
+    /**
+     * a parameter to ArrayList of HashMaps that is parsed each if-expression.
+     * ArrayList of HashMap of parsed if-expr.
+     */
     val ifConditions: HashMap<String, ArrayList<Any>>
 
     init {
         val vdmFile = File(vdmFilePath)
 
-        /* variableName = init; example */
+        // variableName = init; example
         argumentTypes = ArrayList() //int, nat, nat1
 
         //parameter information
@@ -99,14 +88,11 @@ constructor(
                 assert(tcFunctionDefinition != null)
                 functionName = tcFunctionDefinition!!.name.name
                 returnValue = tcFunctionDefinition.type.result.toString()
-                //returnValue.replaceAll((,"").replaceAll(")","");
                 val tcFunctionType = tcFunctionDefinition.type
                 val tmpArgumentTypes = tcFunctionType.parameters
                 val tcExpression = tcFunctionDefinition.body
                 ifExpressionBody = tcExpression.toString()
                 tmpArgumentTypes.forEach { e -> argumentTypes.add(e.toString()) }
-
-                countArgumentTypeNumByKind()
 
                 try {
                     ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody!!)
@@ -137,20 +123,6 @@ constructor(
         conditionAndReturnValueList = ConditionAndReturnValueList(ifElseExprSyntaxTree!!.root)
 
     }/* Initializing fields*/
-
-    private fun countArgumentTypeNumByKind() {
-        argumentTypes.forEach { at ->
-            when (at) {
-                "int" -> {
-                }
-                "nat" -> {
-                }
-                "nat1" -> {
-                }
-            }
-        }
-    }
-
 
     private fun parseIfConditions() {
         val ifElses = ifElseExprSyntaxTree!!.ifElses
@@ -197,7 +169,6 @@ constructor(
     }
 
     companion object {
-
         fun modJudge(condition: String, operator: String, indexOfoperator: Int, hm: HashMap<String, String>) {
             if (operator == "mod") {
                 val indexOfEqual = condition.indexOf("=")

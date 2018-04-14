@@ -25,7 +25,7 @@ public class Util {
 		else                                     return "other";
 	}
 
-	static Object getPrivateField(Object _target_obj, String _field_name)
+	public static Object getPrivateField(Object _target_obj, String _field_name)
 			throws NoSuchFieldException, IllegalAccessException {
 		Class c = _target_obj.getClass();
 		Field f = c.getDeclaredField(_field_name);
@@ -34,7 +34,7 @@ public class Util {
 	}
 
 
-	static Method getPrivateMethod(Object _target_obj, String _method_name)
+	public static Method getPrivateMethod(Object _target_obj, String _method_name)
 			throws NoSuchMethodException {
 		Class c = _target_obj.getClass();
 		Method m = c.getMethod(_method_name);
