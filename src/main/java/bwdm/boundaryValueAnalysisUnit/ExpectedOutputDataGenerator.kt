@@ -100,14 +100,13 @@ class ExpectedOutputDataGenerator internal constructor(private val ie: Informati
     }
 
     private fun judgeInequality(_leftHand: Long?, _operator: String, _rightHand: Long?): Boolean {
-        val returnBool: Boolean = when (_operator) {
+        return when (_operator) {
             "<" -> _leftHand!! < _rightHand!!
             ">" -> _leftHand!! > _rightHand!!
             "<=" -> _leftHand!! <= _rightHand!!
             ">=" -> _leftHand!! >= _rightHand!!
             else -> true
         }
-        return returnBool
     }
 
 
