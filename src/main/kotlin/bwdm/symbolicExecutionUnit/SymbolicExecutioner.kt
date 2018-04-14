@@ -1,6 +1,5 @@
 package bwdm.symbolicExecutionUnit
 
-import bwdm.informationStore.ConditionAndReturnValueList
 import bwdm.informationStore.InformationExtractor
 import bwdm.informationStore.ConditionAndReturnValueList.ConditionAndReturnValue
 import bwdm.Util
@@ -19,16 +18,12 @@ internal constructor(private val ie: InformationExtractor) {
     //残りの変数の値はどうでもいい場合がある
     //その場合、z3はevaluateした場合、変数名をそのまま返すので、
     //<String, String>としてある
-    val inputDataList: ArrayList<HashMap<String, String>>
+    val inputDataList: ArrayList<HashMap<String, String>> = ArrayList()
 
-    internal val expectedOutputDataList: ArrayList<String>
-    private val ctx: Context
+    private val expectedOutputDataList: ArrayList<String> = ArrayList()
+    private val ctx: Context = Context()
 
     init {
-        inputDataList = ArrayList()
-        expectedOutputDataList = ArrayList()
-        ctx = Context()
-
         val conditionAndReturnValueList = ie.conditionAndReturnValueList
 
         conditionAndReturnValueList.conditionAndReturnValues.forEach(Consumer<ConditionAndReturnValue> { this.doSymbolicExecution(it) })
@@ -45,15 +40,15 @@ internal constructor(private val ie: InformationExtractor) {
             val bool = bools[i]
             val operator = parsedCondition["operator"]
 
-            if (operator == "mod") { //剰余式
-                expr = makeModExpr(
+            expr = if (operator == "mod") { //剰余式
+                makeModExpr(
                         parsedCondition["left"]!!,
                         parsedCondition["right"]!!,
                         parsedCondition["surplus"]!!,
                         bool
                 )
             } else { //不等式
-                expr = makeInequalityExpr(
+                makeInequalityExpr(
                         parsedCondition["left"]!!,
                         operator!!,
                         parsedCondition["right"]!!,
@@ -97,12 +92,12 @@ internal constructor(private val ie: InformationExtractor) {
         val surplus = java.lang.Long.valueOf(_surplus)
 
         val modExpr: IntExpr
-        if (Util.isNumber(_left)) { //右辺が変数
+        modExpr = if (Util.isNumber(_left)) { //右辺が変数
             val left = java.lang.Long.valueOf(_left)
-            modExpr = ctx.mkMod(ctx.mkInt(left), ctx.mkIntConst(_right))
+            ctx.mkMod(ctx.mkInt(left), ctx.mkIntConst(_right))
         } else { //左辺が変数
             val right = java.lang.Long.valueOf(_right)
-            modExpr = ctx.mkMod(ctx.mkIntConst(_left), ctx.mkInt(right))
+            ctx.mkMod(ctx.mkIntConst(_left), ctx.mkInt(right))
         }
         expr = ctx.mkEq(modExpr, ctx.mkInt(surplus))
 
@@ -119,30 +114,30 @@ internal constructor(private val ie: InformationExtractor) {
         if (Util.isNumber(_left)) { //右辺が変数
             val left = java.lang.Long.valueOf(_left)
 
-            when (_operator) {
-                "<" -> expr = ctx.mkLt(ctx.mkInt(left), ctx.mkIntConst(_right))
-                "<=" -> expr = ctx.mkLe(ctx.mkInt(left), ctx.mkIntConst(_right))
-                ">" -> expr = ctx.mkGt(ctx.mkInt(left), ctx.mkIntConst(_right))
-                ">=" -> expr = ctx.mkGe(ctx.mkInt(left), ctx.mkIntConst(_right))
-                else -> expr = null
+            expr = when (_operator) {
+                "<" -> ctx.mkLt(ctx.mkInt(left), ctx.mkIntConst(_right))
+                "<=" -> ctx.mkLe(ctx.mkInt(left), ctx.mkIntConst(_right))
+                ">" -> ctx.mkGt(ctx.mkInt(left), ctx.mkIntConst(_right))
+                ">=" -> ctx.mkGe(ctx.mkInt(left), ctx.mkIntConst(_right))
+                else -> null
             }
 
         } else { //左辺が変数
             val right = java.lang.Long.valueOf(_right)
-            when (_operator) {
-                "<" -> expr = ctx.mkLt(ctx.mkIntConst(_left), ctx.mkInt(right))
-                "<=" -> expr = ctx.mkLe(ctx.mkIntConst(_left), ctx.mkInt(right))
-                ">" -> expr = ctx.mkGt(ctx.mkIntConst(_left), ctx.mkInt(right))
-                ">=" -> expr = ctx.mkGe(ctx.mkIntConst(_left), ctx.mkInt(right))
-                else -> expr = null
+            expr = when (_operator) {
+                "<" -> ctx.mkLt(ctx.mkIntConst(_left), ctx.mkInt(right))
+                "<=" -> ctx.mkLe(ctx.mkIntConst(_left), ctx.mkInt(right))
+                ">" -> ctx.mkGt(ctx.mkIntConst(_left), ctx.mkInt(right))
+                ">=" -> ctx.mkGe(ctx.mkIntConst(_left), ctx.mkInt(right))
+                else -> null
             }
         }
 
-        if (_bool!!)
-            return expr //満たすべき真偽(_bool)次第で、notをつける
+        return if (_bool!!)
+            expr //満たすべき真偽(_bool)次第で、notをつける
         else {
             assert(expr != null)
-            return ctx.mkNot(expr!!)
+            ctx.mkNot(expr!!)
         }
     }
 
