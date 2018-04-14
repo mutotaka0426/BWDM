@@ -37,7 +37,7 @@ public class ExpectedOutputDataGenerator {
 	//条件式は両辺のうち片方のみ変数が含まれているという制約付き
     private void extractExpectedOutputDataRecursively(Node _node, HashMap<String, Long> _inputData) {
 
-		if (_node.isIfNode) { //IfNodeである場合
+		if (_node.getIsIfNode()) { //IfNodeである場合
 			HashMap<String, String> parsedCondition = makeParsedCondition(_node.getConditionOrReturnStr());
 
 			//各条件式には一つの変数(parameter)しか登場しない
