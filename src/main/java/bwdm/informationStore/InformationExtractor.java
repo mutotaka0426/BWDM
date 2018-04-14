@@ -41,8 +41,6 @@ public class InformationExtractor {
 	//function name
 	private String functionName;
 
-    //argument types information
-    private String argumentTypeBody; //(int,nat,nat1)
     private ArrayList<String> argumentTypes; //int, nat, nat1
 
 	private ArrayList<String> parameters; //a, b, c
@@ -80,8 +78,7 @@ public class InformationExtractor {
 		vdmFileName = vdmFile.getName();
 
 		/* variableName = init; example */
-		argumentTypeBody = ""; //int*nat*nat1
-		argumentTypes = new ArrayList<String>(); //int, nat, nat1
+        argumentTypes = new ArrayList<String>(); //int, nat, nat1
 
 		//parameter information
 		//a*b*c
@@ -114,9 +111,8 @@ public class InformationExtractor {
 				TCExpression tcExpression = tcFunctionDefinition.body;
 				ifExpressionBody = tcExpression.toString();
 				tmp_argumentTypes.forEach(e -> argumentTypes.add(e.toString()));
-				argumentTypeBody = argumentTypes.toString(); //set argumentTypes
 
-				countArgumentTypeNumByKind();
+                countArgumentTypeNumByKind();
 
 				try {
 					ifElseExprSyntaxTree = new IfElseExprSyntaxTree(ifExpressionBody);
