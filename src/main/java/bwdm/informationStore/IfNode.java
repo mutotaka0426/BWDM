@@ -1,7 +1,7 @@
 package bwdm.informationStore;
 
 public class IfNode extends Node {
-	public String conditionStr;
+	private String conditionStr;
 	public Node conditionTrueNode;
 
 	public Node conditionFalseNode; //Ifノードには子ノードが2つ
