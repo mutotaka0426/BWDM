@@ -16,6 +16,24 @@ Build
 * [JUnit5](https://github.com/junit-team/junit5) : Unit Testing
 * [z3](https://github.com/Z3Prover/z3) : Theorem Prover
 
+
+## install
+1. Install Microsoft Z3 library.
+2. Download [BWDM.jar](https://github.com/korosuke613/BWDM/releases).
+
+
+## example
+
+```bash
+$ java -Djava.library.path=./libs -jar BWDM.jar ./vdm_files/probrem.vdmpp 
+```
+
+or
+
+```bash
+$ gradle run -Pargs="./vdm_files/problem.vdmpp" 
+```
+
 ## History
 * 20161110  create first repository.
 * 20161111  implement FX.java. 
@@ -38,17 +56,6 @@ Build
 | -v | Version |
 | -h | Help |
 
-## example
-
-```bash
-$ java -Djava.library.path=./libs -jar BWDM.jar ./vdm_files/probrem.vdmpp 
-```
-
-or
-
-```bash
-$ gradle run -Pargs="./vdm_files/problem.vdmpp" 
-```
 
 ## build
 
