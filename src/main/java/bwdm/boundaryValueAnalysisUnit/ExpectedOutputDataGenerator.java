@@ -78,7 +78,7 @@ public class ExpectedOutputDataGenerator {
 
 		parsedCondition.put("left", _condition.substring(0, indexOfoperator));
 		parsedCondition.put("operator", operator);
-		InformationExtractor.modJudge(_condition, operator, indexOfoperator, parsedCondition);
+		InformationExtractor.Companion.modJudge(_condition, operator, indexOfoperator, parsedCondition);
 		return parsedCondition;
 	}
 

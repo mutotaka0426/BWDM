@@ -186,7 +186,7 @@ object BwdmMain {
             1 -> vdmPath = args[0]
             2 -> vdmPath = args[1]
         }
-        val extractInformation = InformationExtractor(vdmPath)
+        val extractInformation = InformationExtractor(vdmPath!!)
         val bvaUnitMain = BvaUnitMain(extractInformation)
         val seUnitMain = SeUnitMain(extractInformation)
 
@@ -196,7 +196,7 @@ object BwdmMain {
 
         //1 諸情報
         if (showStandardInfo) {
-            buf += "ファイルパス : " + File(vdmPath!!).canonicalPath + "\n"
+            buf += "ファイルパス : " + File(vdmPath).canonicalPath + "\n"
             buf += "関数名 : " + extractInformation.functionName + "\n"
             buf += "引数の型 : "
             for (i in 0 until extractInformation.argumentTypes.size) {
