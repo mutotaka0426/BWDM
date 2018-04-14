@@ -78,16 +78,16 @@ public class InformationExtractor {
 		vdmFileName = vdmFile.getName();
 
 		/* variableName = init; example */
-        argumentTypes = new ArrayList<String>(); //int, nat, nat1
+        argumentTypes = new ArrayList<>(); //int, nat, nat1
 
 		//parameter information
 		//a*b*c
 		String parameterBodies = "";
-		parameters = new ArrayList<String>(); //a, b, c
+		parameters = new ArrayList<>(); //a, b, c
 
 		ifExpressionBody = "";
 		ifConditionBodies = new HashMap();
-		ifConditionBodiesInCameForward = new ArrayList<String>();
+		ifConditionBodiesInCameForward = new ArrayList<>();
 		ifConditions = new HashMap();
         /*Done initializing fields*/
 
