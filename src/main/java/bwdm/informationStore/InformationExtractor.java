@@ -13,6 +13,7 @@ import com.fujitsu.vdmj.tc.definitions.TCDefinition;
 import com.fujitsu.vdmj.tc.definitions.TCExplicitFunctionDefinition;
 import com.fujitsu.vdmj.tc.expressions.TCExpression;
 import com.fujitsu.vdmj.tc.patterns.TCIdentifierPattern;
+import com.fujitsu.vdmj.tc.patterns.TCPattern;
 import com.fujitsu.vdmj.tc.patterns.TCPatternList;
 import com.fujitsu.vdmj.tc.patterns.TCPatternListList;
 import com.fujitsu.vdmj.tc.types.TCFunctionType;
@@ -82,8 +83,7 @@ public class InformationExtractor {
 
 		//parameter information
 		//a*b*c
-		String parameterBodies = "";
-		parameters = new ArrayList<>(); //a, b, c
+        parameters = new ArrayList<>(); //a, b, c
 
 		ifExpressionBody = "";
 		ifConditionBodies = new HashMap();
@@ -103,7 +103,8 @@ public class InformationExtractor {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				functionName = tcFunctionDefinition.name.getName();
+                assert tcFunctionDefinition != null;
+                functionName = tcFunctionDefinition.name.getName();
 				returnValue = tcFunctionDefinition.type.result.toString();
 				//returnValue.replaceAll((,"").replaceAll(")","");
 				TCFunctionType tcFunctionType = tcFunctionDefinition.type;
@@ -116,20 +117,16 @@ public class InformationExtractor {
 
 				try {
 					ifElseExprSyntaxTree = new IfElseExprSyntaxTree(ifExpressionBody);
-				} catch (ParserException e) {
-					e.printStackTrace();
-				} catch (LexException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
+				} catch (ParserException | LexException | IOException e) {
 					e.printStackTrace();
 				}
 
 				//parsing for parameters
 				TCPatternListList tcPatternListList = tcFunctionDefinition.paramPatternList;
 				TCPatternList tcPatternList = tcPatternListList.firstElement();
-				for(int i=0; i<tcPatternList.size(); i++) {
+				for (TCPattern aTcPatternList : tcPatternList) {
 					TCIdentifierPattern tcIdentifierPattern =
-							(TCIdentifierPattern) tcPatternList.get(i);
+							(TCIdentifierPattern) aTcPatternList;
 					String parameter = tcIdentifierPattern.toString();
 					parameters.add(parameter);
 				}
@@ -149,9 +146,14 @@ public class InformationExtractor {
 
 	private void countArgumentTypeNumByKind() {
 		argumentTypes.forEach(at -> {
-			if(at.toString().equals("int")) ;
-			else if(at.toString().equals("nat")) ;
-			else if(at.toString().equals("nat1")) ;
+			switch (at) {
+				case "int":
+					break;
+				case "nat":
+					break;
+				case "nat1":
+					break;
+			}
 		});
 	}
 
@@ -169,18 +171,17 @@ public class InformationExtractor {
 
 		//initializing of collection instances of each parameter
 		parameters.forEach(s -> {
-			ifConditionBodies.put(s, new ArrayList<String>());
-			ifConditions.put(s, new ArrayList<HashMap<String, String>>());
+			ifConditionBodies.put(s, new ArrayList<>());
+			ifConditions.put(s, new ArrayList<>());
 		});
 
 		//parsing of each if-condition, and store in ifConditions
-		ifConditionBodiesInCameForward.forEach(condition -> {
-			parameters.forEach(parameter -> {
-				if (condition.contains(parameter)) {
-					parse(condition, parameter);
-				}
-			});
-		});
+		ifConditionBodiesInCameForward.forEach(condition ->
+				parameters.forEach(parameter -> {
+					if (condition.contains(parameter)) {
+						parse(condition, parameter);
+					}
+				}));
 	}
 
 	private void parse(String condition, String parameter) {
