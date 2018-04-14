@@ -17,9 +17,9 @@ public class SymbolicExecutioner {
 	//残りの変数の値はどうでもいい場合がある
 	//その場合、z3はevaluateした場合、変数名をそのまま返すので、
 	//<String, String>としてある
-	private ArrayList inputDataList;
+	private ArrayList<HashMap<String, String>> inputDataList;
 
-	private ArrayList expectedOutputDataList;
+	private ArrayList<String> expectedOutputDataList;
 
 	private InformationExtractor ie;
 	private Context ctx;
@@ -27,8 +27,8 @@ public class SymbolicExecutioner {
 	//各条件式は左辺右辺のうち片方のみが変数であるという制約付き
 	SymbolicExecutioner(InformationExtractor _ie) {
 		this.ie = _ie;
-		inputDataList = new ArrayList();
-		expectedOutputDataList = new ArrayList();
+		inputDataList = new ArrayList<>();
+		expectedOutputDataList = new ArrayList<>();
 		ctx = new Context();
 
 		ConditionAndReturnValueList conditionAndReturnValueList = _ie.getConditionAndReturnValueList();
@@ -84,7 +84,7 @@ public class SymbolicExecutioner {
 			Model m = solver.getModel();
 
 			parameters = ie.getParameters();
-			HashMap hm = new HashMap();
+			HashMap<String, String> hm = new HashMap<>();
 			parameters.forEach(p -> hm.put(p, m.evaluate(ctx.mkIntConst(p), false).toString()));
 
 			inputDataList.add(hm);
@@ -147,10 +147,10 @@ public class SymbolicExecutioner {
 		}
 	}
 
-	public ArrayList getInputDataList() {
+	public ArrayList<HashMap<String, String>> getInputDataList() {
 		return inputDataList;
 	}
-	ArrayList getExpectedOutputDataList() {
+	ArrayList<String> getExpectedOutputDataList() {
 		return expectedOutputDataList;
 	}
 
