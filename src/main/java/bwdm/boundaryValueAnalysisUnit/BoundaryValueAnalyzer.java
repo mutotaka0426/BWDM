@@ -16,17 +16,15 @@ public class BoundaryValueAnalyzer {
 	static final long nat1Max = natMax + 1;
 	static final long nat1Min = 1;
 
-	private HashMap boundaryValueList;
+	private HashMap<String, ArrayList<Long>> boundaryValueList;
 	private ArrayList inputDataList;
 
 
 	public BoundaryValueAnalyzer(InformationExtractor _information) {
 		//generation of instance of each parameter
-		boundaryValueList = new HashMap();
+		boundaryValueList = new HashMap<>();
 		inputDataList = new ArrayList();
-		_information.getParameters().forEach(p -> {
-			boundaryValueList.put(p, new ArrayList());
-		});
+		_information.getParameters().forEach(p -> boundaryValueList.put(p, new ArrayList<>()));
 
 		generateTypeBoundaryValue(_information);
 		generateIfConditionalBoundaryValue(_information);
@@ -35,15 +33,15 @@ public class BoundaryValueAnalyzer {
 		ArrayList<String> parameters = _information.getParameters();
 		for(int i = 0; i < boundaryValueList.size(); i++) {
 			String parameter = parameters.get(i);
-			ArrayList bvs = (ArrayList) boundaryValueList.get(parameter);
-			bvs = (ArrayList) bvs.stream().distinct().collect(Collectors.toList());
+			ArrayList<Long> bvs = boundaryValueList.get(parameter);
+			bvs = (ArrayList<Long>) bvs.stream().distinct().collect(Collectors.toList());
 			boundaryValueList.put(parameter, bvs);
 		}
 
 		makeInputDataList(_information);
 	}
 
-	public HashMap getBoundaryValueList() { return boundaryValueList; }
+	public HashMap<String, ArrayList<Long>> getBoundaryValueList() { return boundaryValueList; }
 	public ArrayList<HashMap<String, Long>> getInputDataList() { return inputDataList; }
 
 
@@ -54,7 +52,7 @@ public class BoundaryValueAnalyzer {
 		for(int i=0; i<argumentTypes.size(); i++) {
 			String parameter = parameters.get(i);
 			String argumentType = argumentTypes.get(i);
-			ArrayList bvs = (ArrayList) boundaryValueList.get(parameter);
+			ArrayList<Long> bvs = boundaryValueList.get(parameter);
 			switch (argumentType) {
 				case "int":
 					bvs.add(intMax + 1);
@@ -84,73 +82,70 @@ public class BoundaryValueAnalyzer {
 	private void generateIfConditionalBoundaryValue(InformationExtractor _information) {
 		HashMap allIfConditions = _information.getIfConditions();
 
-		allIfConditions.forEach( (parameter, ifConditions) ->{
-			((ArrayList) ifConditions).forEach(condition -> { //condition : HashMap<String, String>
-				String left   = ((HashMap<String, String>) condition).get("left");
-				String operator = ((HashMap<String, String>) condition).get("operator");
-				String right  = ((HashMap<String, String>) condition).get("right");
-				ArrayList bvs = (ArrayList) boundaryValueList.get(parameter);
+		allIfConditions.forEach( (parameter, ifConditions) -> ((ArrayList) ifConditions).forEach(condition -> { //condition : HashMap<String, String>
+			String left   = ((HashMap<String, String>) condition).get("left");
+			String operator = ((HashMap<String, String>) condition).get("operator");
+			String right  = ((HashMap<String, String>) condition).get("right");
+			ArrayList<Long> bvs = boundaryValueList.get(parameter);
 
-				long trueValue=0, falseValue=0, value=0;
-				if(Util.isNumber(left)) {
-					value = Long.parseLong(left);
-					switch (operator) {
-						case "<":
-							trueValue = value + 1;
-							falseValue = value;
-							break;
-						case "<=":
-							trueValue = value;
-							falseValue = value - 1;
-							break;
-						case ">":
-							trueValue = value - 1;
-							falseValue = value;
-							break;
-						case ">=":
-							trueValue = value;
-							falseValue = value + 1;
-							break;
-						case "mod":
-							trueValue = value + Long.parseLong(((HashMap<String, String>) condition).get("surplus"));
-							falseValue = value + 1;
-							bvs.add(value - 1);
-							break;
-					}
-
-				} else if(Util.isNumber(right)) {
-					value = Long.parseLong(right);
-					switch (operator) {
-						case "<":
-							trueValue = value - 1;
-							falseValue = value;
-							break;
-						case "<=":
-							trueValue = value;
-							falseValue = value + 1;
-							break;
-						case ">":
-							trueValue = value + 1;
-							falseValue = value;
-							break;
-						case ">=":
-							trueValue = value;
-							falseValue = value - 1;
-							break;
-						case "mod":
-							trueValue = value + Long.parseLong(((HashMap<String, String>) condition).get("surplus"));
-							falseValue = value + 1;
-							bvs.add(value - 1);
-							break;
-					}
+			long trueValue=0, falseValue=0, value;
+			if(Util.isNumber(left)) {
+				value = Long.parseLong(left);
+				switch (operator) {
+					case "<":
+						trueValue = value + 1;
+						falseValue = value;
+						break;
+					case "<=":
+						trueValue = value;
+						falseValue = value - 1;
+						break;
+					case ">":
+						trueValue = value - 1;
+						falseValue = value;
+						break;
+					case ">=":
+						trueValue = value;
+						falseValue = value + 1;
+						break;
+					case "mod":
+						trueValue = value + Long.parseLong(((HashMap<String, String>) condition).get("surplus"));
+						falseValue = value + 1;
+						bvs.add(value - 1);
+						break;
 				}
 
-				bvs.add(trueValue);
-				bvs.add(falseValue);
+			} else if(Util.isNumber(right)) {
+				value = Long.parseLong(right);
+				switch (operator) {
+					case "<":
+						trueValue = value - 1;
+						falseValue = value;
+						break;
+					case "<=":
+						trueValue = value;
+						falseValue = value + 1;
+						break;
+					case ">":
+						trueValue = value + 1;
+						falseValue = value;
+						break;
+					case ">=":
+						trueValue = value;
+						falseValue = value - 1;
+						break;
+					case "mod":
+						trueValue = value + Long.parseLong(((HashMap<String, String>) condition).get("surplus"));
+						falseValue = value + 1;
+						bvs.add(value - 1);
+						break;
+				}
+			}
 
-			});
+			bvs.add(trueValue);
+			bvs.add(falseValue);
 
-		});
+		}));
 	}
 
 	private void makeInputDataList(InformationExtractor _information) {
@@ -158,7 +153,7 @@ public class BoundaryValueAnalyzer {
 
 		//最初の一つ目
 		String first_prm = (String) parameters.get(0);
-		ArrayList<Long> first_bvs = (ArrayList) boundaryValueList.get(first_prm);
+		ArrayList<Long> first_bvs = boundaryValueList.get(first_prm);
 		for(int i=0; i<first_bvs.size(); i++) {
 			inputDataList.add(new HashMap());
 			HashMap hm = (HashMap) inputDataList.get(i);
@@ -168,7 +163,7 @@ public class BoundaryValueAnalyzer {
 		//それ以降
 		parameters.forEach(p -> {
 			if( !p.equals(first_prm) ) { //最初の要素以外に対して
-				ArrayList current_bvs = (ArrayList) boundaryValueList.get(p);
+				ArrayList<Long> current_bvs = boundaryValueList.get(p);
 
 				//inputDataListの第一引数のみを登録した状態
 				ArrayList inputDataListInitialState = (ArrayList) inputDataList.clone();
