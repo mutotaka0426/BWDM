@@ -80,9 +80,10 @@ public class BoundaryValueAnalyzer {
 
 
 	private void generateIfConditionalBoundaryValue(InformationExtractor _information) {
-		HashMap allIfConditions = _information.getIfConditions();
+		HashMap<String, ArrayList<Object>> allIfConditions = _information.getIfConditions();
 
-		allIfConditions.forEach( (parameter, ifConditions) -> ((ArrayList) ifConditions).forEach(condition -> { //condition : HashMap<String, String>
+		allIfConditions.forEach( (parameter, ifConditions) ->
+				(ifConditions).forEach(condition -> { //condition : HashMap<String, String>
 			String left   = ((HashMap<String, String>) condition).get("left");
 			String operator = ((HashMap<String, String>) condition).get("operator");
 			String right  = ((HashMap<String, String>) condition).get("right");
