@@ -1,9 +1,9 @@
 package bwdm.informationStore;
 
 public class ReturnNode extends Node{
-	public String returnStr;
+	private String returnStr;
 
-	public ReturnNode(String _returnStr, int _nodeLevel) {
+	ReturnNode(String _returnStr, int _nodeLevel) {
 		returnStr = _returnStr;
 		nodeLevel = _nodeLevel;
 		isIfNode = false;

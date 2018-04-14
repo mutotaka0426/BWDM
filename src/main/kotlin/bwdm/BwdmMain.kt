@@ -242,14 +242,14 @@ object BwdmMain {
                 val bools = carv.bools
 
                 //はじめの一つ以外は、前に and をつけてくっつける
-                buf += if (bools[0] as Boolean) {
+                buf += if (bools[0]) {
                     conditions[0] + " "
                 } else {
                     "!( " + conditions[0] + " ) "
                 }
 
                 for (j in 1 until conditions.size) { //はじめの一個以外
-                    buf += if (bools[j] as Boolean) {
+                    buf += if (bools[j]) {
                         "and " + conditions[j]
                     } else {
                         "and !( " + conditions[j] + " ) "
