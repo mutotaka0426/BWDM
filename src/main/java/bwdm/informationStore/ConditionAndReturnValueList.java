@@ -15,18 +15,15 @@ public class ConditionAndReturnValueList {
 	}
 	private ArrayList<ConditionAndReturnValue> conditionAndReturnValues;
 
-	InformationExtractor ie;
-	BoundaryValueAnalyzer bva;
-
 	public class ConditionAndReturnValue {
 		String returnStr;
 		//conditions[0]の真偽値がbools[0]
 		//conditions[1]の真偽値がbools[1]...
-		ArrayList<String>  conditions;
-		ArrayList<Boolean> bools;
+		ArrayList conditions;
+		ArrayList bools;
 
 
-		public ConditionAndReturnValue() {
+		ConditionAndReturnValue() {
 			size++;
 			conditions = new ArrayList();
 			bools = new ArrayList();
@@ -40,7 +37,7 @@ public class ConditionAndReturnValueList {
 
 	public ConditionAndReturnValueList(IfNode _root, InformationExtractor _ie) {
 		conditionAndReturnValues = new ArrayList();
-		this.ie = _ie;
+		InformationExtractor ie = _ie;
 		recursiveReturnNodeFind(_root);
 
 
