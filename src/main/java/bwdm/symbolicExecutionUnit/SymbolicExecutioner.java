@@ -17,15 +17,15 @@ public class SymbolicExecutioner {
 	//残りの変数の値はどうでもいい場合がある
 	//その場合、z3はevaluateした場合、変数名をそのまま返すので、
 	//<String, String>としてある
-	private ArrayList<HashMap<String, String>> inputDataList;
+	private ArrayList inputDataList;
 
-	private ArrayList<String> expectedOutputDataList;
+	private ArrayList expectedOutputDataList;
 
-	InformationExtractor ie;
-	Context ctx;
+	private InformationExtractor ie;
+	private Context ctx;
 
 	//各条件式は左辺右辺のうち片方のみが変数であるという制約付き
-	public SymbolicExecutioner(InformationExtractor _ie) {
+	SymbolicExecutioner(InformationExtractor _ie) {
 		this.ie = _ie;
 		inputDataList = new ArrayList();
 		expectedOutputDataList = new ArrayList();
@@ -33,9 +33,7 @@ public class SymbolicExecutioner {
 
 		ConditionAndReturnValueList conditionAndReturnValueList = _ie.getConditionAndReturnValueList();
 
-		conditionAndReturnValueList.getConditionAndReturnValues().forEach(c -> {
-			doSymbolicExecution(c);
-		});
+		conditionAndReturnValueList.getConditionAndReturnValues().forEach(this::doSymbolicExecution);
 	}
 
 	private void doSymbolicExecution(ConditionAndReturnValue _conditionAndReturnValue) {
@@ -86,10 +84,8 @@ public class SymbolicExecutioner {
 			Model m = solver.getModel();
 
 			parameters = ie.getParameters();
-			HashMap<String, String> hm = new HashMap();
-			parameters.forEach(p -> {
-				hm.put(p, m.evaluate(ctx.mkIntConst(p), false).toString());
-			});
+			HashMap hm = new HashMap();
+			parameters.forEach(p -> hm.put(p, m.evaluate(ctx.mkIntConst(p), false).toString()));
 
 			inputDataList.add(hm);
 			expectedOutputDataList.add(_conditionAndReturnValue.getReturnStr());
@@ -98,20 +94,18 @@ public class SymbolicExecutioner {
 	}
 
 
-	BoolExpr makeModExpr(String _left, String _right, String _surplus, Boolean _bool) {
+	private BoolExpr makeModExpr(String _left, String _right, String _surplus, Boolean _bool) {
 		BoolExpr expr;
 		Long surplus = Long.valueOf(_surplus);
 
 		IntExpr modExpr;
 		if(Util.isNumber(_left)) { //右辺が変数
 			Long left = Long.valueOf(_left);
-			String right = _right;
-			modExpr = ctx.mkMod(ctx.mkInt(left), ctx.mkIntConst(right));
+			modExpr = ctx.mkMod(ctx.mkInt(left), ctx.mkIntConst(_right));
 		}
 		else { //左辺が変数
-			String left = _left;
 			Long right = Long.valueOf(_right);
-			modExpr = ctx.mkMod(ctx.mkIntConst(left), ctx.mkInt(right));
+			modExpr = ctx.mkMod(ctx.mkIntConst(_left), ctx.mkInt(right));
 		}
 		expr = ctx.mkEq(modExpr, ctx.mkInt(surplus));
 
@@ -120,42 +114,43 @@ public class SymbolicExecutioner {
 	}
 
 
-	BoolExpr makeInequalityExpr(String _left, String _operator, String _right, Boolean _bool) {
+	private BoolExpr makeInequalityExpr(String _left, String _operator, String _right, Boolean _bool) {
 		BoolExpr expr;
 
 		if(Util.isNumber(_left)) { //右辺が変数
 			Long left = Long.valueOf(_left);
-			String right = _right;
 
 			switch (_operator) {
-				case "<":  expr = ctx.mkLt( ctx.mkInt(left), ctx.mkIntConst(right) ); break;
-				case "<=": expr = ctx.mkLe( ctx.mkInt(left), ctx.mkIntConst(right) ); break;
-				case ">":  expr = ctx.mkGt( ctx.mkInt(left), ctx.mkIntConst(right) ); break;
-				case ">=": expr = ctx.mkGe( ctx.mkInt(left), ctx.mkIntConst(right) ); break;
+				case "<":  expr = ctx.mkLt( ctx.mkInt(left), ctx.mkIntConst(_right) ); break;
+				case "<=": expr = ctx.mkLe( ctx.mkInt(left), ctx.mkIntConst(_right) ); break;
+				case ">":  expr = ctx.mkGt( ctx.mkInt(left), ctx.mkIntConst(_right) ); break;
+				case ">=": expr = ctx.mkGe( ctx.mkInt(left), ctx.mkIntConst(_right) ); break;
 				default :  expr = null;
 			}
 
 		}
 		else { //左辺が変数
-			String left = _left;
 			Long right = Long.valueOf(_right);
 			switch (_operator) {
-				case "<":  expr = ctx.mkLt( ctx.mkIntConst(left), ctx.mkInt(right) ); break;
-				case "<=": expr = ctx.mkLe( ctx.mkIntConst(left), ctx.mkInt(right) ); break;
-				case ">":  expr = ctx.mkGt( ctx.mkIntConst(left), ctx.mkInt(right) ); break;
-				case ">=": expr = ctx.mkGe( ctx.mkIntConst(left), ctx.mkInt(right) ); break;
+				case "<":  expr = ctx.mkLt( ctx.mkIntConst(_left), ctx.mkInt(right) ); break;
+				case "<=": expr = ctx.mkLe( ctx.mkIntConst(_left), ctx.mkInt(right) ); break;
+				case ">":  expr = ctx.mkGt( ctx.mkIntConst(_left), ctx.mkInt(right) ); break;
+				case ">=": expr = ctx.mkGe( ctx.mkIntConst(_left), ctx.mkInt(right) ); break;
 				default :  expr = null;
 			}
 		}
 
 		if(_bool) return expr; //満たすべき真偽(_bool)次第で、notをつける
-		else     return ctx.mkNot(expr);
+		else {
+			assert expr != null;
+			return ctx.mkNot(expr);
+		}
 	}
 
-	public ArrayList<HashMap<String, String>> getInputDataList() {
+	public ArrayList getInputDataList() {
 		return inputDataList;
 	}
-	public ArrayList<String> getExpectedOutputDataList() {
+	ArrayList getExpectedOutputDataList() {
 		return expectedOutputDataList;
 	}
 
