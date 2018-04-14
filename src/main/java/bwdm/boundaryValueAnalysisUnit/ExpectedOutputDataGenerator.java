@@ -12,13 +12,13 @@ import java.util.HashMap;
 public class ExpectedOutputDataGenerator {
 
 	private InformationExtractor ie;
-	private ArrayList expectedOutputDataList;
+	private ArrayList<String> expectedOutputDataList;
 
 	ExpectedOutputDataGenerator(InformationExtractor _ie,
                                 IfNode _root,
                                 ArrayList<HashMap<String, Long>> _inputDataList) {
 		this.ie = _ie;
-		expectedOutputDataList = new ArrayList();
+		expectedOutputDataList = new ArrayList<>();
 
 		//inputData:seq of HashMapの各要素に入力データを挿入
 		_inputDataList.forEach(inputData -> extractExpectedOutputDataRecursively(_root, inputData));
@@ -29,7 +29,7 @@ public class ExpectedOutputDataGenerator {
 
 	}
 
-	ArrayList getExpectedOutputDataList() {
+	ArrayList<String> getExpectedOutputDataList() {
 		return expectedOutputDataList;
 	}
 
@@ -37,7 +37,7 @@ public class ExpectedOutputDataGenerator {
     private void extractExpectedOutputDataRecursively(Node _node, HashMap<String, Long> _inputData) {
 
 		if (_node.isIfNode) { //IfNodeである場合
-			HashMap parsedCondition = makeParsedCondition(_node.getConditionOrReturnStr());
+			HashMap<String, String> parsedCondition = makeParsedCondition(_node.getConditionOrReturnStr());
 
 			//各条件式には一つの変数(parameter)しか登場しない
 			ie.getParameters().forEach(prm -> {
@@ -63,8 +63,8 @@ public class ExpectedOutputDataGenerator {
 
 	}
 
-	public static HashMap makeParsedCondition(String _condition) {
-		HashMap parsedCondition = new HashMap();
+	public static HashMap<String, String> makeParsedCondition(String _condition) {
+		HashMap<String, String> parsedCondition = new HashMap<>();
 		String operator = Util.getOperator(_condition);
 		int indexOfoperator = _condition.indexOf(operator);
 
