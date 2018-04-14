@@ -7,6 +7,7 @@ import bwdm.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 
 public class ExpectedOutputDataGenerator {
@@ -47,10 +48,10 @@ public class ExpectedOutputDataGenerator {
 
 					//判定結果がTRUEならばifNodeのtrueNodeに進んで再帰
 					if (conditionJudgeResult) {
-						extractExpectedOutputDataRecursively(((IfNode) _node).getConditionTrueNode(), _inputData);
+						extractExpectedOutputDataRecursively(Objects.requireNonNull(((IfNode) _node).getConditionTrueNode()), _inputData);
 					} else { //判定結果がFalseならばifNodeのfalseNodeに進んで再帰
 						extractExpectedOutputDataRecursively(
-                                ((IfNode) _node).getConditionFalseNode(),
+								Objects.requireNonNull(((IfNode) _node).getConditionFalseNode()),
 								_inputData
 						);
 					}
