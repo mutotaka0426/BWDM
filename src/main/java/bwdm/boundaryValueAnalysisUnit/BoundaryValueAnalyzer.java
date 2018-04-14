@@ -9,14 +9,14 @@ import java.util.stream.Collectors;
 
 public class BoundaryValueAnalyzer {
 
-	public static final long intMax  = Integer.MAX_VALUE;
-	public static final long intMin  = Integer.MIN_VALUE;
-	public static final long natMax  = intMax * 2;
-	public static final long natMin  = 0;
-	public static final long nat1Max = natMax + 1;
-	public static final long nat1Min = 1;
+	static final long intMax  = Integer.MAX_VALUE;
+	static final long intMin  = Integer.MIN_VALUE;
+	static final long natMax  = intMax * 2;
+	static final long natMin  = 0;
+	static final long nat1Max = natMax + 1;
+	static final long nat1Min = 1;
 
-	private HashMap <String, ArrayList<Long>>boundaryValueList;
+	private HashMap boundaryValueList;
 	private ArrayList<HashMap<String, Long>> inputDataList;
 
 
@@ -35,7 +35,7 @@ public class BoundaryValueAnalyzer {
 		ArrayList<String> parameters = _information.getParameters();
 		for(int i = 0; i < boundaryValueList.size(); i++) {
 			String parameter = parameters.get(i);
-			ArrayList bvs = boundaryValueList.get(parameter);
+			ArrayList bvs = (ArrayList) boundaryValueList.get(parameter);
 			bvs = (ArrayList) bvs.stream().distinct().collect(Collectors.toList());
 			boundaryValueList.put(parameter, bvs);
 		}
@@ -62,7 +62,7 @@ public class BoundaryValueAnalyzer {
 		for(int i=0; i<argumentTypes.size(); i++) {
 			String parameter = parameters.get(i);
 			String argumentType = argumentTypes.get(i);
-			ArrayList bvs = boundaryValueList.get(parameter);
+			ArrayList bvs = (ArrayList) boundaryValueList.get(parameter);
 			switch (argumentType) {
 				case "int":
 					bvs.add(intMax + 1);
@@ -97,7 +97,7 @@ public class BoundaryValueAnalyzer {
 				String left   = ((HashMap<String, String>) condition).get("left");
 				String operator = ((HashMap<String, String>) condition).get("operator");
 				String right  = ((HashMap<String, String>) condition).get("right");
-				ArrayList bvs = boundaryValueList.get(parameter);
+				ArrayList bvs = (ArrayList) boundaryValueList.get(parameter);
 
 				long trueValue=0, falseValue=0, value=0;
 				if(Util.isNumber(left)) {
@@ -194,10 +194,10 @@ public class BoundaryValueAnalyzer {
 					inputDataList.addAll(inputDataListTmp);
 				}
 				int repeatTimesOfInsert = 0;
-				for(int j=0; j<current_bvs.size(); j++) {
-					long currentBv = (long) current_bvs.get(j);
-					int offset = repeatTimesOfInsert*inputDataListInitialState.size();
-					for(int k=0; k<inputDataListInitialState.size(); k++) {
+				for (Object current_bv : current_bvs) {
+					long currentBv = (long) current_bv;
+					int offset = repeatTimesOfInsert * inputDataListInitialState.size();
+					for (int k = 0; k < inputDataListInitialState.size(); k++) {
 						HashMap inputData = inputDataList.get(k + offset);
 						inputData.put(p, currentBv);
 					}
