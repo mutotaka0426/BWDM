@@ -52,7 +52,7 @@ public class InformationExtractor {
 
 	private String ifExpressionBody;
 
-    private HashMap<String, ArrayList<String>> ifConditionBodies;
+    private HashMap ifConditionBodies;
     //a parameter to ArrayList of if-conditions
 	//ArrayList of ifConditions of each parameter
 	//ifConditionBodies.get("a") : "4<a", "a<7"
@@ -62,7 +62,7 @@ public class InformationExtractor {
 	private ArrayList<String> ifConditionBodiesInCameForward;
 
 
-	private HashMap<String, ArrayList<HashMap<String, String>>> ifConditions;
+	private HashMap ifConditions;
 	//a parameter to ArrayList of HashMaps that is parsed each if-expression
 	//ArrayList of HashMap of parsed if-expr.
 	//ifConditions.get("a") : 'HashMap of 4<a', 'HashMap of a<7'
@@ -185,7 +185,7 @@ public class InformationExtractor {
 	}
 
 	private void parse(String condition, String parameter) {
-		ArrayList al = ifConditionBodies.get(parameter);
+		ArrayList al = (ArrayList) ifConditionBodies.get(parameter);
 		al.add(condition);
 
 		String operator = Util.getOperator(condition);
@@ -203,7 +203,7 @@ public class InformationExtractor {
 			hm.put("right", condition.substring(indexOfoperator + operator.length()));
 		}
 
-		al = ifConditions.get(parameter);
+		al = (ArrayList) ifConditions.get(parameter);
 		al.add(hm);
     }
 
