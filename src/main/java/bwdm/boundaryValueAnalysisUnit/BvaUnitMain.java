@@ -4,12 +4,13 @@ import bwdm.informationStore.InformationExtractor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class BvaUnitMain {
 
-	InformationExtractor ie;
-	BoundaryValueAnalyzer boundaryValueAnalyzer;
-	ExpectedOutputDataGenerator expectedOutputDataGenerator;
+	private InformationExtractor ie;
+	private BoundaryValueAnalyzer boundaryValueAnalyzer;
+	private ExpectedOutputDataGenerator expectedOutputDataGenerator;
 
 	public BoundaryValueAnalyzer getBoundaryValueAnalyzer() { return boundaryValueAnalyzer; }
 
@@ -19,29 +20,29 @@ public class BvaUnitMain {
 		expectedOutputDataGenerator =
 				new ExpectedOutputDataGenerator(
 						_ie,
-						_ie.getIfElseExprSyntaxTree().getRoot(),
+						Objects.requireNonNull(_ie.getIfElseExprSyntaxTree()).getRoot(),
 						boundaryValueAnalyzer.getInputDataList()
 				);
 
 	}
 
 	public String getAllTestcasesByBv() {
-		String buf = "";
+		StringBuilder buf = new StringBuilder();
 		ArrayList<String> parameters = ie.getParameters();
 		ArrayList<HashMap<String, Long>> inputDataList = boundaryValueAnalyzer.getInputDataList();
 		ArrayList<String> expectedOutputDataList = expectedOutputDataGenerator.getExpectedOutputDataList();
 
 
 		for(int i=0; i<expectedOutputDataList.size(); i++) {
-			buf += "No." + (i+1) + " : ";
+			buf.append("No.").append(i + 1).append(" : ");
 			HashMap<String, Long> inputData = inputDataList.get(i);
 			for(String prm : parameters) {
-				buf += inputData.get(prm) + " ";
+				buf.append(inputData.get(prm)).append(" ");
 			}
-			buf += "-> " + expectedOutputDataList.get(i) + "\n";
+			buf.append("-> ").append(expectedOutputDataList.get(i)).append("\n");
 		}
 
-		return buf;
+		return buf.toString();
 	}
 
 
