@@ -109,7 +109,7 @@ constructor(
                 countArgumentTypeNumByKind()
 
                 try {
-                    ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody)
+                    ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody!!)
                 } catch (e: ParserException) {
                     e.printStackTrace()
                 } catch (e: LexException) {
@@ -132,9 +132,9 @@ constructor(
             }
         }
 
-        ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody)
+        ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody!!)
 
-        conditionAndReturnValueList = ConditionAndReturnValueList(ifElseExprSyntaxTree!!.root, this)
+        conditionAndReturnValueList = ConditionAndReturnValueList(ifElseExprSyntaxTree!!.root)
 
     }/* Initializing fields*/
 
