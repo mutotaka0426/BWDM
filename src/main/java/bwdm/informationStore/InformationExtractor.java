@@ -47,9 +47,7 @@ public class InformationExtractor {
     private int intNum;
     private int natNum;
     private int nat1Num;
-    
-    //parameter information
-    private String parameterBodies; //a*b*c
+
 	private ArrayList<String> parameters; //a, b, c
 
 	//type of return value
@@ -85,13 +83,15 @@ public class InformationExtractor {
 		vdmFileName = vdmFile.getName();
 
 		/* variableName = init; example */
-		argumentTypeBody = new String(); //int*nat*nat1
+		argumentTypeBody = ""; //int*nat*nat1
 		argumentTypes = new ArrayList<String>(); //int, nat, nat1
 
-		parameterBodies = new String(); //a*b*c
+		//parameter information
+		//a*b*c
+		String parameterBodies = "";
 		parameters = new ArrayList<String>(); //a, b, c
 
-		ifExpressionBody = new String();
+		ifExpressionBody = "";
 		ifConditionBodies = new HashMap();
 		ifConditionBodiesInCameForward = new ArrayList<String>();
 		ifConditions = new HashMap();
