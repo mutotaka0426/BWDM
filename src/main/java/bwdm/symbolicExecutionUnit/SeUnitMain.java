@@ -6,29 +6,29 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SeUnitMain {
-	InformationExtractor ie;
-	SymbolicExecutioner se;
+	private InformationExtractor ie;
+	private SymbolicExecutioner se;
 	public SeUnitMain(InformationExtractor _ie) {
 		this.ie = _ie;
 		se = new SymbolicExecutioner(ie);
 	}
 
 	public String getAllTestcasesBySe() {
-		String buf = "";
+		StringBuilder buf = new StringBuilder();
 
 		ArrayList<String> parameters = ie.getParameters();
 		ArrayList<HashMap<String, String>> inputDataList = se.getInputDataList();
 		ArrayList<String> expectedOutputDataList = se.getExpectedOutputDataList();
 
 		for(int i=0; i<expectedOutputDataList.size(); i++) {
-			buf += "No." + (i+1) + " : ";
+			buf.append("No.").append(i + 1).append(" : ");
 			HashMap<String, String> inputData = inputDataList.get(i);
 			for(String prm : parameters) {
-				buf += inputData.get(prm) + " ";
+				buf.append(inputData.get(prm)).append(" ");
 			}
-			 buf += "-> " + expectedOutputDataList.get(i) + "\n";
+			 buf.append("-> ").append(expectedOutputDataList.get(i)).append("\n");
 		}
-		return buf;
+		return buf.toString();
 	}
 
 	public SymbolicExecutioner getSe() { return se; }
