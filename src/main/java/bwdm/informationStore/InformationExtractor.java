@@ -44,9 +44,6 @@ public class InformationExtractor {
     //argument types information
     private String argumentTypeBody; //(int,nat,nat1)
     private ArrayList<String> argumentTypes; //int, nat, nat1
-    private int intNum;
-    private int natNum;
-    private int nat1Num;
 
 	private ArrayList<String> parameters; //a, b, c
 
@@ -156,9 +153,9 @@ public class InformationExtractor {
 
 	private void countArgumentTypeNumByKind() {
 		argumentTypes.forEach(at -> {
-			if(at.toString().equals("int"))       intNum++;
-			else if(at.toString().equals("nat"))  natNum++;
-			else if(at.toString().equals("nat1")) nat1Num++;
+			if(at.toString().equals("int")) ;
+			else if(at.toString().equals("nat")) ;
+			else if(at.toString().equals("nat1")) ;
 		});
 	}
 
