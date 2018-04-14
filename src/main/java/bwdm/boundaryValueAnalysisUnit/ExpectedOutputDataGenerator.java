@@ -78,13 +78,7 @@ public class ExpectedOutputDataGenerator {
 
 		parsedCondition.put("left", _condition.substring(0, indexOfoperator));
 		parsedCondition.put("operator", operator);
-		if (operator.equals("mod")) {
-			int indexOfEqual = _condition.indexOf("=");
-			parsedCondition.put("right", _condition.substring(indexOfoperator + 3, indexOfEqual));
-			parsedCondition.put("surplus", _condition.substring(indexOfEqual + 1));
-		} else {
-			parsedCondition.put("right", _condition.substring(indexOfoperator + operator.length()));
-		}
+		InformationExtractor.Companion.modJudge(_condition, operator, indexOfoperator, parsedCondition);
 		return parsedCondition;
 	}
 
