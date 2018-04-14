@@ -47,10 +47,10 @@ public class ExpectedOutputDataGenerator {
 
 					//判定結果がTRUEならばifNodeのtrueNodeに進んで再帰
 					if (conditionJudgeResult) {
-						extractExpectedOutputDataRecursively(((IfNode) _node).conditionTrueNode, _inputData);
+						extractExpectedOutputDataRecursively(((IfNode) _node).getConditionTrueNode(), _inputData);
 					} else { //判定結果がFalseならばifNodeのfalseNodeに進んで再帰
 						extractExpectedOutputDataRecursively(
-								((IfNode) _node).conditionFalseNode,
+                                ((IfNode) _node).getConditionFalseNode(),
 								_inputData
 						);
 					}

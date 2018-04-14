@@ -79,8 +79,8 @@ class ConditionAndReturnValueList(_root: IfNode) {
     private fun recursiveReturnNodeFind(node: Node) {
         if (node.isIfNode) { //IfNodeならば
             val ifNode = node as IfNode
-            recursiveReturnNodeFind(ifNode.conditionTrueNode)
-            recursiveReturnNodeFind(ifNode.conditionFalseNode)
+            recursiveReturnNodeFind(ifNode.conditionTrueNode!!)
+            recursiveReturnNodeFind(ifNode.conditionFalseNode!!)
         } else { //ReturnNodeならば
             val conditionAndReturnValue = ConditionAndReturnValue()
             conditionAndReturnValue.returnStr = node.conditionOrReturnStr

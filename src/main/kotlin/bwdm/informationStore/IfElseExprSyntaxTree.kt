@@ -53,7 +53,7 @@ class IfElseExprSyntaxTree(_ifExpressionBoby: String) {
         } else {//ifじゃない場合、nextTokenにはreturnが入っている
             ifNode.conditionTrueNode = generateReturnNode(nextToken, ifNode, _nodeLevel + 1)
         }
-        ifNode.conditionTrueNode.isTrueNode = true
+        ifNode.conditionTrueNode!!.isTrueNode = true
 
         //else 特にすることは無いので無視
         //ということはif_elseファイルからelseを消しても問題無し？
@@ -68,7 +68,7 @@ class IfElseExprSyntaxTree(_ifExpressionBoby: String) {
         } else {//ifじゃない場合、nextTokenにはreturnが入っている
             ifNode.conditionFalseNode = generateReturnNode(nextToken, ifNode, _nodeLevel + 1)
         }
-        ifNode.conditionFalseNode.isTrueNode = false
+        ifNode.conditionFalseNode!!.isTrueNode = false
 
         return ifNode
     }
