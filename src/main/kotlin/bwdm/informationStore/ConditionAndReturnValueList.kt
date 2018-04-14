@@ -77,7 +77,7 @@ class ConditionAndReturnValueList(_root: IfNode) {
 
     //ReturnNodeの発見とそこに至る為に必要な条件式とその真偽値
     private fun recursiveReturnNodeFind(node: Node) {
-        if (node.isIfNode!!) { //IfNodeならば
+        if (node.isIfNode) { //IfNodeならば
             val ifNode = node as IfNode
             recursiveReturnNodeFind(ifNode.conditionTrueNode!!)
             recursiveReturnNodeFind(ifNode.conditionFalseNode!!)
