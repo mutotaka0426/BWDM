@@ -42,11 +42,7 @@ class IfElseExprSyntaxTreeTest {
 				String ifExpressionBody = tcExpression.toString();
 
 				ifElseExprSyntaxTree = null;
-				try {
-					ifElseExprSyntaxTree = new IfElseExprSyntaxTree(ifExpressionBody);
-				} catch (ParserException | LexException | IOException e) {
-					e.printStackTrace();
-				}
+				ifElseExprSyntaxTree = new IfElseExprSyntaxTree(ifExpressionBody);
 
 
 			}
