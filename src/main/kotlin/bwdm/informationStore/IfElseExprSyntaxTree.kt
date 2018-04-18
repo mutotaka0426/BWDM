@@ -51,6 +51,7 @@ class IfElseExprSyntaxTree(_ifExpressionBoby: String) {
             val conditionStr = ifElses[count++]
             ifNode.conditionTrueNode = generateIfNode(conditionStr, ifNode, _nodeLevel + 1)
         } else {//ifじゃない場合、nextTokenにはreturnが入っている
+            ifElses[count++]
             ifNode.conditionTrueNode = generateReturnNode(nextToken, ifNode, _nodeLevel + 1)
         }
         ifNode.conditionTrueNode!!.isTrueNode = true
@@ -66,6 +67,7 @@ class IfElseExprSyntaxTree(_ifExpressionBoby: String) {
             val conditionStr = ifElses[count++]
             ifNode.conditionFalseNode = generateIfNode(conditionStr, ifNode, _nodeLevel + 1)
         } else {//ifじゃない場合、nextTokenにはreturnが入っている
+            ifElses[count++]
             ifNode.conditionFalseNode = generateReturnNode(nextToken, ifNode, _nodeLevel + 1)
         }
         ifNode.conditionFalseNode!!.isTrueNode = false
