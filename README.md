@@ -4,11 +4,11 @@
 [![GitHub release](https://img.shields.io/github/release/korosuke613/BWDM/all.svg)](https://github.com/korosuke613/BWDM/releases)
 [![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/korosuke613/BWDM.svg)](https://github.com/korosuke613/BWDM/pulls?q=is%3Apr+is%3Aclosed)
 
-Master 
+Master ::
 [![Build Status](https://travis-ci.org/korosuke613/BWDM.svg?branch=master)](https://travis-ci.org/korosuke613/BWDM)
 [![Coverage Status](https://coveralls.io/repos/github/korosuke613/BWDM/badge.svg?branch=master)](https://coveralls.io/github/korosuke613/BWDM?branch=master)
 
-Build
+Develop ::
 [![Build Status](https://travis-ci.org/korosuke613/BWDM.svg?branch=develop)](https://travis-ci.org/korosuke613/BWDM)
 [![Coverage Status](https://coveralls.io/repos/github/korosuke613/BWDM/badge.svg?branch=develop)](https://coveralls.io/github/korosuke613/BWDM?branch=develop)
 
