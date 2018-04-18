@@ -186,7 +186,7 @@ object BwdmMain {
             1 -> vdmPath = args[0]
             2 -> vdmPath = args[1]
         }
-        val extractInformation = InformationExtractor(vdmPath)
+        val extractInformation = InformationExtractor(vdmPath!!)
         val bvaUnitMain = BvaUnitMain(extractInformation)
         val seUnitMain = SeUnitMain(extractInformation)
 
@@ -196,7 +196,7 @@ object BwdmMain {
 
         //1 諸情報
         if (showStandardInfo) {
-            buf += "ファイルパス : " + File(vdmPath!!).canonicalPath + "\n"
+            buf += "ファイルパス : " + File(vdmPath).canonicalPath + "\n"
             buf += "関数名 : " + extractInformation.functionName + "\n"
             buf += "引数の型 : "
             for (i in 0 until extractInformation.argumentTypes.size) {
@@ -215,7 +215,7 @@ object BwdmMain {
         //2 境界値情報
         if (showBvsInfo) {
             buf += "各引数の境界値\n"
-            val bvsList: HashMap<*, *> = bvaUnitMain.boundaryValueAnalyzer.boundaryValueList as HashMap<*, *>
+            val bvsList: HashMap<*, *> = bvaUnitMain.boundaryValueAnalyzer.boundaryValueList
             val parameters = extractInformation.parameters
             for (i in parameters.indices) {
                 val currentPrm = parameters[i]
@@ -242,14 +242,14 @@ object BwdmMain {
                 val bools = carv.bools
 
                 //はじめの一つ以外は、前に and をつけてくっつける
-                buf += if (bools[0] as Boolean) {
+                buf += if (bools[0]) {
                     conditions[0] + " "
                 } else {
                     "!( " + conditions[0] + " ) "
                 }
 
                 for (j in 1 until conditions.size) { //はじめの一個以外
-                    buf += if (bools[j] as Boolean) {
+                    buf += if (bools[j]) {
                         "and " + conditions[j]
                     } else {
                         "and !( " + conditions[j] + " ) "

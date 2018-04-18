@@ -14,7 +14,6 @@ buildscript {
 }
 
 group 'BWDM'
-version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'kotlin'
@@ -22,6 +21,7 @@ apply plugin: 'application'
 apply plugin: 'jacoco'
 apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'com.github.kt3k.coveralls'
+apply from: 'version.gradle'
 
 
 sourceCompatibility = 1.8
@@ -92,7 +92,8 @@ task junitPlatformJacocoReport(type: JacocoReport) {
     reports {
         xml.enabled true
         csv.enabled false
-        html.enabled false
+        html.enabled true
+        html.destination file("${buildDir}/reports/jacoco/test/")
         xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
     }
     afterEvaluate {

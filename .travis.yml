@@ -1,17 +1,23 @@
 language: java
-
 script:
-  - ./gradlew customTest coveralls
-
+- "./gradlew customTest coveralls"
 before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
 env:
   global:
-    - secure: "bxYtaA5aXrfmTRNR6tiuvNCOgfk1wu7T08mlgGT/QuSuE8D96lM6UcIBXT+tBHKwlXwg5DmdwFiRDd17fQDxnPX7KBUyydrXxRWF030jOagIfkpi5oH61CI+O5KRHYqZ+YByowA6vECkC25/hT26xBoaRmAB8V0zINUtsc3LmF+obDOVioqzE5tweEFseanSBmj7N6Rr0Ge/iTb7TntLsgpQZ1EKGS4NHUVqtG5HFOTqftTItFlW9/ULQZLE4LO5axflFoEB20djPwLBr9AFH5xznH62KcPhxgkFS4nTqEZqxrea6BniMPUD3Uls0+dBa2v3SdoOhKb26pYgCXxkg8qVXqNkcpptfUPCTpNZCmopqSZ6wYeqM7GpfWSdBHok5s1KA6aupQ1OC9zj73DabTbAAN6VJkxfiFBAT6WkBM15rPa3V67QJrETbXwAhND5H41gf4oV3ISywC0sJud+UuwdBg5bfIrXV7KfIXfkfkG/hk2YdJcaypkb7yr4MK4ptMTl8n1F7KRTDGAxq4mpUqzoXOsCbPO6OUbCXoDePGks0b1272e4iQY9XeRrNj+rIYF+8VDVyFZt06EtrNLxKbuKMzjcqLqQPJfebFWAJhY2b52ypaJv7xRb5aa/fR8Fb8DsDHBXprmlRUW4VlP7J7ogsSWZPpIf8b4tD8Sx8Go="
+  - secure: bxYtaA5aXrfmTRNR6tiuvNCOgfk1wu7T08mlgGT/QuSuE8D96lM6UcIBXT+tBHKwlXwg5DmdwFiRDd17fQDxnPX7KBUyydrXxRWF030jOagIfkpi5oH61CI+O5KRHYqZ+YByowA6vECkC25/hT26xBoaRmAB8V0zINUtsc3LmF+obDOVioqzE5tweEFseanSBmj7N6Rr0Ge/iTb7TntLsgpQZ1EKGS4NHUVqtG5HFOTqftTItFlW9/ULQZLE4LO5axflFoEB20djPwLBr9AFH5xznH62KcPhxgkFS4nTqEZqxrea6BniMPUD3Uls0+dBa2v3SdoOhKb26pYgCXxkg8qVXqNkcpptfUPCTpNZCmopqSZ6wYeqM7GpfWSdBHok5s1KA6aupQ1OC9zj73DabTbAAN6VJkxfiFBAT6WkBM15rPa3V67QJrETbXwAhND5H41gf4oV3ISywC0sJud+UuwdBg5bfIrXV7KfIXfkfkG/hk2YdJcaypkb7yr4MK4ptMTl8n1F7KRTDGAxq4mpUqzoXOsCbPO6OUbCXoDePGks0b1272e4iQY9XeRrNj+rIYF+8VDVyFZt06EtrNLxKbuKMzjcqLqQPJfebFWAJhY2b52ypaJv7xRb5aa/fR8Fb8DsDHBXprmlRUW4VlP7J7ogsSWZPpIf8b4tD8Sx8Go=
+deploy:
+  provider: releases
+  api_key:
+    secure: ZXnaWBoLDeeNBJTvaSpcJZYIU+wsPXR2p3UYJjwNBwwew46tcDW4G68/69a85nguFWNeKd2TLuaILJyAfjGhyKztsSFEVVY4kniN1khiBeLCOiw2uZOSiNt+HhyS941RHELXXrvdw+RmD8htywNWJhOeKTwy7vgI5rl7f3HNszMlO70MuEgQyUhKFY+23DBAyIvRI/nj1CrD5+BGM/JgzwSRkHZ7/OAKhp5/OJg62e4VSfKJ+9G6fGjppOYjiCWaoTObALoHTZ6O6LfRVrlHM7Xv/OqGU43TOdoS8jN2IqOfcn2GQRqCJLTv+rqjRa1SSkYx8wXrTKuvvbjsMwsEWGa0ww6nYUHgshMTbdbHzKKx0tSkFZYGr0lK9uxohbVxCeY9NSUuUDFlaYWyoANFALSFVXaj5qbgvpdCnSkHrEdiXQoeWEEaYkXsiS+LOsmQquQh12KSvOwCw0Cu154Vt3yyp/+D+1wU9LcalrDdjZ0nZzdh/qjCDXY8PV9kuQWKINnQonFRM0y8pv+KCdLRyQUZVfBzj73GEQC3Kh1ZuwRtlceKn7v/RebsKcq9d/+7+ssG2Fb1ltHUhnTD2mH5z1e+atf4fNCL5VFkEcTd2VFe7zZuUyWL4jdQWwf1xh/Hil8pWQqiZIdz5teiSjp0lt8TUEmuU9Ou3XPYcr1eJMU=
+  file_glob: true
+  file: "build/libs/BWDM*"
+  skip_cleanup: true
+  on:
+    repo: korosuke613/BWDM
+    tags: true
