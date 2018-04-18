@@ -1,5 +1,9 @@
 # BWDM - Boundary Value/Vienna Development Method -
 #### Test Cases Auto-Generation from a VDM Specification
+[![GitHub tag](https://img.shields.io/github/tag/korosuke613/BWDM.svg)](https://github.com/korosuke613/BWDM/tags)
+[![GitHub release](https://img.shields.io/github/release/korosuke613/BWDM/all.svg)](https://github.com/korosuke613/BWDM/releases)
+[![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/korosuke613/BWDM.svg)](https://github.com/korosuke613/BWDM/pulls?q=is%3Apr+is%3Aclosed)
+
 Master 
 [![Build Status](https://travis-ci.org/korosuke613/BWDM.svg?branch=master)](https://travis-ci.org/korosuke613/BWDM)
 [![Coverage Status](https://coveralls.io/repos/github/korosuke613/BWDM/badge.svg?branch=master)](https://coveralls.io/github/korosuke613/BWDM?branch=master)
@@ -9,11 +13,18 @@ Build
 [![Coverage Status](https://coveralls.io/repos/github/korosuke613/BWDM/badge.svg?branch=develop)](https://coveralls.io/github/korosuke613/BWDM?branch=develop)
 
 
+
+
+
+
+
+
 ## Execution Environment, using Libraries,
 * OS : Any OS (Please prepare same enviroment.)
-* [Java9](https://www.oracle.com/java/java9.html) : Execution Environment
+* [![Java version](https://img.shields.io/badge/java-9+-4c7e9f.svg)](https://www.java.com/en/) : Execution Environment
+* [![Gradle version](https://img.shields.io/badge/gradle-4.4+-007042.svg)](https://gradle.org/docs/) : Building
+* [![JUnit version](https://img.shields.io/badge/junit-5+-dc524a.svg)](http://junit.org/junit5/) : Unit Testing
 * [VDMJ Ver.4](https://github.com/nickbattle/vdmj.git) : Lexer and Parser
-* [JUnit5](https://github.com/junit-team/junit5) : Unit Testing
 * [z3](https://github.com/Z3Prover/z3) : Theorem Prover
 
 
