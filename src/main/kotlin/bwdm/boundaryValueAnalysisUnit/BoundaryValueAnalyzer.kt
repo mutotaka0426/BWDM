@@ -88,7 +88,7 @@ class BoundaryValueAnalyzer(_information: InformationExtractor) {
                 var trueValue: Long = 0
                 var falseValue: Long = 0
                 val value: Long
-                if (Util.isNumber(left)) {
+                if (Util.isNumber(left!!)) {
                     value = java.lang.Long.parseLong(left)
                     when (operator) {
                         "<" -> {
@@ -114,7 +114,7 @@ class BoundaryValueAnalyzer(_information: InformationExtractor) {
                         }
                     }
 
-                } else if (Util.isNumber(right)) {
+                } else if (Util.isNumber(right!!)) {
                     value = java.lang.Long.parseLong(right)
                     when (operator) {
                         "<" -> {

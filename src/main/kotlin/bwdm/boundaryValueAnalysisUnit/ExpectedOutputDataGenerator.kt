@@ -61,7 +61,7 @@ class ExpectedOutputDataGenerator internal constructor(private val ie: Informati
                       _parameter: String): Boolean {
         val result: Boolean
 
-        if (Util.isNumber(_parsedCondition["left"])) { //右辺が変数
+        if (Util.isNumber(_parsedCondition["left"]!!)) { //右辺が変数
             result = if (_parsedCondition["operator"] == "mod") {
                 judgeMod(
                         java.lang.Long.valueOf(_parsedCondition["left"]), //左辺：数字
