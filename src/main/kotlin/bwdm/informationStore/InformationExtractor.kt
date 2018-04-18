@@ -14,7 +14,6 @@ import com.fujitsu.vdmj.tc.patterns.TCIdentifierPattern
 
 import java.io.File
 import java.io.IOException
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -154,7 +153,7 @@ constructor(val vdmFilePath: String) {
     }
 
     private fun parse(condition: String, parameter: String) {
-        var al = ifConditionBodies[parameter]
+        //var al = ifConditionBodies[parameter]
         //al!!.add(condition)
 
         val operator = Util.getOperator(condition)
@@ -166,7 +165,7 @@ constructor(val vdmFilePath: String) {
         //right-hand and surplus need branch depending on mod or other.
         modJudge(condition, operator, indexOfoperator, hm)
 
-        al = ifConditions[parameter]
+        val al = ifConditions[parameter]
         al!!.add(hm)
     }
 

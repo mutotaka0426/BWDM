@@ -215,7 +215,7 @@ object BwdmMain {
         //2 境界値情報
         if (showBvsInfo) {
             buf += "各引数の境界値\n"
-            val bvsList: HashMap<*, *> = bvaUnitMain.boundaryValueAnalyzer.boundaryValueList as HashMap<*, *>
+            val bvsList: HashMap<*, *> = bvaUnitMain.boundaryValueAnalyzer.boundaryValueList
             val parameters = extractInformation.parameters
             for (i in parameters.indices) {
                 val currentPrm = parameters[i]
