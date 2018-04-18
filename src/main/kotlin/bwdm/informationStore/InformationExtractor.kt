@@ -15,6 +15,8 @@ import com.fujitsu.vdmj.tc.patterns.TCIdentifierPattern
 import java.io.File
 import java.io.IOException
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 /**
@@ -30,7 +32,7 @@ constructor(val vdmFilePath: String) {
      * a parameter to ArrayList of if-conditions.
      * ArrayList of ifConditions of each parameter.
      */
-    private val ifConditionBodies: HashMap<String, ArrayList<Any>>
+    private val ifConditionBodies: HashMap<String, ArrayList<HashMap<String, String>>>
     private var ifExpressionBody: String? = null
     private val ifConditionBodiesInCameForward: ArrayList<String>
 
@@ -54,7 +56,7 @@ constructor(val vdmFilePath: String) {
      * a parameter to ArrayList of HashMaps that is parsed each if-expression.
      * ArrayList of HashMap of parsed if-expr.
      */
-    val ifConditions: HashMap<String, ArrayList<Any>>
+    val ifConditions: HashMap<String, ArrayList<HashMap<String, String>>>
 
     init {
         val vdmFile = File(vdmFilePath)
@@ -153,7 +155,7 @@ constructor(val vdmFilePath: String) {
 
     private fun parse(condition: String, parameter: String) {
         var al = ifConditionBodies[parameter]
-        al!!.add(condition)
+        //al!!.add(condition)
 
         val operator = Util.getOperator(condition)
         val indexOfoperator = condition.indexOf(operator)
