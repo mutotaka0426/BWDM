@@ -109,8 +109,12 @@ task junitPlatformJacocoReport(type: JacocoReport) {
 task customeTest(dependsOn: [junitPlatformTest, junitPlatformJacocoReport]){}
 
 dokka {
+//    outputFormat = 'kotlin-website*'
+  //  outputFormat = 'kotlin-website*'
+    //outputFormat = 'kotlin-website*'
     outputFormat = 'html'
     includeNonPublic = true
+
 }
 
 task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
@@ -120,13 +124,13 @@ task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
 }
 
 task dokkaMaster(type: org.jetbrains.dokka.gradle.DokkaTask) {
-    outputFormat = 'html'
+    outputFormat = 'gfm'
     outputDirectory = "${projectDir}/docs/master"
     includeNonPublic = false
 }
 
 task dokkaDevelop(type: org.jetbrains.dokka.gradle.DokkaTask) {
-    outputFormat = 'html'
+    outputFormat = 'gfm'
     outputDirectory = "${projectDir}/docs/develop"
     includeNonPublic = true
 }
