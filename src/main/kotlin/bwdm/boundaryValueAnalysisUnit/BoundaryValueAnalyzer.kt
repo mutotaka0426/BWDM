@@ -193,7 +193,6 @@ class BoundaryValueAnalyzer(_information: InformationExtractor) {
     } //end makeInputDatList
 
     companion object {
-
         internal const val intMax = Integer.MAX_VALUE.toLong()
         internal const val intMin = Integer.MIN_VALUE.toLong()
         internal const val natMax = intMax * 2

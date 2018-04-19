@@ -23,7 +23,7 @@ public class HelloVDMJ4 {
 
 
     public static void extractInformationByVDMJ() throws LexException, ParserException {
-        LexTokenReader ltr = new LexTokenReader(new File("BWDM/vdm_files/Arg2.vdmpp"), Dialect.VDM_PP);
+        LexTokenReader ltr = new LexTokenReader(new File("./vdm_files/Arg2.vdmpp"), Dialect.VDM_PP);
         DefinitionReader dr = new DefinitionReader(ltr);
         ASTDefinitionList astDefinitionList = dr.readDefinitions();
 
@@ -56,7 +56,7 @@ public class HelloVDMJ4 {
 
 
         //ASTDefinitionListまでは同じ
-        LexTokenReader ltr = new LexTokenReader(new File("./BWDM/vdm_files/various_syntax.vdmpp"), Dialect.VDM_PP);
+        LexTokenReader ltr = new LexTokenReader(new File("./vdm_files/various_syntax.vdmpp"), Dialect.VDM_PP);
         DefinitionReader dr = new DefinitionReader(ltr);
         ASTDefinitionList astDefinitionList = dr.readDefinitions();
 
