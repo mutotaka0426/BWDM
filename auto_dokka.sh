@@ -1,10 +1,10 @@
 #!/bin/bash
 
-if [$TRAVIS_PULL_REQUEST=="true"]; then
+if [$TRAVIS_PULL_REQUEST = "true"]; then
   return
 fi
 
-if [ $BRANCH = "master" ] || [ $$BRANCH = "develop" ]; then
+if [ $TRAVIS_BRANCH = "master" ] || [ $TRAVIS_BRANCH = "develop" ]; then
   ./gradlew dokka_$current_branch
   cd docs
   git add -A
