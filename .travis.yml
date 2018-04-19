@@ -3,7 +3,7 @@ script:
 - "./gradlew customTest coveralls"
 
 after_success:
-- "./auto_dokka.sh
+- "./auto_dokka.sh"
 
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
