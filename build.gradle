@@ -119,6 +119,18 @@ task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
     includeNonPublic = true
 }
 
+task dokkaMaster(type: org.jetbrains.dokka.gradle.DokkaTask) {
+    outputFormat = 'html'
+    outputDirectory = "${projectDir}/docs/master"
+    includeNonPublic = false
+}
+
+task dokkaDevelop(type: org.jetbrains.dokka.gradle.DokkaTask) {
+    outputFormat = 'html'
+    outputDirectory = "${projectDir}/docs/develop"
+    includeNonPublic = true
+}
+
 javadoc{
     options.memberLevel = JavadocMemberLevel.PRIVATE
 }
