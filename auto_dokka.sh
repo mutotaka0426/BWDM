@@ -1,8 +1,10 @@
 #!/bin/bash
 
-current_branch=$(git symbolic-ref --short HEAD)
+if [$TRAVIS_PULL_REQUEST=="true"]; then
+  return
+fi
 
-if [ $current_branch = "master" ] || [ $current_branch = "develop" ]; then
+if [ $BRANCH = "master" ] || [ $$BRANCH = "develop" ]; then
   ./gradlew dokka_$current_branch
   cd docs
   git add -A
