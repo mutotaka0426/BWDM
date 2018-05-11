@@ -7,10 +7,13 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.stream.Collectors
 
+typealias BoundaryValueList = HashMap<String, ArrayList<Long>>
+typealias InputDataList = ArrayList<HashMap<String, Long>>
+
 class BoundaryValueAnalyzer(_information: InformationExtractor) {
 
-    val boundaryValueList: HashMap<String, ArrayList<Long>> = HashMap()
-    val inputDataList: ArrayList<HashMap<String, Long>> = ArrayList()
+    val boundaryValueList: BoundaryValueList = HashMap()
+    val inputDataList: InputDataList = ArrayList()
 
 
     init {
@@ -171,7 +174,7 @@ class BoundaryValueAnalyzer(_information: InformationExtractor) {
                 val inputDataListInitialState = ArrayList(inputDataList)
 
                 for (i in 0 until currentBvs!!.size - 1) {
-                    val inputDataListTmp = ArrayList<HashMap<String, Long>>()
+                    val inputDataListTmp = InputDataList()
                     inputDataListInitialState.forEach { inputDataOriginal ->
                         //inputDataを複製
                         val inputData = HashMap<String, Long>()
