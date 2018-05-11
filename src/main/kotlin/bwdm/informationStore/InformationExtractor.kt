@@ -31,7 +31,7 @@ constructor(val vdmFilePath: String) {
      * a parameter to ArrayList of if-conditions.
      * ArrayList of ifConditions of each parameter.
      */
-    private val ifConditionBodies: HashMap<String, ArrayList<HashMap<String, String>>>
+    //private val ifConditionBodies: HashMap<String, ArrayList<HashMap<String, String>>>
     private var ifExpressionBody: String? = null
     private val ifConditionBodiesInCameForward: ArrayList<String>
 
@@ -68,7 +68,7 @@ constructor(val vdmFilePath: String) {
         parameters = ArrayList() //a, b, c
 
         ifExpressionBody = ""
-        ifConditionBodies = HashMap()
+        //ifConditionBodies = HashMap()
         ifConditionBodiesInCameForward = ArrayList()
         ifConditions = HashMap()
         /*Done initializing fields*/
@@ -138,7 +138,7 @@ constructor(val vdmFilePath: String) {
 
         //initializing of collection instances of each parameter
         parameters.forEach { s ->
-            ifConditionBodies[s] = ArrayList()
+            //ifConditionBodies[s] = ArrayList()
             ifConditions[s] = ArrayList()
         }
 

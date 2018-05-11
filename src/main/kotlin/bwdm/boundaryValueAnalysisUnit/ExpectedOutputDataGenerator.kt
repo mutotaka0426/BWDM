@@ -9,6 +9,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Objects
 
+typealias Expression = HashMap<String, String>
 
 class ExpectedOutputDataGenerator internal constructor(private val ie: InformationExtractor,
                                                        _root: IfNode,
@@ -56,7 +57,7 @@ class ExpectedOutputDataGenerator internal constructor(private val ie: Informati
 
     }
 
-    private fun judge(_parsedCondition: HashMap<String, String>,
+    private fun judge(_parsedCondition: Expression,
                       _inputData: HashMap<String, Long>,
                       _parameter: String): Boolean {
         val result: Boolean
@@ -139,8 +140,8 @@ class ExpectedOutputDataGenerator internal constructor(private val ie: Informati
 
     companion object {
 
-        fun makeParsedCondition(_condition: String): HashMap<String, String> {
-            val parsedCondition = HashMap<String, String>()
+        fun makeParsedCondition(_condition: String): Expression {
+            val parsedCondition = Expression()
             val operator = Util.getOperator(_condition)
             val indexOfoperator = _condition.indexOf(operator)
 
