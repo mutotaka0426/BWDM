@@ -24,7 +24,7 @@ apply plugin: 'com.github.kt3k.coveralls'
 apply from: 'version.gradle'
 
 
-sourceCompatibility = 9
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
