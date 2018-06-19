@@ -5,7 +5,6 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.IntByReference;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -94,16 +93,17 @@ public class UsePict {
 
         // 生成
         ret = p.PictGenerate(task);
-        IntByReference row_ref = p.PictAllocateResultBuffer(task);
+        IntByReference result_ref = p.PictAllocateResultBuffer(task);
 
         int paramCount = p.PictGetTotalParameterCount( task );
         p.PictResetResultFetching( task );
 
         int count = 0;
-        while(p.PictGetNextResultRow(task, row_ref) > 0){
-            Pointer p_row_ref = row_ref.getPointer();
-            for(int index = 0; index < paramCount*8; index+=8){
-                System.out.print(p_row_ref.getInt(index) + " ");
+        while(p.PictGetNextResultRow(task, result_ref) > 0){
+            Pointer row_ref = result_ref.getPointer();
+            long[] row = row_ref.getLongArray(0, paramCount);
+            for(int index = 0; index < paramCount; index++){
+                System.out.print(row[index] + " ");
             }
             System.out.println();
             count++;
