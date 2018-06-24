@@ -25,8 +25,8 @@ Develop ::
 * [![Java version](https://img.shields.io/badge/java-9+-4c7e9f.svg)](https://www.java.com/en/) : Execution Environment
 * [![Gradle version](https://img.shields.io/badge/gradle-4.4+-007042.svg)](https://gradle.org/docs/) : Building
 * [![JUnit version](https://img.shields.io/badge/junit-5+-dc524a.svg)](http://junit.org/junit5/) : Unit Testing
-* [VDMJ Ver.4](https://github.com/nickbattle/vdmj.git) : Lexer and Parser
-* [z3](https://github.com/Z3Prover/z3) : Theorem Prover
+* [![VDMJ Ver.4](https://img.shields.io/badge/VDMJ-4-orange.svg)](https://github.com/nickbattle/vdmj.git) : Lexer and Parser
+* [![Z3](https://img.shields.io/badge/Z3-4.6-blue.svg)](https://github.com/Z3Prover/z3) : Theorem Prover
 
 
 ## install
