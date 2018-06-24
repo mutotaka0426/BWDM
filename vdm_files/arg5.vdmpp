@@ -1,0 +1,17 @@
+class ProblemClass
+
+  functions
+
+  problemFunction : nat*nat -> seq of char
+    problemFunction(a, b) ==
+      if(a>4) then
+        if(b<10)then
+          "b<3"
+        else
+          "a>4"
+      elseif(b<5) then
+        "b<5"
+      else
+        "aaa"
+
+end ProblemClass

@@ -4,7 +4,7 @@ functions
 
 SampleFunction : int*nat -> seq of char
     SampleFunction(a, b) ==
-       if(2 < 3) then
+       if(a < b) then
       	   "a<b"
        else
 	       "a>=b"

@@ -37,6 +37,7 @@ dependencies {
     testCompile 'org.junit.jupiter:junit-jupiter-api:5.1.0'
     testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
     testCompileOnly 'org.apiguardian:apiguardian-api:1.0.0'
+    compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
     compile fileTree(dir: 'libs', include: '*.jar')
 }
 
@@ -109,13 +110,32 @@ task junitPlatformJacocoReport(type: JacocoReport) {
 task customeTest(dependsOn: [junitPlatformTest, junitPlatformJacocoReport]){}
 
 dokka {
+//    outputFormat = 'kotlin-website*'
+  //  outputFormat = 'kotlin-website*'
+    //outputFormat = 'kotlin-website*'
     outputFormat = 'html'
-    includeNonPublic = false
+    includeNonPublic = true
+
 }
 
 task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
     outputFormat = 'javadoc'
     outputDirectory = "${buildDir}/javadoc"
+    includeNonPublic = true
+}
+
+task dokka_master(type: org.jetbrains.dokka.gradle.DokkaTask) {
+    reportNotDocumented = false
+    outputFormat = 'gfm'
+    outputDirectory = "${projectDir}/docs/master"
+    includeNonPublic = false
+}
+
+task dokka_develop(type: org.jetbrains.dokka.gradle.DokkaTask) {
+    reportNotDocumented = false
+    outputFormat = 'gfm'
+    outputDirectory = "${projectDir}/docs/develop"
+    includeNonPublic = true
 }
 
 javadoc{

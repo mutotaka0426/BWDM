@@ -11,14 +11,16 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.function.Consumer
 
-class SymbolicExecutioner//各条件式は左辺右辺のうち片方のみが変数であるという制約付き
-internal constructor(private val ie: InformationExtractor) {
+typealias InputData = HashMap<String, String>
+
+class SymbolicExecutioner internal constructor(private val ie: InformationExtractor) {
+    //各条件式は左辺右辺のうち片方のみが変数であるという制約付き
 
     //複数の変数があっても、条件式次第で一つの変数の値次第で、
     //残りの変数の値はどうでもいい場合がある
     //その場合、z3はevaluateした場合、変数名をそのまま返すので、
     //<String, String>としてある
-    val inputDataList: ArrayList<HashMap<String, String>> = ArrayList()
+    val inputDataList: ArrayList<InputData> = ArrayList()
 
     private val expectedOutputDataList: ArrayList<String> = ArrayList()
     private val ctx: Context = Context()
@@ -77,10 +79,10 @@ internal constructor(private val ie: InformationExtractor) {
             val m = solver.model
 
             parameters = ie.parameters
-            val hm = HashMap<String, String>()
-            parameters.forEach { p -> hm[p] = m.evaluate(ctx.mkIntConst(p), false).toString() }
+            val inputData = InputData()
+            parameters.forEach { p -> inputData[p] = m.evaluate(ctx.mkIntConst(p), false).toString() }
 
-            inputDataList.add(hm)
+            inputDataList.add(inputData)
             expectedOutputDataList.add(_conditionAndReturnValue.returnStr!!)
         }
 

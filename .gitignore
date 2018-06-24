@@ -27,5 +27,7 @@ hs_err_pid*
 .idea/
 build/
 .gradle/
+docs/
+out/
 
 
