@@ -2,6 +2,9 @@ package bwdm.boundaryValueAnalysisUnit
 
 import bwdm.informationStore.InformationExtractor
 import bwdm.Util
+import io.github.pict.Factor
+import io.github.pict.Model
+import io.github.pict.Pict
 
 import java.util.ArrayList
 import java.util.HashMap
@@ -10,11 +13,10 @@ import java.util.stream.Collectors
 typealias BoundaryValueList = HashMap<String, ArrayList<Long>>
 typealias InputDataList = ArrayList<HashMap<String, Long>>
 
-class BoundaryValueAnalyzer(_information: InformationExtractor) {
+class BoundaryValueAnalyzer(_information: InformationExtractor, isPairwise: Boolean = true) {
 
     val boundaryValueList: BoundaryValueList = HashMap()
     val inputDataList: InputDataList = ArrayList()
-
 
     init {
         //generation of instance of each parameter
@@ -32,8 +34,11 @@ class BoundaryValueAnalyzer(_information: InformationExtractor) {
 
             boundaryValueList[parameter] = bvs
         }
-
-        makeInputDataList(_information)
+        if(isPairwise) {
+            makeInputDataListWithPairwise(_information)
+        }else{
+            makeInputDataList(_information)
+        }
     }
 
 
@@ -150,6 +155,32 @@ class BoundaryValueAnalyzer(_information: InformationExtractor) {
                 }
 
             }
+        }
+    }
+
+    private fun makeInputDataListWithPairwise(_information: InformationExtractor){
+        val pict = Pict()
+        val model = Model()
+        // 因子の取得
+        val parameters = _information.parameters
+
+        // ファクターの追加
+        for (prm in parameters){
+            val bvs = boundaryValueList[prm]
+            val factor = Factor(named_level = bvs!!.map { it.toString() }, name = prm)
+            model.addFactor(factor)
+        }
+
+        // ペアワイズ分析した結果を生成
+        pict.setRootModel(model)
+        val tests = pict.generate()
+
+        for (test in tests) {
+            val hash = HashMap<String, Long>()
+            for((index, param) in test.withIndex()){
+                hash[model.factors[index].name] = param!!.toLong()
+            }
+            inputDataList.add(hash)
         }
     }
 

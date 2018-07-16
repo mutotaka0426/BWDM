@@ -5,8 +5,8 @@ import bwdm.informationStore.InformationExtractor
 
 import java.util.Objects
 
-class BvaUnitMain(private val ie: InformationExtractor) {
-    val boundaryValueAnalyzer: BoundaryValueAnalyzer = BoundaryValueAnalyzer(ie)
+class BvaUnitMain(private val ie: InformationExtractor, isPairwise: Boolean) {
+    val boundaryValueAnalyzer: BoundaryValueAnalyzer = BoundaryValueAnalyzer(ie, isPairwise)
     private val expectedOutputDataGenerator: ExpectedOutputDataGenerator
 
     val allTestcasesByBv: String
