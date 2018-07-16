@@ -22,12 +22,13 @@ Develop ::
 
 ## Execution Environment, using Libraries,
 * OS : Any OS (Please prepare same enviroment.)
-* [![Java version](https://img.shields.io/badge/java-9+-4c7e9f.svg)](https://www.java.com/en/) : Execution Environment
+* [![Java version](https://img.shields.io/badge/java-8-4c7e9f.svg)](https://www.java.com/en/) : Execution Environment
 * [![Gradle version](https://img.shields.io/badge/gradle-4.4+-007042.svg)](https://gradle.org/docs/) : Building
 * [![JUnit version](https://img.shields.io/badge/junit-5+-dc524a.svg)](http://junit.org/junit5/) : Unit Testing
 * [![VDMJ Ver.4](https://img.shields.io/badge/VDMJ-4-orange.svg)](https://github.com/nickbattle/vdmj.git) : Lexer and Parser
 * [![Z3](https://img.shields.io/badge/Z3-4.6-blue.svg)](https://github.com/Z3Prover/z3) : Theorem Prover
-
+* [![PICT](https://img.shields.io/badge/PICT-e7b0ef-yellow.svg)](https://github.com/Microsoft/pict) : Pairwise Independent Combinatorial Testing
+* [![pict-java](https://img.shields.io/badge/pict--java-1.0-yellowgreen.svg)](https://github.com/korosuke613/pict-java) : PICT wrappers for java-class
 
 ## install
 1. Install Microsoft Z3 library.
@@ -60,13 +61,14 @@ $ gradle run -Pargs="./vdm_files/problem.vdmpp"
 | Option | Content |
 | --- |:---|
 | -n | Basically Info. |
-| -a | Info. of BVA |
+| -a | Info. of BVA. |
 | -i | Info. of Symbolic Exe.  |
-| -b | Output ONLY testcases of BVA |
+| -b | Output ONLY testcases of BVA. |
+| -p | Output ONLY testcases of BVA with pairwise. |
 | -s | Output OHLY testcases of Symbolic Exe. |
-| -f | Output testcase into a file (default:display on console)|
-| -v | Version |
-| -h | Help |
+| -f | Output testcase into a file(default:display on console).|
+| -v | Version. |
+| -h | Help. |
 
 
 ## build
