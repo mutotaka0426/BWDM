@@ -65,10 +65,13 @@ object BwdmMain {
         var showSeConditionsInfo = false
 
         //4 境界値テストケース  default:ON  -b
-        var showBvTestcases = true
+        var showBvTestcases = false
 
         //5 記号実行テストケース  default:ON  -s
         var showSeTestcases = true
+
+        //6 境界値テストケース（ペアワイズ適用） default:ON  -p
+        var showBvTestcasesWithPairwise = true
 
         /**情報フラグ終わり */
 
@@ -121,13 +124,22 @@ object BwdmMain {
                         displayOnConsole = false
                     }
                     if (args[0].contains("b")) { //境界値分析によるテストケースのみ出力
+                        showBvTestcases = true
+                        showBvTestcasesWithPairwise = false
                         showSeTestcases = false
                     }
                     if (args[0].contains("s")) { //記号実行によるテストケースのみ出力
                         showBvTestcases = false
+                        showBvTestcasesWithPairwise = false
                     }
                     if (args[0].contains("b") && args[0].contains("s")) { //両方指定されていたらどちらも出力
                         showBvTestcases = true
+                        showSeTestcases = true
+                    }
+
+                    if (args[0].contains("p") && args[0].contains("s")) { //両方指定されていたらどちらも出力
+                        showBvTestcases = false
+                        showBvTestcasesWithPairwise = true
                         showSeTestcases = true
                     }
 
@@ -169,6 +181,7 @@ object BwdmMain {
             println()
             println("テストケース絞り込み")
             println("-b : 境界値分析によるテストケースのみ出力")
+            println("-p : 境界値分析にペアワイズ法を適用したテストケースのみ出力")
             println("-s : 記号実行によるテストケースのみ出力")
             println()
             println("出力先")
@@ -190,7 +203,7 @@ object BwdmMain {
             2 -> vdmPath = args[1]
         }
         val extractInformation = InformationExtractor(vdmPath!!)
-        val bvaUnitMain = BvaUnitMain(extractInformation)
+        val bvaUnitMain = BvaUnitMain(extractInformation, isPairwise = showBvTestcasesWithPairwise)
         val seUnitMain = SeUnitMain(extractInformation)
 
 
@@ -272,6 +285,11 @@ object BwdmMain {
             buf += "境界値分析によるテストケース\n"
             buf += bvaUnitMain.allTestcasesByBv
             buf += "\n"
+        }else if (showBvTestcasesWithPairwise) {
+            //6 境界値テストケース(ペアワイズ法適用)
+            buf += "境界値分析によるテストケース（ペアワイズ法適用）\n"
+            buf += bvaUnitMain.allTestcasesByBv
+            buf += "\n"
         }
 
         //5 記号実行テストケース
@@ -280,6 +298,8 @@ object BwdmMain {
             buf += seUnitMain.allTestcasesBySe
             buf += "\n"
         }
+
+
 
         //コンソール表示 or テキスト出力
         if (displayOnConsole) {
