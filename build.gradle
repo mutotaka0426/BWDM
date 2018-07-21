@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.2.30'
+    ext.kotlin_version = '1.2.51'
 
     repositories {
         mavenCentral()
@@ -38,6 +38,7 @@ dependencies {
     testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
     testCompileOnly 'org.apiguardian:apiguardian-api:1.0.0'
     compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
+    compile group: 'args4j', name: 'args4j', version: '2.33'
     compile fileTree(dir: 'libs', include: '*.jar')
 }
 
