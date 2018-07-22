@@ -1,13 +1,10 @@
 package bwdm.boundaryValueAnalysisUnit
 
+import bwdm.Util
+import bwdm.informationStore.IfNode
 import bwdm.informationStore.InformationExtractor
 import bwdm.informationStore.Node
-import bwdm.informationStore.IfNode
-import bwdm.Util
-
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.Objects
+import java.util.*
 
 typealias Expression = HashMap<String, String>
 

@@ -6,14 +6,12 @@ import bwdm.symbolicExecutionUnit.SeUnitMain
 import com.fujitsu.vdmj.lex.LexException
 import com.fujitsu.vdmj.syntax.ParserException
 import external.TimeMeasure
-
+import org.kohsuke.args4j.CmdLineException
+import org.kohsuke.args4j.CmdLineParser
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
-import java.util.ArrayList
-import java.util.HashMap
-import org.kohsuke.args4j.CmdLineException
-import org.kohsuke.args4j.CmdLineParser
+import java.util.*
 
 
 /**
@@ -61,12 +59,10 @@ object BwdmMain {
             }
             1 //ヘルプ表示 or バージョン表示 or オプション指定ミス or ファイル指定による通常実行の4パターン
             -> {
-                if (shell.versionFlag) {
-                    printVersionInfo()
-                }else if(shell.usageFlag){
-                    printUsage(parser)
-                }else{
-                    printUsage(parser)
+                when {
+                    shell.versionFlag -> printVersionInfo()
+                    shell.usageFlag -> printUsage(parser)
+                    else -> printUsage(parser)
                 }
                 return
             }
@@ -140,7 +136,7 @@ object BwdmMain {
             }
             buf += "\n"
         }
-        if (shell.showBvTestcases) {
+        if (shell.showBvTestcases and !shell.showBvTestcasesWithPairwise) {
             buf += "境界値分析によるテストケース\n"
             buf += bvaUnitMain.allTestcasesByBv
             buf += "\n"

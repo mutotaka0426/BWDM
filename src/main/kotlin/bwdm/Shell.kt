@@ -16,23 +16,23 @@ class Shell{
     @Option(name = "-n", usage = "VDM仕様の基本情報を表示")
     var showStandardInfo: Boolean = false
 
-    @Option(name = "-a", usage = "生成した境界値に関する情報を表示")
+    @Option(name = "-a", depends = ["-b"], usage = "生成した境界値に関する情報を表示")
     var showBvsInfo: Boolean = false
 
-    @Option(name = "-i", usage = "記号実行時に生成した条件式と戻り値に関する情報を表示")
+    @Option(name = "-i", depends = ["-s"], usage = "記号実行時に生成した条件式と戻り値に関する情報を表示")
     var showSeConditionsInfo: Boolean = false
 
     @Option(name = "-b", usage = "境界値分析によるテストケースを出力")
     var showBvTestcases: Boolean = false
 
     //6 境界値テストケース（ペアワイズ適用） default:ON  -p
-    @Option(name = "-p", usage = "境界値分析にペアワイズ法を適用したテストケースを出力")
+    @Option(name = "-p", depends = ["-b"], usage = "境界値分析にペアワイズ法を適用したテストケースを出力")
     var showBvTestcasesWithPairwise: Boolean = false
 
     @Option(name = "-s", usage = "記号実行によるテストケースを出力")
     var showSeTestcases: Boolean = false
 
-    @Option(name = "-d", usage = "ディスプレイ表示")
+    @Option(name = "-d", aliases = ["--print_display"], usage = "ディスプレイ表示")
     var displayOnConsole: Boolean= true
 
     @Option(name = "-f", aliases = ["--output_file"], usage = "テキストファイル<file_name>.tcに書出")
