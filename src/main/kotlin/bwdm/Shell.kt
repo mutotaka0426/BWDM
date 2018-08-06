@@ -33,7 +33,7 @@ class Shell{
     var showSeTestcases: Boolean = false
 
     @Option(name = "-d", aliases = ["--print_display"], usage = "ディスプレイ表示")
-    var displayOnConsole: Boolean= true
+    var displayOnConsole: Boolean = false
 
     @Option(name = "-f", aliases = ["--output_file"], usage = "テキストファイル<file_name>.tcに書出")
     var writeFile: Boolean = false
