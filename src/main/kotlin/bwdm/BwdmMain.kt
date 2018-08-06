@@ -79,7 +79,6 @@ object BwdmMain {
         extractInformation = InformationExtractor(shell.vdmFileName!!)
         bvaUnitMain = BvaUnitMain(extractInformation, isPairwise = shell.showBvTestcasesWithPairwise)
         seUnitMain = SeUnitMain(extractInformation)
-        tm.finish()
         if (shell.showStandardInfo) {
             showStandardInfo()
         }
@@ -106,13 +105,15 @@ object BwdmMain {
         if (shell.displayOnConsole) {
             print(buf)
         }
-        if (shell.printTimeMeasure){
-            tm.printResult()
-        }
         if (shell.writeFile) {
             outputFile(extractInformation.vdmFilePath.replace("vdmpp", "tc"))
         }else if (shell.writeFileName != null){
             outputFile(shell.writeFileName!!)
+        }
+
+        tm.finish()
+        if (shell.printTimeMeasure) {
+            tm.printResult()
         }
     }
 
