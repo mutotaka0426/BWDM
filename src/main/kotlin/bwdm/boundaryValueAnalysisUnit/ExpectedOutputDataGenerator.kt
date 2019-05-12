@@ -28,8 +28,11 @@ class ExpectedOutputDataGenerator internal constructor(private val ie: Informati
     private fun extractExpectedOutputDataRecursively(_node: Node, _inputData: HashMap<String, Long>) {
 
         if (_node.getIsIfNode()) { //IfNodeである場合
+            // 条件式のパース
             val parsedCondition = makeParsedCondition(_node.conditionOrReturnStr)
-
+            if (parsedCondition["left"]!!.contains("+")) {
+                ie.parameters.add(parsedCondition["left"]!!)
+            }
             //各条件式には一つの変数(parameter)しか登場しない
             ie.parameters.forEach { prm ->
                 //条件式中の変数とprmが一致したらinputDataを代入して真偽判定
