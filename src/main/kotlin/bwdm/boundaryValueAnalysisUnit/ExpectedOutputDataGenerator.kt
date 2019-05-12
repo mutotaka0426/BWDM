@@ -30,11 +30,8 @@ class ExpectedOutputDataGenerator internal constructor(private val ie: Informati
         if (_node.getIsIfNode()) { //IfNodeである場合
             // 条件式のパース
             val parsedCondition = makeParsedCondition(_node.conditionOrReturnStr)
-            if (parsedCondition["left"]!!.contains("+")) {
-                ie.parameters.add(parsedCondition["left"]!!)
-            }
             //各条件式には一つの変数(parameter)しか登場しない
-            ie.parameters.forEach { prm ->
+            ie.compositeParameters.forEach { prm ->
                 //条件式中の変数とprmが一致したらinputDataを代入して真偽判定
                 if (parsedCondition["right"] == prm || parsedCondition["left"] == prm) {
                     val conditionJudgeResult = judge(parsedCondition, _inputData, prm)
@@ -84,8 +81,26 @@ class ExpectedOutputDataGenerator internal constructor(private val ie: Informati
                         java.lang.Long.valueOf(_parsedCondition["surplus"])
                 )
             } else {
+                val inputData: Long
+                if (Util.getOperator(_parameter) == "+") {
+                    val left = _inputData[_parameter.split("+")[0]]
+                    val right = _inputData[_parameter.split("+")[1]]
+                    inputData = if (Integer.MAX_VALUE.toLong() == left || Integer.MAX_VALUE.toLong() == right
+                            || Integer.MAX_VALUE.toLong() + 1 == left || Integer.MAX_VALUE.toLong() + 1 == right) {
+                        if (left!! < right!!) right
+                        else left
+                    } else if (Integer.MIN_VALUE.toLong() == left || Integer.MIN_VALUE.toLong() == right
+                            || Integer.MIN_VALUE.toLong() - 1 == left || Integer.MIN_VALUE.toLong() - 1 == right) {
+                        if (left!! < right!!) left
+                        else right
+                    } else {
+                        left!! + right!!
+                    }
+                } else {
+                    inputData = _inputData[_parameter]!!
+                }
                 judgeInequality(
-                        _inputData[_parameter], //左辺：変数
+                        inputData, //左辺：変数
                         _parsedCondition["operator"]!!,
                         java.lang.Long.valueOf(_parsedCondition["right"])//右辺：数字
                 )

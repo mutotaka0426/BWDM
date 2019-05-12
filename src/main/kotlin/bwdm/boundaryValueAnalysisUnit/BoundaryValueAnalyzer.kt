@@ -1,13 +1,8 @@
 package bwdm.boundaryValueAnalysisUnit
 
-import bwdm.informationStore.InformationExtractor
 import bwdm.Util
-import io.github.pict.Factor
-import io.github.pict.Model
-import io.github.pict.Pict
-
-import java.util.ArrayList
-import java.util.HashMap
+import bwdm.informationStore.InformationExtractor
+import java.util.*
 import java.util.stream.Collectors
 
 typealias BoundaryValueList = HashMap<String, ArrayList<Long>>
@@ -89,6 +84,9 @@ class BoundaryValueAnalyzer(_information: InformationExtractor, isPairwise: Bool
             ifConditions.forEach { condition ->
                 //condition : HashMap<String, String>
                 val left = condition["left"]
+                if (Util.getOperator(left!!) == "+") {
+                    return@forEach
+                }
                 val operator = condition["operator"]
                 val right = condition["right"]
                 val bvs = boundaryValueList[parameter]

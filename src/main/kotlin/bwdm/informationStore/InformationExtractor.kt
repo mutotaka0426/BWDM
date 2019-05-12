@@ -125,7 +125,7 @@ constructor(val vdmFilePath: String) {
     private fun parseIfConditions() {
         val ifElses = ifElseExprSyntaxTree!!.ifElses
 
-        compositeParameters = parameters
+        compositeParameters = ArrayList(parameters)
 
         for (i in ifElses.indices) {
             var element = ifElses[i]
