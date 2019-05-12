@@ -41,7 +41,7 @@ dependencies {
     compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
     compile group: 'args4j', name: 'args4j', version: '2.33'
     compile group: 'com.github.nickbattle', name:'FJ-VDMJ', version: 'FJ-VDMJ'
-    compile group: 'com.github.korosuke613', name: 'pict-java', version: 'master-SNAPSHOT'
+    implementation 'com.github.korosuke613:pict-java:master-SNAPSHOT'
     compile fileTree(dir: 'libs', include: '*.jar')
 }
 
