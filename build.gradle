@@ -151,3 +151,10 @@ javadoc{
 coveralls {
     sourceDirs = files(sourceSets.main.allSource.srcDirs).files.absolutePath
 }
+
+if (hasProperty("buildScan")) {
+    buildScan {
+        licenseAgreementUrl = 'https://gradle.com/terms-of-service'
+        licenseAgree = 'yes'
+    }
+}
