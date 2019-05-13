@@ -38,7 +38,7 @@ Develop ::
 ## example
 
 ```bash
-$ java -Djava.library.path=./libs -jar BWDM.jar ./vdm_files/probrem.vdmpp 
+$ java -Djna.library.path=./libs -Djava.library.path=./libs -jar BWDM.jar ./vdm_files/probrem.vdmpp -p
 ```
 
 or

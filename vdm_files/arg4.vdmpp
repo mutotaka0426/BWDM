@@ -5,7 +5,7 @@ class ProblemClass
   problemFunction : nat*nat*nat*nat*nat*nat*nat -> seq of char
     problemFunction(a, b, c, d, e, f, g) ==
       if(a > 4) then
-        if(b mod 10 = 3) then
+        if(b  <= 3) then
           if(c < 13) then
             if(b>11) then
         	  "a>4 and b>11 and c<13"

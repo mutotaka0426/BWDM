@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.2.51'
+    ext.kotlin_version = '1.2.30'
 
     repositories {
         mavenCentral()
@@ -28,6 +28,7 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 
@@ -39,6 +40,8 @@ dependencies {
     testCompileOnly 'org.apiguardian:apiguardian-api:1.0.0'
     compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
     compile group: 'args4j', name: 'args4j', version: '2.33'
+    compile group: 'com.github.nickbattle', name:'FJ-VDMJ', version: 'FJ-VDMJ'
+    implementation 'com.github.korosuke613:pict-java:master-SNAPSHOT'
     compile fileTree(dir: 'libs', include: '*.jar')
 }
 
@@ -82,9 +85,9 @@ jacocoTestReport {
         })
     }
     reports {
-        xml.enabled true
-        csv.enabled false
-        html.enabled true
+        xml.enabled = true
+        csv.enabled = false
+        html.enabled = true
     }
 }
 
@@ -92,9 +95,9 @@ task junitPlatformJacocoReport(type: JacocoReport) {
     sourceSets sourceSets.main
     executionData junitPlatformTest
     reports {
-        xml.enabled true
-        csv.enabled false
-        html.enabled true
+        xml.enabled = true
+        csv.enabled = false
+        html.enabled = true
         html.destination file("${buildDir}/reports/jacoco/test/")
         xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
     }
@@ -147,4 +150,11 @@ javadoc{
 
 coveralls {
     sourceDirs = files(sourceSets.main.allSource.srcDirs).files.absolutePath
+}
+
+if (hasProperty("buildScan")) {
+    buildScan {
+        licenseAgreementUrl = 'https://gradle.com/terms-of-service'
+        licenseAgree = 'yes'
+    }
 }

@@ -1,13 +1,13 @@
 package bwdm.boundaryValueAnalysisUnit
 
+import bwdm.domainAnalysis.DomainAnalyser
 import bwdm.informationStore.IfElseExprSyntaxTree
 import bwdm.informationStore.InformationExtractor
-
-import java.util.Objects
+import java.util.*
 
 class BvaUnitMain(private val ie: InformationExtractor, isPairwise: Boolean) {
-    val boundaryValueAnalyzer: BoundaryValueAnalyzer = BoundaryValueAnalyzer(ie, isPairwise)
     private val expectedOutputDataGenerator: ExpectedOutputDataGenerator
+    val boundaryValueAnalyzer: BoundaryValueAnalyzer = BoundaryValueAnalyzer(ie, isPairwise)
 
     val allTestcasesByBv: String
         get() {
@@ -35,7 +35,6 @@ class BvaUnitMain(private val ie: InformationExtractor, isPairwise: Boolean) {
                 Objects.requireNonNull<IfElseExprSyntaxTree>(ie.ifElseExprSyntaxTree).root,
                 boundaryValueAnalyzer.inputDataList
         )
-
     }
 
 
