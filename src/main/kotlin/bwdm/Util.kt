@@ -21,6 +21,7 @@ class Util {
                 condition.contains(">=") -> ">="
                 condition.contains("<") -> "<"
                 condition.contains(">") -> ">"
+                condition.contains("=") -> "="
                 condition.contains("mod") -> "mod"
                 condition.contains("+") -> "+"
                 else -> "other"

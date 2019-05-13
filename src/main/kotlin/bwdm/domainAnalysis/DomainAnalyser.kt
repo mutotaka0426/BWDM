@@ -123,8 +123,8 @@ class DomainAnalyser(private val ie: InformationExtractor){
         arithes.add(right)
         val plus = ctx.mkAdd(left, right)
         return when (operator) {
-            "<" -> ctx.mkLt(plus, ctx.mkInt(_right.toInt() + alith))
-            "<=" -> ctx.mkLe(plus, ctx.mkInt(_right.toInt() + alith))
+            "<" -> ctx.mkLt(plus, ctx.mkInt(_right.toInt() - alith))
+            "<=" -> ctx.mkLe(plus, ctx.mkInt(_right.toInt() - alith))
             ">" -> ctx.mkGt(plus, ctx.mkInt(_right.toInt() + alith))
             ">=" -> ctx.mkGe(plus, ctx.mkInt(_right.toInt() + alith))
             else -> null
@@ -134,8 +134,8 @@ class DomainAnalyser(private val ie: InformationExtractor){
     private fun makeInequalityExpr(_right: String, operator: String, _left: String, bool: Boolean, alith: Int=0): BoolExpr? {
         val right = java.lang.Long.valueOf(_right)
         return when (operator) {
-            "<" -> ctx.mkLt(ctx.mkIntConst(_left), ctx.mkInt(right + alith))
-            "<=" -> ctx.mkLe(ctx.mkIntConst(_left), ctx.mkInt(right + alith))
+            "<" -> ctx.mkLt(ctx.mkIntConst(_left), ctx.mkInt(right - alith))
+            "<=" -> ctx.mkLe(ctx.mkIntConst(_left), ctx.mkInt(right - alith))
             ">" -> ctx.mkGt(ctx.mkIntConst(_left), ctx.mkInt(right + alith))
             ">=" -> ctx.mkGe(ctx.mkIntConst(_left), ctx.mkInt(right + alith))
             else -> null
