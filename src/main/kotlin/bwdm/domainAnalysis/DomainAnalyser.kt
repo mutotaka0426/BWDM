@@ -51,17 +51,17 @@ class DomainAnalyser(private val ie: InformationExtractor){
         for ((k, p) in onPoints) {
             if(Util.getOperator(p.type) == "+"){
                 for((k_, f) in p.factors) {
-                    copyOffPoint(p, k_, 1)
-                    copyOffPoint(p, k_, -1)
+                    copyOffPoint(k, p, k_, 1)
+                    copyOffPoint(k, p, k_, -1)
                 }
             }else{
-                copyOffPoint(p, p.type, 1)
-                copyOffPoint(p, p.type, -1)
+                copyOffPoint(k, p, p.type, 1)
+                copyOffPoint(k, p, p.type, -1)
             }
         }
     }
 
-    private fun copyOffPoint(point: Point, key: String, add: Int = 0){
+    private fun copyOffPoint(keyName: String, point: Point, key: String, add: Int = 0){
         val f: Map<String, Int> = point.factors.toMap()
 
         val name = if(add >= 0){
@@ -72,57 +72,82 @@ class DomainAnalyser(private val ie: InformationExtractor){
 
         val newPoint = point.copy(name = name, factors = f as HashMap<String, Int>)
         newPoint.factors[key] = point.factors[key]!! + add
-        offPoints[name] = newPoint
+        offPoints["$keyName $name"] = newPoint
+    }
+
+    private fun removeSameParameter(ic: ArrayList<String>, parsedCondition: HashMap<String, String>): Int? {
+        for((i, _ic) in ic.withIndex()){
+            val _parsedCondition = ExpectedOutputDataGenerator.makeParsedCondition(_ic)
+            if(parsedCondition["left"] == _parsedCondition["left"]
+                    && parsedCondition["right"] != _parsedCondition["right"]){
+                return i
+            }
+        }
+        return null
     }
 
     private fun generateOnPoints() {
-        val ifCondition = ie.ifConditionBodiesInCameForward
-        val b: Array<Boolean> = Array(ifCondition.size) {true}
+        for(condition in ie.conditionAndReturnValueList.conditionAndReturnValues) {
+            val ifCondition = condition.conditions
+            val b: ArrayList<Boolean> = condition.bools
 
-        for (i in 0..2) {
-            val ic = ArrayList<String>(ifCondition)
-            val parsedCondition = ExpectedOutputDataGenerator.makeParsedCondition(ic[i])
-            ic[i] = parsedCondition["left"] + "=" + parsedCondition["right"]
-            val result = generatePoint(ic, b, ic[i], parsedCondition["left"].toString(), 2)
-            if(result != null) {
-                onPoints[ic[i]] = result
+            for (i in 0 until ifCondition.size) {
+                var ic = ArrayList<String>(ifCondition)
+                val parsedCondition = ExpectedOutputDataGenerator.makeParsedCondition(ic[i])
+                ic[i] = parsedCondition["left"] + "=" + parsedCondition["right"]
+                val localIc = ic[i]
+
+                val index = removeSameParameter(ic, parsedCondition)
+                if (index != null) {
+                    val copyic: ArrayList<String> = ArrayList(ic)
+                    copyic.removeAt(index)
+                    ic = ArrayList(copyic)
+                }
+                val result = generatePoint(ic, b, localIc, parsedCondition["left"].toString(), 2)
+                if (result != null) {
+                    onPoints["${condition.returnStr} $localIc $b"] = result
+                }
             }
         }
     }
 
     private fun generateOutPoints() {
-        val ifCondition = ie.ifConditionBodiesInCameForward
-        val bools: ArrayList<Array<Boolean>> = ArrayList()
-        for(i in 0 until ifCondition.size) {
-            val b = Array(ifCondition.size) {true}
-            b[i] = false
-            bools.add(b)
-        }
-        for ((i, b) in bools.withIndex()) {
-            val name = ifCondition[i]
-            val type = ExpectedOutputDataGenerator.makeParsedCondition(name)["left"].toString()
+        for(condition in ie.conditionAndReturnValueList.conditionAndReturnValues) {
+            val ifCondition = condition.conditions
+            val bools: ArrayList<ArrayList<Boolean>> = ArrayList()
+            for (i in 0 until ifCondition.size) {
+                val b = condition.bools
+                b[i] = false
+                bools.add(b)
+            }
+            for ((i, b) in bools.withIndex()) {
+                val name = ifCondition[i]
+                val type = ExpectedOutputDataGenerator.makeParsedCondition(name)["left"].toString()
 
-            val result = generatePoint(ifCondition, b, name, type, 2)
-            if(result != null) {
-                outPoints[name] = result
+                val result = generatePoint(ifCondition, b, name, type, 2)
+                if (result != null) {
+                    outPoints["${condition.returnStr} $name $b"] = result
+                }
             }
         }
     }
 
     private fun generateInPoints() {
-        val ifCondition = ie.ifConditionBodiesInCameForward
-        val b: Array<Boolean> = Array(ifCondition.size) {true}
+        for(condition in ie.conditionAndReturnValueList.conditionAndReturnValues) {
+            val ifCondition = condition.conditions
+            val b: ArrayList<Boolean> = condition.bools
 
-        val name = ifCondition.joinToString(separator = " and ")
-        val type = "all"
-        val result = generatePoint(ifCondition, b, name, type, 2)
-        if(result != null) {
-            inPoints[name] = result
+            val name = ifCondition.joinToString(separator = " and ")
+            val type = "all"
+            val result = generatePoint(ifCondition, b, name, type, 2)
+            if (result != null) {
+                inPoints["$name $b"] = result
+            }
         }
     }
 
 
-    private fun generatePoint(ifCondition: ArrayList<String>, bools: Array<Boolean>,
+    private fun generatePoint(ifCondition: ArrayList<String>, bools: ArrayList<Boolean>,
                               name: String, type: String, buf: Int=0): Point? {
         var conditionUnion = ctx.mkBool(java.lang.Boolean.TRUE) //単位元としてTRUEの式を一つくっつけとく
         var expr: BoolExpr?
@@ -162,7 +187,12 @@ class DomainAnalyser(private val ie: InformationExtractor){
 
         for (i in ie.parameters.indices) {
             if (ie.argumentTypes[i] != "int") { //int型なら0以上の制限はいらない
-                expr = makeInequalityExpr("0", ">", ie.parameters[i], true)
+                val _expr =  makeInequalityExpr("0", ">", ie.parameters[i], true)
+                if(expr == null){
+                    expr = _expr
+                }else {
+                    expr = ctx.mkAnd(expr, _expr)
+                }
             }
         }
         if (expr != null) {
