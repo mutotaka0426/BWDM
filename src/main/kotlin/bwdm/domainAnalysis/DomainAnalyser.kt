@@ -132,11 +132,11 @@ class DomainAnalyser(private val ie: InformationExtractor){
             val ifCondition = condition.conditions
             val bools: ArrayList<ArrayList<Boolean>> = ArrayList()
             for (i in 0 until ifCondition.size) {
-                val b = condition.bools
-                b[i] = false
+                val b = ArrayList(condition.bools)
                 bools.add(b)
             }
             for ((i, b) in bools.withIndex()) {
+                b[i] = false
                 val name = ifCondition[i]
                 val type = ExpectedOutputDataGenerator.makeParsedCondition(name)["left"].toString()
 
