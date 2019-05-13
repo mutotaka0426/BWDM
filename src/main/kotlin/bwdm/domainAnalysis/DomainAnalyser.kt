@@ -35,12 +35,10 @@ class DomainAnalyser(private val ie: InformationExtractor){
         bools.add(arrayListOf(false, true, true))
         bools.add(arrayListOf(true, false, true))
         bools.add(arrayListOf(true, true, false))
-        println(ifCondition)
 
         for (b in bools) {
             outPoints.add(generateOutPoint(ifCondition, b))
         }
-        println()
     }
 
 
@@ -72,6 +70,10 @@ class DomainAnalyser(private val ie: InformationExtractor){
 
             }
 
+            if (!bool){
+                assert(expr != null)
+                expr = ctx.mkNot(expr!!)
+            }
 
             conditionUnion = ctx.mkAnd(conditionUnion, expr)
         }
@@ -91,14 +93,11 @@ class DomainAnalyser(private val ie: InformationExtractor){
         val point = Point()
         if (solver.check() == Status.SATISFIABLE) {
             val m = solver.model
-            print("$bools ")
             ie.parameters.forEach { p ->
                 val v = m.evaluate(ctx.mkIntConst(p), false)
-                print("$p $v, ")
                 val f = Factor(p, v.toString().toInt())
                 point.factors.add(f)
             }
-            println()
         }
         return point
     }
@@ -111,33 +110,23 @@ class DomainAnalyser(private val ie: InformationExtractor){
         arithes.add(left)
         arithes.add(right)
         val plus = ctx.mkAdd(left, right)
-        var expr: BoolExpr? = when (operator) {
+        return when (operator) {
             "<" -> ctx.mkLt(plus, ctx.mkInt(_right.toInt() + alith))
             "<=" -> ctx.mkLe(plus, ctx.mkInt(_right.toInt() + alith))
             ">" -> ctx.mkGt(plus, ctx.mkInt(_right.toInt() + alith))
             ">=" -> ctx.mkGe(plus, ctx.mkInt(_right.toInt() + alith))
             else -> null
         }
-        if (!bool){
-            assert(expr != null)
-            expr = ctx.mkNot(expr!!)
-        }
-        return expr
     }
 
     private fun makeInequalityExpr(_right: String, operator: String, _left: String, bool: Boolean, alith: Int=0): BoolExpr? {
         val right = java.lang.Long.valueOf(_right)
-        var expr: BoolExpr? = when (operator) {
+        return when (operator) {
             "<" -> ctx.mkLt(ctx.mkIntConst(_left), ctx.mkInt(right + alith))
             "<=" -> ctx.mkLe(ctx.mkIntConst(_left), ctx.mkInt(right + alith))
             ">" -> ctx.mkGt(ctx.mkIntConst(_left), ctx.mkInt(right + alith))
             ">=" -> ctx.mkGe(ctx.mkIntConst(_left), ctx.mkInt(right + alith))
             else -> null
         }
-        if (!bool){
-            assert(expr != null)
-            expr = ctx.mkNot(expr)
-        }
-        return expr
     }
 }
