@@ -2,6 +2,7 @@ package workspace;
 
 import com.microsoft.z3.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -152,13 +153,46 @@ public class HelloZ3 {
 
 	}
 
+	static void solve5() {
+		// a + 3 > 5
+
+		Context ctx = new Context();
+		Solver s = ctx.mkSolver();
+
+		IntExpr a = ctx.mkIntConst("a");
+		IntExpr five = ctx.mkInt(5);
+		IntExpr three = ctx.mkInt(3);
+		ArithExpr[] pluses = {a, three};
+		ArithExpr a_plus_3 = ctx.mkAdd(pluses);
+
+		BoolExpr a_bigger_five = ctx.mkLt(a_plus_3, five);
+
+		System.out.println(a_bigger_five);
+		//a_bigger_five = ctx.mkNot(a_bigger_five);
+		s.add(a_bigger_five);
+		if(s.check() == Status.SATISFIABLE) {
+			System.out.println("SAT");
+			Model model = s.getModel();
+			System.out.println("a=" + model.evaluate(a, false));
+
+			System.out.println(model.toString());
+			//System.out.println(model.);
+			//System.out.println(s.);
+
+		} else {
+			System.out.println("UNSAT");
+		}
+
+
+	}
 
 	public static void main(String[] args) {
-    	solve();
+    	//solve();
 		//solve1();
 		//solve2();
 		//solve3();
-		solve4();
+		//solve4();
+		solve5();
 	}
 
 }

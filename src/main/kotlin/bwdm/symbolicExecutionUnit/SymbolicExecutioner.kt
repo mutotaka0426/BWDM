@@ -50,12 +50,30 @@ class SymbolicExecutioner internal constructor(private val ie: InformationExtrac
                         bool
                 )
             } else { //不等式
-                makeInequalityExpr(
-                        parsedCondition["left"]!!,
-                        operator!!,
-                        parsedCondition["right"]!!,
-                        bool
-                )
+                if(Util.getOperator(parsedCondition["left"]!!) == "+"){
+                    val str = parsedCondition["left"]!!.split("+")
+                    val left = ctx.mkIntConst(str[0])
+                    val right = ctx.mkIntConst(str[1])
+                    val arithes: ArrayList<ArithExpr>  = ArrayList()
+                    arithes.add(left)
+                    arithes.add(right)
+                    val plus = ctx.mkAdd(left, right)
+                    expr = when (operator) {
+                        "<" -> ctx.mkLt(plus, ctx.mkInt(parsedCondition["right"]))
+                        "<=" -> ctx.mkLe(plus, ctx.mkInt(parsedCondition["right"]))
+                        ">" -> ctx.mkGt(plus, ctx.mkInt(parsedCondition["right"]))
+                        ">=" -> ctx.mkGe(plus, ctx.mkInt(parsedCondition["right"]))
+                        else -> null
+                    }
+                    expr
+                }else {
+                    makeInequalityExpr(
+                            parsedCondition["left"]!!,
+                            operator!!,
+                            parsedCondition["right"]!!,
+                            bool
+                    )
+                }
             }
 
             conditionUnion = ctx.mkAnd(conditionUnion, expr)
