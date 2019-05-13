@@ -81,7 +81,7 @@ object BwdmMain {
         extractInformation = InformationExtractor(shell.vdmFileName!!)
         bvaUnitMain = BvaUnitMain(extractInformation, isPairwise = shell.showBvTestcasesWithPairwise)
         seUnitMain = SeUnitMain(extractInformation)
-        //domainAnalyser = DomainAnalyser(extractInformation, seUnitMain)
+        domainAnalyser = DomainAnalyser(extractInformation)
         if (shell.showStandardInfo) {
             showStandardInfo()
         }
