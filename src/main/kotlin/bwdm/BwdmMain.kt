@@ -3,6 +3,7 @@ package bwdm
 import bwdm.boundaryValueAnalysisUnit.BvaUnitMain
 import bwdm.informationStore.InformationExtractor
 import bwdm.symbolicExecutionUnit.SeUnitMain
+import bwdm.domainAnalysis.DomainAnalyser
 import com.fujitsu.vdmj.lex.LexException
 import com.fujitsu.vdmj.syntax.ParserException
 import external.TimeMeasure
@@ -23,6 +24,7 @@ object BwdmMain {
     private lateinit var extractInformation: InformationExtractor
     private lateinit var bvaUnitMain: BvaUnitMain
     private lateinit var seUnitMain: SeUnitMain
+    private lateinit var domainAnalyser: DomainAnalyser
     private val shell = Shell()
     private lateinit var buf: String
 
@@ -79,6 +81,7 @@ object BwdmMain {
         extractInformation = InformationExtractor(shell.vdmFileName!!)
         bvaUnitMain = BvaUnitMain(extractInformation, isPairwise = shell.showBvTestcasesWithPairwise)
         seUnitMain = SeUnitMain(extractInformation)
+        //domainAnalyser = DomainAnalyser(extractInformation, seUnitMain)
         if (shell.showStandardInfo) {
             showStandardInfo()
         }

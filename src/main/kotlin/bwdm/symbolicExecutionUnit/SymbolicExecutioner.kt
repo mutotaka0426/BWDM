@@ -6,6 +6,9 @@ import bwdm.Util
 import com.microsoft.z3.*
 
 import bwdm.boundaryValueAnalysisUnit.ExpectedOutputDataGenerator.Companion.makeParsedCondition
+import bwdm.domainAnalysis.DomainAnalyser
+import bwdm.domainAnalysis.Factor
+import bwdm.domainAnalysis.Point
 
 import java.util.ArrayList
 import java.util.HashMap
@@ -24,11 +27,109 @@ class SymbolicExecutioner internal constructor(private val ie: InformationExtrac
 
     private val expectedOutputDataList: ArrayList<String> = ArrayList()
     private val ctx: Context = Context()
+    private val da: DomainAnalyser = DomainAnalyser(ie)
 
     init {
         val conditionAndReturnValueList = ie.conditionAndReturnValueList
 
-        conditionAndReturnValueList.conditionAndReturnValues.forEach(Consumer<ConditionAndReturnValue> { this.doSymbolicExecution(it) })
+        conditionAndReturnValueList.conditionAndReturnValues.forEach(Consumer<ConditionAndReturnValue> {
+            this.doSymbolicExecution(it)
+        })
+
+        this.generateOutPoints(ie.ifConditionBodiesInCameForward)
+    }
+
+    private fun generateOutPoints(ifCondition: ArrayList<String>) {
+        val bools: ArrayList<ArrayList<Boolean>> = ArrayList()
+        bools.add(arrayListOf(false, true, true))
+        bools.add(arrayListOf(true, false, true))
+        bools.add(arrayListOf(true, true, false))
+        println(ifCondition)
+
+        for (b in bools) {
+            da.OutPoints.add(generateOutPoint(ifCondition, b))
+        }
+        println()
+    }
+
+    private fun generateOutPoint(ifCondition: ArrayList<String>, bools: ArrayList<Boolean>): Point {
+        var conditionUnion = ctx.mkBool(java.lang.Boolean.TRUE) //単位元としてTRUEの式を一つくっつけとく
+        var expr: BoolExpr?
+        for (i in ifCondition.indices) {
+            val parsedCondition = makeParsedCondition(ifCondition[i])
+            val bool = bools[i]
+            val operator = parsedCondition["operator"]
+            val alith = when(bool){
+                true -> 2
+                false -> +2
+            }
+            expr = if (Util.getOperator(parsedCondition["left"]!!) == "+") {
+                val str = parsedCondition["left"]!!.split("+")
+                val left = ctx.mkIntConst(str[0])
+                val right = ctx.mkIntConst(str[1])
+                val arithes: ArrayList<ArithExpr> = ArrayList()
+                arithes.add(left)
+                arithes.add(right)
+                val plus = ctx.mkAdd(left, right)
+                expr = when (operator) {
+                    "<" -> ctx.mkLt(plus, ctx.mkInt(parsedCondition["right"]!!.toInt() + alith))
+                    "<=" -> ctx.mkLe(plus, ctx.mkInt(parsedCondition["right"]!!.toInt() + alith))
+                    ">" -> ctx.mkGt(plus, ctx.mkInt(parsedCondition["right"]!!.toInt() + alith))
+                    ">=" -> ctx.mkGe(plus, ctx.mkInt(parsedCondition["right"]!!.toInt() + alith))
+                    else -> null
+                }
+                if (bool)
+                    expr //満たすべき真偽(_bool)次第で、notをつける
+                else {
+                    assert(expr != null)
+                    ctx.mkNot(expr!!)
+                }
+            } else {
+                val right = java.lang.Long.valueOf(parsedCondition["right"]!!)
+                expr = when (operator) {
+                    "<" -> ctx.mkLt(ctx.mkIntConst(parsedCondition["left"]!!), ctx.mkInt(right  +alith))
+                    "<=" -> ctx.mkLe(ctx.mkIntConst(parsedCondition["left"]!!), ctx.mkInt(right  +alith))
+                    ">" -> ctx.mkGt(ctx.mkIntConst(parsedCondition["left"]!!), ctx.mkInt(right  + alith))
+                    ">=" -> ctx.mkGe(ctx.mkIntConst(parsedCondition["left"]!!), ctx.mkInt(right  + alith))
+                    else -> null
+                }
+                if (bool)
+                    expr //満たすべき真偽(_bool)次第で、notをつける
+                else {
+                    assert(expr != null)
+                    ctx.mkNot(expr!!)
+                }
+            }
+
+
+            conditionUnion = ctx.mkAnd(conditionUnion, expr)
+        }
+        expr = null
+
+        for (i in ie.parameters.indices) {
+            if (ie.argumentTypes[i] != "int") { //int型なら0以上の制限はいらない
+                expr = makeInequalityExpr(ie.parameters[i], ">", "0", true)
+            }
+        }
+        if (expr != null) {
+            conditionUnion = ctx.mkAnd(conditionUnion, expr)
+        }
+
+        val solver = ctx.mkSolver()
+        solver.add(conditionUnion)
+        val point = Point()
+        if (solver.check() == Status.SATISFIABLE) {
+            val m = solver.model
+            print("$bools ")
+            ie.parameters.forEach { p ->
+                val v = m.evaluate(ctx.mkIntConst(p), false)
+                print("$p $v, ")
+                val f = Factor(p, v.toString().toInt())
+                point.factors.add(f)
+            }
+            println()
+        }
+        return point
     }
 
     private fun doSymbolicExecution(_conditionAndReturnValue: ConditionAndReturnValue) {
@@ -50,11 +151,11 @@ class SymbolicExecutioner internal constructor(private val ie: InformationExtrac
                         bool
                 )
             } else { //不等式
-                if(Util.getOperator(parsedCondition["left"]!!) == "+"){
+                if (Util.getOperator(parsedCondition["left"]!!) == "+") {
                     val str = parsedCondition["left"]!!.split("+")
                     val left = ctx.mkIntConst(str[0])
                     val right = ctx.mkIntConst(str[1])
-                    val arithes: ArrayList<ArithExpr>  = ArrayList()
+                    val arithes: ArrayList<ArithExpr> = ArrayList()
                     arithes.add(left)
                     arithes.add(right)
                     val plus = ctx.mkAdd(left, right)
@@ -71,7 +172,7 @@ class SymbolicExecutioner internal constructor(private val ie: InformationExtrac
                         assert(expr != null)
                         ctx.mkNot(expr!!)
                     }
-                }else {
+                } else {
                     makeInequalityExpr(
                             parsedCondition["left"]!!,
                             operator!!,

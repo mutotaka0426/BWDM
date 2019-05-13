@@ -30,7 +30,7 @@ constructor(val vdmFilePath: String) {
      */
     //private val ifConditionBodies: HashMap<String, ArrayList<HashMap<String, String>>>
     private var ifExpressionBody: String? = null
-    private val ifConditionBodiesInCameForward: ArrayList<String>
+    val ifConditionBodiesInCameForward: ArrayList<String>
 
     val conditionAndReturnValueList: ConditionAndReturnValueList
     val argumentTypes: ArrayList<String> //int, nat, nat1
