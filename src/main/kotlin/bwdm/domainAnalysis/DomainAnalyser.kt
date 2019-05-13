@@ -12,7 +12,7 @@ import java.util.ArrayList
 class DomainAnalyser(private val ie: InformationExtractor){
 //    val OnPoints: ArrayList<Point> = ArrayList()
   //  val OffPoints:ArrayList<Point> = ArrayList()
-    //val InPoints:ArrayList<Point> = ArrayList()
+    val inPoints:ArrayList<Point> = ArrayList()
     val outPoints:ArrayList<Point> = ArrayList()
     private var factors: HashMap<String, Factor> = HashMap()
     private val ctx: Context = Context()
@@ -20,6 +20,8 @@ class DomainAnalyser(private val ie: InformationExtractor){
     init {
         makeFactors()
         generateOutPoints()
+        generateInPoints()
+        print("")
     }
 
     private fun makeFactors(){
@@ -37,12 +39,22 @@ class DomainAnalyser(private val ie: InformationExtractor){
         bools.add(arrayListOf(true, true, false))
 
         for (b in bools) {
-            outPoints.add(generateOutPoint(ifCondition, b))
+            outPoints.add(generateOutPoint(ifCondition, b, 2))
+        }
+    }
+
+    private fun generateInPoints() {
+        val ifCondition = ie.ifConditionBodiesInCameForward
+        val bools: ArrayList<ArrayList<Boolean>> = ArrayList()
+        bools.add(arrayListOf(true, true, true))
+
+        for (b in bools) {
+            inPoints.add(generateOutPoint(ifCondition, b, 2))
         }
     }
 
 
-    private fun generateOutPoint(ifCondition: ArrayList<String>, bools: ArrayList<Boolean>): Point {
+    private fun generateOutPoint(ifCondition: ArrayList<String>, bools: ArrayList<Boolean>, buf: Int=0): Point {
         var conditionUnion = ctx.mkBool(java.lang.Boolean.TRUE) //単位元としてTRUEの式を一つくっつけとく
         var expr: BoolExpr?
         for (i in ifCondition.indices) {
@@ -50,8 +62,8 @@ class DomainAnalyser(private val ie: InformationExtractor){
             val bool = bools[i]
             val operator = parsedCondition["operator"]
             val alith = when(bool){
-                true -> 2
-                false -> -2
+                true -> buf
+                false -> -buf
             }
             expr = if (Util.getOperator(parsedCondition["left"]!!) == "+") {
                 makePlusExpr(
