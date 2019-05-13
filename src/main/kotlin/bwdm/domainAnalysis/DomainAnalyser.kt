@@ -16,10 +16,10 @@ class DomainAnalyser(private val ie: InformationExtractor){
     private val ctx: Context = Context()
 
     init {
-        generateOutPoints()
         generateInPoints()
         generateOnPoints()
         generateOffPoints()
+        generateOutPoints()
     }
 
     val allTestcasesByDa: String
@@ -77,45 +77,53 @@ class DomainAnalyser(private val ie: InformationExtractor){
 
     private fun generateOnPoints() {
         val ifCondition = ie.ifConditionBodiesInCameForward
-        val b = arrayListOf(true, true, true)
+        val b: Array<Boolean> = Array(ifCondition.size) {true}
 
         for (i in 0..2) {
             val ic = ArrayList<String>(ifCondition)
             val parsedCondition = ExpectedOutputDataGenerator.makeParsedCondition(ic[i])
             ic[i] = parsedCondition["left"] + "=" + parsedCondition["right"]
-            onPoints[ic[i]] = generatePoint(ic, b, ic[i], parsedCondition["left"].toString(), 2)
+            val result = generatePoint(ic, b, ic[i], parsedCondition["left"].toString(), 2)
+            if(result != null) {
+                onPoints[ic[i]] = result
+            }
         }
     }
 
     private fun generateOutPoints() {
         val ifCondition = ie.ifConditionBodiesInCameForward
-        val bools: ArrayList<ArrayList<Boolean>> = ArrayList()
-        bools.add(arrayListOf(false, true, true))
-        bools.add(arrayListOf(true, false, true))
-        bools.add(arrayListOf(true, true, false))
-
+        val bools: ArrayList<Array<Boolean>> = ArrayList()
+        for(i in 0 until ifCondition.size) {
+            val b = Array(ifCondition.size) {true}
+            b[i] = false
+            bools.add(b)
+        }
         for ((i, b) in bools.withIndex()) {
             val name = ifCondition[i]
             val type = ExpectedOutputDataGenerator.makeParsedCondition(name)["left"].toString()
-            outPoints[name] = generatePoint(ifCondition, b, name, type,  2)
+
+            val result = generatePoint(ifCondition, b, name, type, 2)
+            if(result != null) {
+                outPoints[name] = result
+            }
         }
     }
 
     private fun generateInPoints() {
         val ifCondition = ie.ifConditionBodiesInCameForward
-        val bools: ArrayList<ArrayList<Boolean>> = ArrayList()
-        bools.add(arrayListOf(true, true, true))
+        val b: Array<Boolean> = Array(ifCondition.size) {true}
 
         val name = ifCondition.joinToString(separator = " and ")
         val type = "all"
-        for (b in bools) {
-            inPoints[name] = generatePoint(ifCondition, b, name, type, 2)
+        val result = generatePoint(ifCondition, b, name, type, 2)
+        if(result != null) {
+            inPoints[name] = result
         }
     }
 
 
-    private fun generatePoint(ifCondition: ArrayList<String>, bools: ArrayList<Boolean>,
-                              name: String, type: String, buf: Int=0): Point {
+    private fun generatePoint(ifCondition: ArrayList<String>, bools: Array<Boolean>,
+                              name: String, type: String, buf: Int=0): Point? {
         var conditionUnion = ctx.mkBool(java.lang.Boolean.TRUE) //単位元としてTRUEの式を一つくっつけとく
         var expr: BoolExpr?
         for (i in ifCondition.indices) {
@@ -154,7 +162,7 @@ class DomainAnalyser(private val ie: InformationExtractor){
 
         for (i in ie.parameters.indices) {
             if (ie.argumentTypes[i] != "int") { //int型なら0以上の制限はいらない
-                expr = makeInequalityExpr(ie.parameters[i], ">", "0", true)
+                expr = makeInequalityExpr("0", ">", ie.parameters[i], true)
             }
         }
         if (expr != null) {
@@ -170,8 +178,9 @@ class DomainAnalyser(private val ie: InformationExtractor){
                 val v = m.evaluate(ctx.mkIntConst(p), false)
                 point.factors[p] = v.toString().toInt()
             }
+            return point
         }
-        return point
+        return null
     }
 
     private fun makePlusExpr(_right: String, operator: String, _left: String, bool: Boolean, alith: Int=0): BoolExpr? {
