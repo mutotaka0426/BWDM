@@ -65,7 +65,12 @@ class SymbolicExecutioner internal constructor(private val ie: InformationExtrac
                         ">=" -> ctx.mkGe(plus, ctx.mkInt(parsedCondition["right"]))
                         else -> null
                     }
-                    expr
+                    if (bool)
+                        expr //満たすべき真偽(_bool)次第で、notをつける
+                    else {
+                        assert(expr != null)
+                        ctx.mkNot(expr!!)
+                    }
                 }else {
                     makeInequalityExpr(
                             parsedCondition["left"]!!,
