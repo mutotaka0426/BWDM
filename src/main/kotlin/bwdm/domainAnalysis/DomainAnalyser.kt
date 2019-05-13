@@ -3,14 +3,20 @@ package bwdm.domainAnalysis
 import bwdm.Util
 import bwdm.boundaryValueAnalysisUnit.ExpectedOutputDataGenerator
 import bwdm.informationStore.ConditionAndReturnValueList
+import bwdm.informationStore.IfElseExprSyntaxTree
 import bwdm.informationStore.InformationExtractor
 import com.microsoft.z3.ArithExpr
 import com.microsoft.z3.BoolExpr
 import com.microsoft.z3.Context
 import com.microsoft.z3.Status
+import java.util.*
+import kotlin.collections.ArrayList
 
 class DomainAnalyser(private val ie: InformationExtractor){
     val domains: ArrayList<DomainPoints> = ArrayList()
+    val inputDataList: ArrayList<HashMap<String, Long>> = ArrayList()
+    val expectedOutputDataGenerator: ExpectedOutputDataGenerator
+    var expectedCount = 0
 
     private val ctx: Context = Context()
 
@@ -23,12 +29,35 @@ class DomainAnalyser(private val ie: InformationExtractor){
             generateOutPoints(domainPoints, condition)
             domains.add(domainPoints)
         }
+        createInputDataList()
+        expectedOutputDataGenerator = ExpectedOutputDataGenerator(
+                ie,
+                Objects.requireNonNull<IfElseExprSyntaxTree>(ie.ifElseExprSyntaxTree).root,
+                inputDataList
+        )
+    }
+
+    private fun createInputDataList(){
+        for(dp in domains){
+            for((k, p) in dp.onPoints.toSortedMap()){
+                inputDataList.add(p.inputData)
+            }
+            for((k, p) in dp.offPoints.toSortedMap()){
+                inputDataList.add(p.inputData)
+            }
+            for((k, p) in dp.inPoints.toSortedMap()){
+                inputDataList.add(p.inputData)
+            }
+            for((k, p) in dp.outPoints.toSortedMap()){
+                inputDataList.add(p.inputData)
+            }
+        }
     }
 
     val allTestcasesByDa: String
         get() {
             val buf = StringBuilder()
-
+            expectedCount = 0
             for(dp in domains) {
                 buf.append("- ${dp.name}\n")
                 addResultBuf(buf, dp.onPoints, "Onポイント")
@@ -41,15 +70,15 @@ class DomainAnalyser(private val ie: InformationExtractor){
         }
 
     private fun addResultBuf(buf: StringBuilder, points: HashMap<String, Point>, title: String){
-        var i: Int = 0
+        var i = 0
         buf.append("-- $title\n")
-        for ((k, p) in points) {
+        for ((k, p) in points.toSortedMap()) {
             buf.append("No.").append(i + 1).append(" : ")
             for (prm in ie.parameters) {
                 buf.append(p.factors[prm]).append(" ")
             }
-            buf.append("-> ").append("not yet").append("\n")
-
+            buf.append("-> ").append(expectedOutputDataGenerator.expectedOutputDataList[expectedCount]).append("\n")
+            expectedCount++
             i++
         }
     }
@@ -104,12 +133,16 @@ class DomainAnalyser(private val ie: InformationExtractor){
                 ic[i] = parsedCondition["left"] + "=" + parsedCondition["right"]
 
                 var op = 0
-                if(!b[i]) {
+                if(b[i]) {
+                    op = when(parsedCondition["operator"]){
+                        ">"-> 1
+                        "<"-> -1
+                        else -> 0
+                    }
+                }else{
                     op = when(parsedCondition["operator"]){
                         ">="-> -1
-                        ">"-> 0
                         "<="-> 1
-                        "<"-> 0
                         else -> 0
                     }
                     b[i] = true
