@@ -2,6 +2,7 @@ package bwdm.domainAnalysis
 
 import bwdm.Util
 import bwdm.boundaryValueAnalysisUnit.ExpectedOutputDataGenerator
+import bwdm.informationStore.ConditionAndReturnValueList
 import bwdm.informationStore.InformationExtractor
 import com.microsoft.z3.ArithExpr
 import com.microsoft.z3.BoolExpr
@@ -9,33 +10,39 @@ import com.microsoft.z3.Context
 import com.microsoft.z3.Status
 
 class DomainAnalyser(private val ie: InformationExtractor){
-    val onPoints:HashMap<String, Point> = HashMap()
-    val offPoints:HashMap<String, Point> = HashMap()
-    val inPoints:HashMap<String, Point> = HashMap()
-    val outPoints:HashMap<String, Point> = HashMap()
+    val domains: ArrayList<DomainPoints> = ArrayList()
+
     private val ctx: Context = Context()
 
     init {
-        generateInPoints()
-        generateOnPoints()
-        generateOffPoints()
-        generateOutPoints()
+        for(condition in ie.conditionAndReturnValueList.conditionAndReturnValues) {
+            val domainPoints = DomainPoints(condition.returnStr.toString())
+            generateInPoints(domainPoints, condition)
+            generateOnPoints(domainPoints, condition)
+            generateOffPoints(domainPoints)
+            generateOutPoints(domainPoints, condition)
+            domains.add(domainPoints)
+        }
     }
 
     val allTestcasesByDa: String
         get() {
             val buf = StringBuilder()
-            addResultBuf(buf, onPoints, "Onポイント")
-            addResultBuf(buf, offPoints, "Offポイント")
-            addResultBuf(buf, inPoints, "Inポイント")
-            addResultBuf(buf, outPoints, "Outポイント")
 
+            for(dp in domains) {
+                buf.append("- ${dp.name}\n")
+                addResultBuf(buf, dp.onPoints, "Onポイント")
+                addResultBuf(buf, dp.offPoints, "Offポイント")
+                addResultBuf(buf, dp.inPoints, "Inポイント")
+                addResultBuf(buf, dp.outPoints, "Outポイント")
+                buf.append("\n")
+            }
             return buf.toString()
         }
 
     private fun addResultBuf(buf: StringBuilder, points: HashMap<String, Point>, title: String){
         var i: Int = 0
-        buf.append("- $title\n")
+        buf.append("-- $title\n")
         for ((k, p) in points) {
             buf.append("No.").append(i + 1).append(" : ")
             for (prm in ie.parameters) {
@@ -47,21 +54,21 @@ class DomainAnalyser(private val ie: InformationExtractor){
         }
     }
 
-    private fun generateOffPoints() {
-        for ((k, p) in onPoints) {
+    private fun generateOffPoints(dp: DomainPoints) {
+        for ((k, p) in dp.onPoints) {
             if(Util.getOperator(p.type) == "+"){
                 for((k_, f) in p.factors) {
-                    copyOffPoint(k, p, k_, 1)
-                    copyOffPoint(k, p, k_, -1)
+                    copyOffPoint(dp, p, k_, 1)
+                    copyOffPoint(dp, p, k_, -1)
                 }
             }else{
-                copyOffPoint(k, p, p.type, 1)
-                copyOffPoint(k, p, p.type, -1)
+                copyOffPoint(dp, p, p.type, 1)
+                copyOffPoint(dp, p, p.type, -1)
             }
         }
     }
 
-    private fun copyOffPoint(keyName: String, point: Point, key: String, add: Int = 0){
+    private fun copyOffPoint(dp: DomainPoints, point: Point, key: String, add: Int = 0){
         val f: Map<String, Int> = point.factors.toMap()
 
         val name = if(add >= 0){
@@ -72,7 +79,7 @@ class DomainAnalyser(private val ie: InformationExtractor){
 
         val newPoint = point.copy(name = name, factors = f as HashMap<String, Int>)
         newPoint.factors[key] = point.factors[key]!! + add
-        offPoints["$keyName $name"] = newPoint
+        dp.offPoints[name] = newPoint
     }
 
     private fun removeSameParameter(ic: ArrayList<String>, parsedCondition: HashMap<String, String>): Int? {
@@ -86,33 +93,42 @@ class DomainAnalyser(private val ie: InformationExtractor){
         return null
     }
 
-    private fun generateOnPoints() {
-        for(condition in ie.conditionAndReturnValueList.conditionAndReturnValues) {
+    private fun generateOnPoints(dp: DomainPoints, condition: ConditionAndReturnValueList.ConditionAndReturnValue) {
             val ifCondition = condition.conditions
-            val b: ArrayList<Boolean> = condition.bools
 
             for (i in 0 until ifCondition.size) {
+                val b: ArrayList<Boolean> = ArrayList(condition.bools)
+
                 var ic = ArrayList<String>(ifCondition)
                 val parsedCondition = ExpectedOutputDataGenerator.makeParsedCondition(ic[i])
                 ic[i] = parsedCondition["left"] + "=" + parsedCondition["right"]
-                val localIc = ic[i]
 
+                var op = 0
+                if(!b[i]) {
+                    op = when(parsedCondition["operator"]){
+                        ">="-> -1
+                        ">"-> 0
+                        "<="-> 1
+                        "<"-> 0
+                        else -> 0
+                    }
+                    b[i] = true
+                }
+                val localIc = ic[i]
                 val index = removeSameParameter(ic, parsedCondition)
                 if (index != null) {
                     val copyic: ArrayList<String> = ArrayList(ic)
                     copyic.removeAt(index)
                     ic = ArrayList(copyic)
                 }
-                val result = generatePoint(ic, b, localIc, parsedCondition["left"].toString(), 2)
+                val result = generatePoint(ic, b, localIc, parsedCondition["left"].toString(), 2, eqAlith=op)
                 if (result != null) {
-                    onPoints["${condition.returnStr} $localIc $b"] = result
+                    dp.onPoints["${condition.returnStr} $localIc $b"] = result
                 }
             }
-        }
     }
 
-    private fun generateOutPoints() {
-        for(condition in ie.conditionAndReturnValueList.conditionAndReturnValues) {
+    private fun generateOutPoints(dp: DomainPoints, condition: ConditionAndReturnValueList.ConditionAndReturnValue) {
             val ifCondition = condition.conditions
             val bools: ArrayList<ArrayList<Boolean>> = ArrayList()
             for (i in 0 until ifCondition.size) {
@@ -126,14 +142,12 @@ class DomainAnalyser(private val ie: InformationExtractor){
 
                 val result = generatePoint(ifCondition, b, name, type, 2)
                 if (result != null) {
-                    outPoints["${condition.returnStr} $name $b"] = result
+                    dp.outPoints["${condition.returnStr} $name $b"] = result
                 }
             }
-        }
     }
 
-    private fun generateInPoints() {
-        for(condition in ie.conditionAndReturnValueList.conditionAndReturnValues) {
+    private fun generateInPoints(dp: DomainPoints, condition: ConditionAndReturnValueList.ConditionAndReturnValue) {
             val ifCondition = condition.conditions
             val b: ArrayList<Boolean> = condition.bools
 
@@ -141,14 +155,14 @@ class DomainAnalyser(private val ie: InformationExtractor){
             val type = "all"
             val result = generatePoint(ifCondition, b, name, type, 2)
             if (result != null) {
-                inPoints["$name $b"] = result
+                dp.inPoints["$name $b"] = result
             }
-        }
     }
 
 
     private fun generatePoint(ifCondition: ArrayList<String>, bools: ArrayList<Boolean>,
-                              name: String, type: String, buf: Int=0): Point? {
+                              name: String, type: String, buf: Int=0,
+                              eqAlith: Int = 0): Point? {
         var conditionUnion = ctx.mkBool(java.lang.Boolean.TRUE) //単位元としてTRUEの式を一つくっつけとく
         var expr: BoolExpr?
         for (i in ifCondition.indices) {
@@ -165,14 +179,16 @@ class DomainAnalyser(private val ie: InformationExtractor){
                         operator!!,
                         parsedCondition["left"]!!,
                         bool,
-                        alith)
+                        alith,
+                        eqAlith)
             } else {
                 makeInequalityExpr(
                         parsedCondition["right"]!!,
                         operator!!,
                         parsedCondition["left"]!!,
                         bool,
-                        alith)
+                        alith,
+                        eqAlith)
 
             }
 
@@ -213,7 +229,7 @@ class DomainAnalyser(private val ie: InformationExtractor){
         return null
     }
 
-    private fun makePlusExpr(_right: String, operator: String, _left: String, bool: Boolean, alith: Int=0): BoolExpr? {
+    private fun makePlusExpr(_right: String, operator: String, _left: String, bool: Boolean, alith: Int=0, eqAlith: Int=0): BoolExpr? {
         val str = _left.split("+")
         val left = ctx.mkIntConst(str[0])
         val right = ctx.mkIntConst(str[1])
@@ -226,19 +242,19 @@ class DomainAnalyser(private val ie: InformationExtractor){
             "<=" -> ctx.mkLe(plus, ctx.mkInt(_right.toInt() - alith))
             ">" -> ctx.mkGt(plus, ctx.mkInt(_right.toInt() + alith))
             ">=" -> ctx.mkGe(plus, ctx.mkInt(_right.toInt() + alith))
-            "=" -> ctx.mkEq(plus, ctx.mkInt(_right.toInt()))
+            "=" -> ctx.mkEq(plus, ctx.mkInt(_right.toInt() + eqAlith))
             else -> null
         }
     }
 
-    private fun makeInequalityExpr(_right: String, operator: String, _left: String, bool: Boolean, alith: Int=0): BoolExpr? {
+    private fun makeInequalityExpr(_right: String, operator: String, _left: String, bool: Boolean, alith: Int=0, eqAlith: Int=0): BoolExpr? {
         val right = java.lang.Long.valueOf(_right)
         return when (operator) {
             "<" -> ctx.mkLt(ctx.mkIntConst(_left), ctx.mkInt(right - alith))
             "<=" -> ctx.mkLe(ctx.mkIntConst(_left), ctx.mkInt(right - alith))
             ">" -> ctx.mkGt(ctx.mkIntConst(_left), ctx.mkInt(right + alith))
             ">=" -> ctx.mkGe(ctx.mkIntConst(_left), ctx.mkInt(right + alith))
-            "=" -> ctx.mkEq(ctx.mkIntConst(_left), ctx.mkInt(right))
+            "=" -> ctx.mkEq(ctx.mkIntConst(_left), ctx.mkInt(right + eqAlith))
             else -> null
         }
     }
