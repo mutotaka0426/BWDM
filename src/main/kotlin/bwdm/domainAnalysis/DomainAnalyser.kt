@@ -26,9 +26,9 @@ class DomainAnalyser(private val ie: InformationExtractor){
     private fun generateOffPoints() {
         for ((k, p) in onPoints) {
             if(Util.getOperator(p.type) == "+"){
-                for(f in p.factors.values) {
-                    copyOffPoint(p, f.name, 1)
-                    copyOffPoint(p, f.name, -1)
+                for((k_, f) in p.factors) {
+                    copyOffPoint(p, k_, 1)
+                    copyOffPoint(p, k_, -1)
                 }
             }else{
                 copyOffPoint(p, p.type, 1)
@@ -38,10 +38,7 @@ class DomainAnalyser(private val ie: InformationExtractor){
     }
 
     private fun copyOffPoint(point: Point, key: String, add: Int = 0){
-        val f: HashMap<String, Factor> = HashMap()
-        for(_f in point.factors.values) {
-            f[_f.name] = _f.copy()
-        }
+        val f: Map<String, Int> = point.factors.toMap()
 
         val name = if(add >= 0){
             point.name + " and index[$key] + " + add.toString()
@@ -49,8 +46,8 @@ class DomainAnalyser(private val ie: InformationExtractor){
             point.name + " and index[$key] " + add.toString()
         }
 
-        val newPoint = point.copy(name = name, factors = f)
-        newPoint.factors[key]!!.value = newPoint.factors[key]!!.value?.plus(add)
+        val newPoint = point.copy(name = name, factors = f as HashMap<String, Int>)
+        newPoint.factors[key] = point.factors[key]!! + add
         offPoints[name] = newPoint
     }
 
@@ -147,8 +144,7 @@ class DomainAnalyser(private val ie: InformationExtractor){
             val m = solver.model
             ie.parameters.forEach { p ->
                 val v = m.evaluate(ctx.mkIntConst(p), false)
-                val f = Factor(p, v.toString().toInt())
-                point.factors[f.name] = f
+                point.factors[p] = v.toString().toInt()
             }
         }
         return point
