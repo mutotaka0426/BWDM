@@ -7,29 +7,63 @@ import com.microsoft.z3.ArithExpr
 import com.microsoft.z3.BoolExpr
 import com.microsoft.z3.Context
 import com.microsoft.z3.Status
-import java.util.ArrayList
 
 class DomainAnalyser(private val ie: InformationExtractor){
-//    val OnPoints: ArrayList<Point> = ArrayList()
-  //  val OffPoints:ArrayList<Point> = ArrayList()
-    val inPoints:ArrayList<Point> = ArrayList()
-    val outPoints:ArrayList<Point> = ArrayList()
-    private var factors: HashMap<String, Factor> = HashMap()
+    val onPoints:HashMap<String, Point> = HashMap()
+    val offPoints:HashMap<String, Point> = HashMap()
+    val inPoints:HashMap<String, Point> = HashMap()
+    val outPoints:HashMap<String, Point> = HashMap()
     private val ctx: Context = Context()
 
     init {
-        makeFactors()
         generateOutPoints()
         generateInPoints()
+        generateOnPoints()
+        generateOffPoints()
         print("")
     }
 
-    private fun makeFactors(){
-        ie.parameters.forEach{parameter ->
-            factors[parameter] = Factor(parameter)
+    private fun generateOffPoints() {
+        for ((k, p) in onPoints) {
+            if(Util.getOperator(p.type) == "+"){
+                for(f in p.factors.values) {
+                    copyOffPoint(p, f.name, 1)
+                    copyOffPoint(p, f.name, -1)
+                }
+            }else{
+
+            }
         }
     }
 
+    private fun copyOffPoint(point: Point, key: String, add: Int = 0){
+        val f: HashMap<String, Factor> = HashMap()
+        for(_f in point.factors.values) {
+            f[_f.name] = _f.copy()
+        }
+
+        val name = if(add >= 0){
+            point.name + " and index[$key] + " + add.toString()
+        }else{
+            point.name + " and index[$key] " + add.toString()
+        }
+
+        val newPoint = point.copy(name = name, factors = f)
+        newPoint.factors[key]!!.value = newPoint.factors[key]!!.value?.plus(add)
+        offPoints[name] = newPoint
+    }
+
+    private fun generateOnPoints() {
+        val ifCondition = ie.ifConditionBodiesInCameForward
+        val b = arrayListOf(true, true, true)
+
+        for (i in 0..2) {
+            val ic = ArrayList<String>(ifCondition)
+            val parsedCondition = ExpectedOutputDataGenerator.makeParsedCondition(ic[i])
+            ic[i] = parsedCondition["left"] + "=" + parsedCondition["right"]
+            onPoints[ic[i]] = generatePoint(ic, b, ic[i], parsedCondition["left"].toString(), 2)
+        }
+    }
 
     private fun generateOutPoints() {
         val ifCondition = ie.ifConditionBodiesInCameForward
@@ -38,8 +72,10 @@ class DomainAnalyser(private val ie: InformationExtractor){
         bools.add(arrayListOf(true, false, true))
         bools.add(arrayListOf(true, true, false))
 
-        for (b in bools) {
-            outPoints.add(generateOutPoint(ifCondition, b, 2))
+        for ((i, b) in bools.withIndex()) {
+            val name = ifCondition[i]
+            val type = ExpectedOutputDataGenerator.makeParsedCondition(name)["left"].toString()
+            outPoints[name] = generatePoint(ifCondition, b, name, type,  2)
         }
     }
 
@@ -48,13 +84,16 @@ class DomainAnalyser(private val ie: InformationExtractor){
         val bools: ArrayList<ArrayList<Boolean>> = ArrayList()
         bools.add(arrayListOf(true, true, true))
 
+        val name = ifCondition.joinToString(separator = " and ")
+        val type = "all"
         for (b in bools) {
-            inPoints.add(generateOutPoint(ifCondition, b, 2))
+            inPoints[name] = generatePoint(ifCondition, b, name, type, 2)
         }
     }
 
 
-    private fun generateOutPoint(ifCondition: ArrayList<String>, bools: ArrayList<Boolean>, buf: Int=0): Point {
+    private fun generatePoint(ifCondition: ArrayList<String>, bools: ArrayList<Boolean>,
+                              name: String, type: String, buf: Int=0): Point {
         var conditionUnion = ctx.mkBool(java.lang.Boolean.TRUE) //単位元としてTRUEの式を一つくっつけとく
         var expr: BoolExpr?
         for (i in ifCondition.indices) {
@@ -102,13 +141,13 @@ class DomainAnalyser(private val ie: InformationExtractor){
 
         val solver = ctx.mkSolver()
         solver.add(conditionUnion)
-        val point = Point()
+        val point = Point(name, type, bools)
         if (solver.check() == Status.SATISFIABLE) {
             val m = solver.model
             ie.parameters.forEach { p ->
                 val v = m.evaluate(ctx.mkIntConst(p), false)
                 val f = Factor(p, v.toString().toInt())
-                point.factors.add(f)
+                point.factors[f.name] = f
             }
         }
         return point
@@ -127,6 +166,7 @@ class DomainAnalyser(private val ie: InformationExtractor){
             "<=" -> ctx.mkLe(plus, ctx.mkInt(_right.toInt() - alith))
             ">" -> ctx.mkGt(plus, ctx.mkInt(_right.toInt() + alith))
             ">=" -> ctx.mkGe(plus, ctx.mkInt(_right.toInt() + alith))
+            "=" -> ctx.mkEq(plus, ctx.mkInt(_right.toInt()))
             else -> null
         }
     }
@@ -138,6 +178,7 @@ class DomainAnalyser(private val ie: InformationExtractor){
             "<=" -> ctx.mkLe(ctx.mkIntConst(_left), ctx.mkInt(right - alith))
             ">" -> ctx.mkGt(ctx.mkIntConst(_left), ctx.mkInt(right + alith))
             ">=" -> ctx.mkGe(ctx.mkIntConst(_left), ctx.mkInt(right + alith))
+            "=" -> ctx.mkEq(ctx.mkIntConst(_left), ctx.mkInt(right))
             else -> null
         }
     }
