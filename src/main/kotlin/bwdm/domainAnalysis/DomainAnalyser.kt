@@ -31,7 +31,8 @@ class DomainAnalyser(private val ie: InformationExtractor){
                     copyOffPoint(p, f.name, -1)
                 }
             }else{
-
+                copyOffPoint(p, p.type, 1)
+                copyOffPoint(p, p.type, -1)
             }
         }
     }
