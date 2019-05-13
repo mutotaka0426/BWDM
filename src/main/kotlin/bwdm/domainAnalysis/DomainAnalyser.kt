@@ -20,7 +20,31 @@ class DomainAnalyser(private val ie: InformationExtractor){
         generateInPoints()
         generateOnPoints()
         generateOffPoints()
-        print("")
+    }
+
+    val allTestcasesByDa: String
+        get() {
+            val buf = StringBuilder()
+            addResultBuf(buf, onPoints, "Onポイント")
+            addResultBuf(buf, offPoints, "Offポイント")
+            addResultBuf(buf, inPoints, "Inポイント")
+            addResultBuf(buf, outPoints, "Outポイント")
+
+            return buf.toString()
+        }
+
+    private fun addResultBuf(buf: StringBuilder, points: HashMap<String, Point>, title: String){
+        var i: Int = 0
+        buf.append("- $title\n")
+        for ((k, p) in points) {
+            buf.append("No.").append(i + 1).append(" : ")
+            for (prm in ie.parameters) {
+                buf.append(p.factors[prm]).append(" ")
+            }
+            buf.append("-> ").append("not yet").append("\n")
+
+            i++
+        }
     }
 
     private fun generateOffPoints() {

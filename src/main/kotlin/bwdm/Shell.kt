@@ -25,6 +25,9 @@ class Shell{
     @Option(name = "-b", usage = "境界値分析によるテストケースを出力")
     var showBvTestcases: Boolean = false
 
+    @Option(name = "-m", usage = "ドメインテストによるテストケースを出力")
+    var showDaTestcases: Boolean = false
+
     //6 境界値テストケース（ペアワイズ適用） default:ON  -p
     @Option(name = "-p", depends = ["-b"], usage = "境界値分析にペアワイズ法を適用したテストケースを出力")
     var showBvTestcasesWithPairwise: Boolean = false

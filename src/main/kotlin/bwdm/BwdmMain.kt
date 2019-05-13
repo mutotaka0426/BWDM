@@ -105,6 +105,11 @@ object BwdmMain {
             buf += seUnitMain.allTestcasesBySe
             buf += "\n"
         }
+        if (shell.showDaTestcases) {
+            buf += "ドメインテストによるテストケース\n"
+            buf += domainAnalyser.allTestcasesByDa
+            buf += "\n"
+        }
         if (shell.displayOnConsole) {
             print(buf)
         }
