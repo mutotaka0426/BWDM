@@ -189,7 +189,7 @@ class BoundaryValueAnalyzer(_information: InformationExtractor, isPairwise: Bool
     private fun makeInputDataList(_information: InformationExtractor) {
         val parameters = _information.parameters
 
-        //最初の一つ目
+        // 最初の一つ目
         val firstPrm = parameters[0]
         val firstBvs = boundaryValueList[firstPrm]
         for (i in firstBvs!!.indices) {
@@ -198,12 +198,12 @@ class BoundaryValueAnalyzer(_information: InformationExtractor, isPairwise: Bool
             hm[firstPrm] = firstBvs[i]
         }
 
-        //それ以降
+        // それ以降
         parameters.forEach { p ->
-            if (p != firstPrm) { //最初の要素以外に対して
+            if (p != firstPrm) { // 最初の要素以外に対して
                 val currentBvs = boundaryValueList[p]
 
-                //inputDataListの第一引数のみを登録した状態
+                // inputDataListの第一引数のみを登録した状態
                 val inputDataListInitialState = ArrayList(inputDataList)
 
                 for (i in 0 until currentBvs!!.size - 1) {
