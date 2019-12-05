@@ -1,4 +1,0 @@
-[submodule "docs"]
-	path = docs
-	url = https://github.com/korosuke613/BWDM.git
-	branch = gh-pages
