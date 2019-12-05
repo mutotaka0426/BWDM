@@ -1,24 +1,7 @@
-# BWDM - Boundary Value/Vienna Development Method -
-#### Test Cases Auto-Generation from a VDM Specification
-[![GitHub tag](https://img.shields.io/github/tag/korosuke613/BWDM.svg)](https://github.com/korosuke613/BWDM/tags)
-[![GitHub release](https://img.shields.io/github/release/korosuke613/BWDM/all.svg)](https://github.com/korosuke613/BWDM/releases)
-[![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/korosuke613/BWDM.svg)](https://github.com/korosuke613/BWDM/pulls?q=is%3Apr+is%3Aclosed)
+# BWDM is Verification tool for Vienna Development Method
+Test Cases Auto-Generation from a VDM Specification.
 
-Master ::
-[![Build Status](https://travis-ci.org/korosuke613/BWDM.svg?branch=master)](https://travis-ci.org/korosuke613/BWDM)
-[![Coverage Status](https://coveralls.io/repos/github/korosuke613/BWDM/badge.svg?branch=master)](https://coveralls.io/github/korosuke613/BWDM?branch=master)
-[![codebeat badge](https://codebeat.co/badges/2ee47212-b56d-4ef8-9412-645d71e98a94)](https://codebeat.co/projects/github-com-korosuke613-bwdm-master)
-
-Develop ::
-[![Build Status](https://travis-ci.org/korosuke613/BWDM.svg?branch=develop)](https://travis-ci.org/korosuke613/BWDM)
-[![Coverage Status](https://coveralls.io/repos/github/korosuke613/BWDM/badge.svg?branch=develop)](https://coveralls.io/github/korosuke613/BWDM?branch=develop)
-[![codebeat badge](https://codebeat.co/badges/dbeeed1d-2de8-4fff-b2e7-7fca0e77fb07)](https://codebeat.co/projects/github-com-korosuke613-bwdm-develop)
-
-
-
-
-
-
+[![](https://img.shields.io/badge/GitHub%20Actions-enable-brightgreen.svg?logo=github)](https://github.com/korosuke613/BWDM/actions) [![codecov](https://codecov.io/gh/korosuke613/BWDM/branch/master/graph/badge.svg)](https://codecov.io/gh/korosuke613/BWDM)
 
 ## Execution Environment, using Libraries,
 * OS : Any OS (Please prepare same enviroment.)
