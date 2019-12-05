@@ -5,9 +5,9 @@ import bwdm.Util
 import bwdm.informationStore.InformationExtractor
 import java.util.*
 import java.util.stream.Collectors
-import io.github.pict.Factor
-import io.github.pict.Model
-import io.github.pict.Pict
+import com.github.korosuke613.pict4java.Factor
+import com.github.korosuke613.pict4java.Model
+import com.github.korosuke613.pict4java.Pict
 
 typealias BoundaryValueList = HashMap<String, ArrayList<Long>>
 typealias InputDataList = ArrayList<HashMap<String, Long>>

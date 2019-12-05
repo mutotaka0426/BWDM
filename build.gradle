@@ -36,6 +36,14 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/korosuke613/pict4java")
+        credentials {
+            username = System.getenv("GITHUB_PACKAGE_USERNAME")
+            password = System.getenv("GITHUB_PACKAGE_TOKEN")
+        }
+    }
 }
 
 
@@ -47,7 +55,8 @@ dependencies {
     compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
     compile group: 'args4j', name: 'args4j', version: '2.33'
     compile group: 'com.github.nickbattle', name:'FJ-VDMJ', version: 'FJ-VDMJ'
-    implementation 'com.github.korosuke613:pict-java:master-SNAPSHOT'
+    implementation "com.github.korosuke613:pict4java:v2.0.0"
+    compile files('libs/com.microsoft.z3.jar')
 }
 
 compileKotlin {
