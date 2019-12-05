@@ -93,7 +93,7 @@ jacocoTestReport {
     reports {
         xml.enabled = true
         csv.enabled = false
-        html.enabled = true
+        html.enabled = false
     }
 }
 
@@ -103,9 +103,8 @@ task junitPlatformJacocoReport(type: JacocoReport) {
     reports {
         xml.enabled = true
         csv.enabled = false
-        html.enabled = true
-        html.destination file("${buildDir}/reports/jacoco/test/")
-        xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+        html.enabled = false
+        xml.destination file("${buildDir}/reports/coverage.xml")
     }
 }
 
