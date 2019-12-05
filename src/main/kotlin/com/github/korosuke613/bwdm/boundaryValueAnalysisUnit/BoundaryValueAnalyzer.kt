@@ -166,7 +166,7 @@ class BoundaryValueAnalyzer(_information: InformationExtractor, isPairwise: Bool
         // 因子の取得
         val parameters = _information.parameters
 
-        // ファクターの追加
+        // ファクターの追�
         for (prm in parameters){
             val bvs = boundaryValueList[prm]
             val factor = Factor(named_level = bvs!!.map { it.toString() }, name = prm)
