@@ -1,4 +1,4 @@
-package bwdm.informationStore
+package com.github.korosuke613.bwdm.informationStore
 
 class ReturnNode internal constructor(returnStr: String, _nodeLevel: Int) : Node() {
     override val conditionOrReturnStr = returnStr
@@ -6,6 +6,6 @@ class ReturnNode internal constructor(returnStr: String, _nodeLevel: Int) : Node
 
     init {
         nodeLevel = _nodeLevel
-        id = Node.staticID++
+        id = staticID++
     }
 }

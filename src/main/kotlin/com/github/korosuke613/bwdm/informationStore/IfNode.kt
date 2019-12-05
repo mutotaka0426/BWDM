@@ -1,4 +1,4 @@
-package bwdm.informationStore
+package com.github.korosuke613.bwdm.informationStore
 
 class IfNode(conditionStr: String, _nodeLevel: Int) : Node() {
     var conditionTrueNode: Node? = null
@@ -9,6 +9,6 @@ class IfNode(conditionStr: String, _nodeLevel: Int) : Node() {
 
     init {
         nodeLevel = _nodeLevel
-        id = Node.staticID++
+        id = staticID++
     }
 }

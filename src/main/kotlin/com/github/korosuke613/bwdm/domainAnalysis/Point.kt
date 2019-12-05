@@ -1,4 +1,4 @@
-package bwdm.domainAnalysis
+package com.github.korosuke613.bwdm.domainAnalysis
 
 data class Point(val name: String,
                  val type: String,

@@ -1,4 +1,4 @@
-package bwdm.domainAnalysis
+package com.github.korosuke613.bwdm.domainAnalysis
 
 data class DomainPoints(val name: String){
     val onPoints:HashMap<String, Point> = HashMap()

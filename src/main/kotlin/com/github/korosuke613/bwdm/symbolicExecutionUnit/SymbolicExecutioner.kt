@@ -1,11 +1,11 @@
-package bwdm.symbolicExecutionUnit
+package com.github.korosuke613.bwdm.symbolicExecutionUnit
 
-import bwdm.informationStore.InformationExtractor
-import bwdm.informationStore.ConditionAndReturnValueList.ConditionAndReturnValue
-import bwdm.Util
+import com.github.korosuke613.bwdm.informationStore.InformationExtractor
+import com.github.korosuke613.bwdm.informationStore.ConditionAndReturnValueList.ConditionAndReturnValue
+import com.github.korosuke613.bwdm.Util
 import com.microsoft.z3.*
 
-import bwdm.boundaryValueAnalysisUnit.ExpectedOutputDataGenerator.Companion.makeParsedCondition
+import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.ExpectedOutputDataGenerator.Companion.makeParsedCondition
 
 import java.util.ArrayList
 import java.util.HashMap

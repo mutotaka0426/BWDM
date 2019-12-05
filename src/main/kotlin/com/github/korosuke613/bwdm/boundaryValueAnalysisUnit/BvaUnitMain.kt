@@ -1,8 +1,8 @@
-package bwdm.boundaryValueAnalysisUnit
+package com.github.korosuke613.bwdm.boundaryValueAnalysisUnit
 
-import bwdm.domainAnalysis.DomainAnalyser
-import bwdm.informationStore.IfElseExprSyntaxTree
-import bwdm.informationStore.InformationExtractor
+import com.github.korosuke613.bwdm.domainAnalysis.DomainAnalyser
+import com.github.korosuke613.bwdm.informationStore.IfElseExprSyntaxTree
+import com.github.korosuke613.bwdm.informationStore.InformationExtractor
 import java.util.*
 
 class BvaUnitMain(private val ie: InformationExtractor, isPairwise: Boolean) {

@@ -1,4 +1,4 @@
-package bwdm.informationStore
+package com.github.korosuke613.bwdm.informationStore
 
 abstract class Node {
     /*

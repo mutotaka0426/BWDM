@@ -1,6 +1,6 @@
-package bwdm.symbolicExecutionUnit
+package com.github.korosuke613.bwdm.symbolicExecutionUnit
 
-import bwdm.informationStore.InformationExtractor
+import com.github.korosuke613.bwdm.informationStore.InformationExtractor
 
 
 class SeUnitMain(private val ie: InformationExtractor) {

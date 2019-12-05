@@ -1,10 +1,10 @@
-package bwdm.domainAnalysis
+package com.github.korosuke613.bwdm.domainAnalysis
 
-import bwdm.Util
-import bwdm.boundaryValueAnalysisUnit.ExpectedOutputDataGenerator
-import bwdm.informationStore.ConditionAndReturnValueList
-import bwdm.informationStore.IfElseExprSyntaxTree
-import bwdm.informationStore.InformationExtractor
+import com.github.korosuke613.bwdm.Util
+import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.ExpectedOutputDataGenerator
+import com.github.korosuke613.bwdm.informationStore.ConditionAndReturnValueList
+import com.github.korosuke613.bwdm.informationStore.IfElseExprSyntaxTree
+import com.github.korosuke613.bwdm.informationStore.InformationExtractor
 import com.microsoft.z3.ArithExpr
 import com.microsoft.z3.BoolExpr
 import com.microsoft.z3.Context

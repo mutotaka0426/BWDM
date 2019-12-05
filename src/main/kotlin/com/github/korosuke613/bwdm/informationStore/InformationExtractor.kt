@@ -1,6 +1,6 @@
-package bwdm.informationStore
+package com.github.korosuke613.bwdm.informationStore
 
-import bwdm.Util
+import com.github.korosuke613.bwdm.Util
 import com.fujitsu.vdmj.ast.definitions.ASTDefinition
 import com.fujitsu.vdmj.lex.Dialect
 import com.fujitsu.vdmj.lex.LexException

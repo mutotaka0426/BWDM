@@ -1,4 +1,4 @@
-package bwdm
+package com.github.korosuke613.bwdm
 
 import java.lang.reflect.Method
 

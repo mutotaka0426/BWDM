@@ -1,9 +1,9 @@
-package bwdm
+package com.github.korosuke613.bwdm
 
-import bwdm.boundaryValueAnalysisUnit.BvaUnitMain
-import bwdm.informationStore.InformationExtractor
-import bwdm.symbolicExecutionUnit.SeUnitMain
-import bwdm.domainAnalysis.DomainAnalyser
+import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.BvaUnitMain
+import com.github.korosuke613.bwdm.informationStore.InformationExtractor
+import com.github.korosuke613.bwdm.symbolicExecutionUnit.SeUnitMain
+import com.github.korosuke613.bwdm.domainAnalysis.DomainAnalyser
 import com.fujitsu.vdmj.lex.LexException
 import com.fujitsu.vdmj.syntax.ParserException
 import external.TimeMeasure

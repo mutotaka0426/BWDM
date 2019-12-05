@@ -1,9 +1,9 @@
-package bwdm.boundaryValueAnalysisUnit
+package com.github.korosuke613.bwdm.boundaryValueAnalysisUnit
 
-import bwdm.Util
-import bwdm.informationStore.IfNode
-import bwdm.informationStore.InformationExtractor
-import bwdm.informationStore.Node
+import com.github.korosuke613.bwdm.Util
+import com.github.korosuke613.bwdm.informationStore.IfNode
+import com.github.korosuke613.bwdm.informationStore.InformationExtractor
+import com.github.korosuke613.bwdm.informationStore.Node
 import java.util.*
 
 typealias Expression = HashMap<String, String>

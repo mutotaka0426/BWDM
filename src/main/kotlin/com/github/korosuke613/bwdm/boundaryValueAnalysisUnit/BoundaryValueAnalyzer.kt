@@ -1,8 +1,8 @@
-package bwdm.boundaryValueAnalysisUnit
+package com.github.korosuke613.bwdm.boundaryValueAnalysisUnit
 
 //import com.github.korosuke613.pict-java
-import bwdm.Util
-import bwdm.informationStore.InformationExtractor
+import com.github.korosuke613.bwdm.Util
+import com.github.korosuke613.bwdm.informationStore.InformationExtractor
 import java.util.*
 import java.util.stream.Collectors
 import com.github.korosuke613.pict4java.Factor

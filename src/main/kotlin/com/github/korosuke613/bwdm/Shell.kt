@@ -1,4 +1,4 @@
-package bwdm
+package com.github.korosuke613.bwdm
 
 import org.kohsuke.args4j.Argument
 import org.kohsuke.args4j.Option

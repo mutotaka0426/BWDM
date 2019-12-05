@@ -1,4 +1,4 @@
-package bwdm.informationStore;
+package com.github.korosuke613.bwdm.informationStore;
 
 import com.fujitsu.vdmj.ast.definitions.ASTDefinition;
 import com.fujitsu.vdmj.ast.definitions.ASTDefinitionList;

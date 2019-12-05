@@ -1,4 +1,4 @@
-package bwdm.informationStore
+package com.github.korosuke613.bwdm.informationStore
 
 import java.util.ArrayList
 import java.util.Arrays
