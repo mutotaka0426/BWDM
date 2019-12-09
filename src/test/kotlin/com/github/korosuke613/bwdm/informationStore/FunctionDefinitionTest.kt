@@ -8,12 +8,8 @@ import com.fujitsu.vdmj.mapper.ClassMapper
 import com.fujitsu.vdmj.syntax.DefinitionReader
 import com.fujitsu.vdmj.tc.definitions.TCDefinition
 import com.fujitsu.vdmj.tc.definitions.TCExplicitFunctionDefinition
-import com.fujitsu.vdmj.tc.definitions.TCExplicitOperationDefinition
-import com.fujitsu.vdmj.tc.definitions.TCInstanceVariableDefinition
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -42,6 +38,31 @@ internal class FunctionDefinitionTest {
                 }
                 function = FunctionDefinition(tcFunctionDefinition)
             }
+        }
+    }
+
+    @Test
+    fun conditionAndReturnValuesTest(){
+        val returnStr = arrayListOf("\"うるう年\"", "\"平年\"", "\"うるう年\"", "\"平年\"")
+        val conditionNames = arrayListOf("年mod400=0", "年mod100=0", "年mod4=0")
+        val conditions = arrayListOf(
+                arrayListOf(conditionNames[0], conditionNames[1], conditionNames[2]),
+                arrayListOf(conditionNames[0], conditionNames[1], conditionNames[2]),
+                arrayListOf(conditionNames[1], conditionNames[2]),
+                arrayListOf(conditionNames[2]))
+        val boolList = arrayListOf(
+                arrayListOf(true, true, true),
+                arrayListOf(false, true, true),
+                arrayListOf(false, true),
+                arrayListOf(false)
+        )
+
+        var i = 0
+        function.conditionAndReturnValueList.conditionAndReturnValues.forEach { returnValue ->
+            assertEquals(returnStr[i], returnValue.returnStr)
+            assertEquals(conditions[i], returnValue.conditions)
+            assertEquals(boolList[i], returnValue.bools)
+            i++
         }
     }
 

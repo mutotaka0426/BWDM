@@ -10,7 +10,11 @@ import java.io.IOException
 class FunctionDefinition
 constructor(private val tcFunctionDefinition: TCExplicitFunctionDefinition) {
     private val ifConditionBodiesInCameForward: ArrayList<String> = ArrayList()
+
+    // +でつながった変数の式
     lateinit var compositeParameters: ArrayList<String>
+
+
     private var ifExpressionBody: String = ""
     var conditionAndReturnValueList: ConditionAndReturnValueList
 
@@ -62,6 +66,8 @@ constructor(private val tcFunctionDefinition: TCExplicitFunctionDefinition) {
         for (parameter in tcPatternList) {
             parameters.add(parameter.toString())
         }
+
+
         parseIfConditions()
 
         ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody)
@@ -81,6 +87,8 @@ constructor(private val tcFunctionDefinition: TCExplicitFunctionDefinition) {
                 val operator = Util.getOperator(element)
                 val indexOfOperator = element.indexOf(operator)
                 val left = element.substring(0, indexOfOperator)
+
+                // 左辺に+が含まれていたらそれも仮引数リストに加え入れる。
                 if (Util.getOperator(left) == "+") {
                     compositeParameters.add(left)
                 }
@@ -99,13 +107,15 @@ constructor(private val tcFunctionDefinition: TCExplicitFunctionDefinition) {
             val left = condition.substring(0, indexOfOperator)
             compositeParameters.forEach { parameter ->
                 if (left == parameter) {
-                    parse(condition, parameter)
+                    another_mod_parse(condition, parameter)
+                }else if(condition.contains(parameter)){
+                    mod_parse(condition, parameter)
                 }
             }
         }
     }
 
-    private fun parse(condition: String, parameter: String) {
+    private fun another_mod_parse(condition: String, parameter: String) {
         val operator = Util.getOperator(condition)
         val indexOfOperator = condition.indexOf(operator)
         val hm = HashMap<String, String>()
@@ -114,8 +124,19 @@ constructor(private val tcFunctionDefinition: TCExplicitFunctionDefinition) {
 
         val al = ifConditions[parameter]
         al!!.add(hm)
+    }
+
+    private fun mod_parse(condition: String, parameter: String) {
+        val operator = Util.getOperator(condition)
+        val indexOfOperator = condition.indexOf(operator)
+        val hm = HashMap<String, String>()
+        hm["left"] = condition.substring(0, indexOfOperator)
+        hm["operator"] = operator
+
         //right-hand and surplus need branch depending on mod or other.
         modJudge(condition, operator, indexOfOperator, hm)
+        val al = ifConditions[parameter]
+        al!!.add(hm)
     }
 
     companion object {
