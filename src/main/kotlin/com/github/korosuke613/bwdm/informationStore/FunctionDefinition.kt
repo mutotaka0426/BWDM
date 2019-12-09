@@ -107,29 +107,18 @@ constructor(private val tcFunctionDefinition: TCExplicitFunctionDefinition) {
             val left = condition.substring(0, indexOfOperator)
             compositeParameters.forEach { parameter ->
                 if (left == parameter) {
-                    another_mod_parse(condition, parameter)
+                    parse(condition, parameter)
                 }
             }
             parameters.forEach { parameter ->
                 if(condition.contains(parameter)){
-                    mod_parse(condition, parameter)
+                    parse(condition, parameter)
                 }
             }
         }
     }
 
-    private fun another_mod_parse(condition: String, parameter: String) {
-        val operator = Util.getOperator(condition)
-        val indexOfOperator = condition.indexOf(operator)
-        val hm = HashMap<String, String>()
-        hm["left"] = condition.substring(0, indexOfOperator)
-        hm["operator"] = operator
-
-        val al = ifConditions[parameter]
-        al!!.add(hm)
-    }
-
-    private fun mod_parse(condition: String, parameter: String) {
+    private fun parse(condition: String, parameter: String) {
         val operator = Util.getOperator(condition)
         val indexOfOperator = condition.indexOf(operator)
         val hm = HashMap<String, String>()
