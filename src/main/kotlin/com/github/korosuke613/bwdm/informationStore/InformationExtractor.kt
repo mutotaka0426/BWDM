@@ -112,14 +112,12 @@ constructor(val vdmFilePath: String) {
                     parameters.add(parameter)
                 }
                 parseIfConditions()
-
             }
         }
 
         ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody!!)
 
         conditionAndReturnValueList = ConditionAndReturnValueList(ifElseExprSyntaxTree!!.root)
-
     }/* Initializing fields*/
 
     private fun parseIfConditions() {
