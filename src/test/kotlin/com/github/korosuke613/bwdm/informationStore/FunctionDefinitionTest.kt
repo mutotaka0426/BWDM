@@ -67,6 +67,23 @@ internal class FunctionDefinitionTest {
     }
 
     @Test
+    fun ifConditionsTest(){
+        val values = arrayListOf(
+                arrayListOf("年mod4", "0", "="),
+                arrayListOf("年mod100", "0", "="),
+                arrayListOf("年mod400", "0", "=")
+                )
+
+        var i = 0
+        function.ifConditions["年"]!!.forEach { condition ->
+            assertEquals(values[i][0], condition["left"])
+            assertEquals(values[i][1], condition["right"])
+            assertEquals(values[i][2], condition["operator"])
+            i++
+        }
+    }
+
+    @Test
     fun getFunctionName() {
         assertEquals("うるう年判定仕様", function.functionName)
     }
