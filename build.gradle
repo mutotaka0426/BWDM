@@ -63,14 +63,14 @@ jar {
     }
 }
 
-mainClassName = 'bwdm.BwdmMain'
+mainClassName = 'com.github.korosuke613.bwdm.BwdmMain'
 applicationDefaultJvmArgs = ["-Djava.library.path=./libs"]
 
 run{
     // 「args」という引数が存在するかチェック
     if (project.hasProperty('args')) {
         // 存在する場合は、半角スペースでsplitして引数に設定する
-        args(project.args.split('\\s+' as Closure))
+        args(project.args.split('\\s+'))
     }
 }
 

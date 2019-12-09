@@ -21,7 +21,7 @@ Test Cases Auto-Generation from a VDM Specification.
 ## example
 
 ```bash
-$ java -Djna.library.path=./libs -Djava.library.path=./libs -jar BWDM.jar ./vdm_files/probrem.vdmpp -p
+$ DYLD_LIBRARY_PATH=./libs java -Djna.library.path=./libs -Djava.library.path=./libs -jar BWDM.jar ./vdm_files/probrem.vdmpp -n -a -i -s -b -p -d
 ```
 
 or

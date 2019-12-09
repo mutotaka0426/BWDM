@@ -83,7 +83,6 @@ object BwdmMain {
         extractInformation.explicitFunctions.values.forEach{ functionDefinition: FunctionDefinition ->
             bvaUnitMain = BvaUnitMain(functionDefinition, isPairwise = shell.showBvTestcasesWithPairwise)
             seUnitMain = SeUnitMain(functionDefinition)
-            domainAnalyser = DomainAnalyser(functionDefinition)
             if (shell.showStandardInfo) {
                 showStandardInfo(functionDefinition)
             }
@@ -109,6 +108,7 @@ object BwdmMain {
             }
             if (shell.showDaTestcases) {
                 buf += "ドメインテストによるテストケース\n"
+                domainAnalyser = DomainAnalyser(functionDefinition)
                 buf += domainAnalyser.allTestcasesByDa
                 buf += "\n"
             }
