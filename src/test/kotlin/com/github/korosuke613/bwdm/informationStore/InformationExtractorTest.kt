@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-internal class InformationExtractorFunctionTest {
+internal class InformationExtractorTest {
     private lateinit var informationExtractor: InformationExtractor
     private lateinit var fileName: String
 
