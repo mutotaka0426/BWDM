@@ -25,18 +25,16 @@ constructor(tcFunctionDefinition: TCExplicitFunctionDefinition) {
     /**
      * type of return value
      */
-    var returnValue: String? = null
+    var returnValue: String = tcFunctionDefinition.type.result.toString()
         private set
 
     var ifElseExprSyntaxTree: IfElseExprSyntaxTree? = null
         private set
 
-    var functionName: String
+    var functionName: String = tcFunctionDefinition.name.name
         private set
 
     init {
-        functionName = tcFunctionDefinition.name.name
-        returnValue = tcFunctionDefinition.type.result.toString()
         val tcFunctionType = tcFunctionDefinition.type
         val tcExpression = tcFunctionDefinition.body
         ifExpressionBody = tcExpression.toString()
@@ -77,8 +75,8 @@ constructor(tcFunctionDefinition: TCExplicitFunctionDefinition) {
                 element = ifElses[i + 1]
                 ifConditionBodiesInCameForward.add(element)
                 val operator = Util.getOperator(element)
-                val indexOfoperator = element.indexOf(operator)
-                val left = element.substring(0, indexOfoperator)
+                val indexOfOperator = element.indexOf(operator)
+                val left = element.substring(0, indexOfOperator)
                 if (Util.getOperator(left) == "+") {
                     compositeParameters.add(left)
                 }
@@ -93,8 +91,8 @@ constructor(tcFunctionDefinition: TCExplicitFunctionDefinition) {
         //parsing of each if-condition, and store in ifConditions
         ifConditionBodiesInCameForward.forEach { condition ->
             val operator = Util.getOperator(condition)
-            val indexOfoperator = condition.indexOf(operator)
-            val left = condition.substring(0, indexOfoperator)
+            val indexOfOperator = condition.indexOf(operator)
+            val left = condition.substring(0, indexOfOperator)
             compositeParameters.forEach { parameter ->
                 if (left == parameter) {
                     parse(condition, parameter)
@@ -105,26 +103,25 @@ constructor(tcFunctionDefinition: TCExplicitFunctionDefinition) {
 
     private fun parse(condition: String, parameter: String) {
         val operator = Util.getOperator(condition)
-        val indexOfoperator = condition.indexOf(operator)
+        val indexOfOperator = condition.indexOf(operator)
         val hm = HashMap<String, String>()
-        hm["left"] = condition.substring(0, indexOfoperator)
+        hm["left"] = condition.substring(0, indexOfOperator)
         hm["operator"] = operator
 
         val al = ifConditions[parameter]
         al!!.add(hm)
         //right-hand and surplus need branch depending on mod or other.
-        modJudge(condition, operator, indexOfoperator, hm)
-
+        modJudge(condition, operator, indexOfOperator, hm)
     }
 
     companion object {
-        fun modJudge(condition: String, operator: String, indexOfoperator: Int, hm: HashMap<String, String>) {
+        fun modJudge(condition: String, operator: String, indexOfOperator: Int, hm: HashMap<String, String>) {
             if (operator == "mod") {
                 val indexOfEqual = condition.indexOf("=")
-                hm["right"] = condition.substring(indexOfoperator + 3, indexOfEqual)
+                hm["right"] = condition.substring(indexOfOperator + 3, indexOfEqual)
                 hm["surplus"] = condition.substring(indexOfEqual + 1)
             } else {
-                hm["right"] = condition.substring(indexOfoperator + operator.length)
+                hm["right"] = condition.substring(indexOfOperator + operator.length)
             }
         }
     }

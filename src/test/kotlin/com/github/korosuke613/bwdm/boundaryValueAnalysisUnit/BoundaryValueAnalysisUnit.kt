@@ -10,7 +10,9 @@ internal class BoundaryValueAnalyzerTest {
     @Test
     @Throws(LexException::class, ParserException::class, IOException::class)
     fun test() {
-        val information = InformationExtractor("./vdm_files/Arg2_Japanese.vdmpp")
-        val bvAnalyzer = BoundaryValueAnalyzer(information, false)
+        val resource = InformationExtractor::class.java.classLoader.getResource("Arg2_Japanese.vdmpp")
+        val fileName = if (resource?.path == null) "" else resource.path
+        val information = InformationExtractor(fileName)
+        val bvAnalyzer = BoundaryValueAnalyzer(information.explicitFunctions["SampleFunction"]!!, false)
     }
 }
