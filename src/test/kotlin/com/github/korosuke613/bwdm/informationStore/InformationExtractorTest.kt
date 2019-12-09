@@ -1,5 +1,6 @@
 package com.github.korosuke613.bwdm.informationStore
 
+import com.fujitsu.vdmj.tc.definitions.TCExplicitOperationDefinition
 import com.fujitsu.vdmj.tc.definitions.TCInstanceVariableDefinition
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -40,10 +41,15 @@ internal class InformationExtractorTest {
         }
 
         @Test
-        fun getOperationName1() {
-            assertEquals("うるう年判定仕様", informationExtractor.explicitOperations["うるう年判定仕様"]?.name.toString())
-        }
+        fun getOperationNames() {
+            val expected: Array<String> = arrayOf("西暦設定", "うるう年判定")
 
+            var i = 0
+            informationExtractor.explicitOperations.values.forEach { instanceVariable: TCExplicitOperationDefinition ->
+                assertEquals(expected[i], informationExtractor.explicitOperations[expected[i]]?.name.toString())
+                i++
+            }
+        }
 
         @Test
         fun getInstanceVariables() {
