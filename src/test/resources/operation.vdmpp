@@ -1,0 +1,28 @@
+class Nest
+
+instance variables
+
+private rule1 : nat := 4;
+private rule2 : nat := 100;
+private rule3 : nat := 400;
+private current_year : nat := 2000;
+
+operations
+
+public 西暦設定 : int ==> int
+  西暦設定(年) == current_yer := 年;
+
+public うるう年判定 : () ==> seq of char
+  うるう年判定() ==
+    if(current_year mod rule1 = 0) then
+      if(current_year mod rule2 = 0) then
+        if(current_year mod rule3 = 0) then
+          return "うるう年"
+        else
+          return "平年"
+      else
+        return "うるう年"
+    else
+      return "平年";
+
+end Nest

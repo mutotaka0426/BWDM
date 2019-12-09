@@ -13,11 +13,11 @@ jobs:
           java-version: 1.8
       - name: Build with Gradle
         run: |
-          ./gradlew customeTest
+          ./gradlew test jacocoTestReport
       - uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }} #required
-          file: ./build/reports/coverage.xml #optional
+          file: ./build/customJacocoReportDir/test/jacocoTestReport.xml #optional
           flags: unittests #optional
           #name: codecov-umbrella #optional
           #yml: ./codecov.yml #optional
