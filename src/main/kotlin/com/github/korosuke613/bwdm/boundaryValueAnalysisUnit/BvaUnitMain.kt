@@ -1,11 +1,12 @@
 package com.github.korosuke613.bwdm.boundaryValueAnalysisUnit
 
 import com.github.korosuke613.bwdm.domainAnalysis.DomainAnalyser
+import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
 import com.github.korosuke613.bwdm.informationStore.IfElseExprSyntaxTree
 import com.github.korosuke613.bwdm.informationStore.InformationExtractor
 import java.util.*
 
-class BvaUnitMain(private val ie: InformationExtractor, isPairwise: Boolean) {
+class BvaUnitMain(private val ie: FunctionDefinition, isPairwise: Boolean) {
     private val expectedOutputDataGenerator: ExpectedOutputDataGenerator
     val boundaryValueAnalyzer: BoundaryValueAnalyzer = BoundaryValueAnalyzer(ie, isPairwise)
 

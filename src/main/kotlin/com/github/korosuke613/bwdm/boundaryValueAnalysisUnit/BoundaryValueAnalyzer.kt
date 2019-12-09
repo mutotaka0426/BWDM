@@ -2,6 +2,7 @@ package com.github.korosuke613.bwdm.boundaryValueAnalysisUnit
 
 //import com.github.korosuke613.pict-java
 import com.github.korosuke613.bwdm.Util
+import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
 import com.github.korosuke613.bwdm.informationStore.InformationExtractor
 import java.util.*
 import java.util.stream.Collectors
@@ -12,20 +13,21 @@ import com.github.korosuke613.pict4java.Pict
 typealias BoundaryValueList = HashMap<String, ArrayList<Long>>
 typealias InputDataList = ArrayList<HashMap<String, Long>>
 
-class BoundaryValueAnalyzer(_information: InformationExtractor, isPairwise: Boolean = true) {
+class BoundaryValueAnalyzer
+constructor(private val functionDefinition: FunctionDefinition, isPairwise: Boolean = true) {
 
     val boundaryValueList: BoundaryValueList = HashMap()
     val inputDataList: InputDataList = ArrayList()
 
     init {
         //generation of instance of each parameter
-        _information.parameters.forEach { p -> boundaryValueList[p] = ArrayList() }
+        functionDefinition.parameters.forEach { p -> boundaryValueList[p] = ArrayList() }
 
-        generateTypeBoundaryValue(_information)
-        generateIfConditionalBoundaryValue(_information)
+        generateTypeBoundaryValue()
+        generateIfConditionalBoundaryValue()
 
         //remove overlapped values
-        val parameters = _information.parameters
+        val parameters = functionDefinition.parameters
         for (i in 0 until boundaryValueList.size) {
             val parameter = parameters[i]
             var bvs = boundaryValueList[parameter]!!
@@ -34,16 +36,16 @@ class BoundaryValueAnalyzer(_information: InformationExtractor, isPairwise: Bool
             boundaryValueList[parameter] = bvs
         }
         if(isPairwise) {
-            makeInputDataListWithPairwise(_information)
+            makeInputDataListWithPairwise()
         }else{
-            makeInputDataList(_information)
+            makeInputDataList()
         }
     }
 
 
-    private fun generateTypeBoundaryValue(_information: InformationExtractor) {
-        val parameters = _information.parameters
-        val argumentTypes = _information.argumentTypes
+    private fun generateTypeBoundaryValue() {
+        val parameters = functionDefinition.parameters
+        val argumentTypes = functionDefinition.argumentTypes
 
         for (i in argumentTypes.indices) {
             val parameter = parameters[i]
@@ -81,10 +83,10 @@ class BoundaryValueAnalyzer(_information: InformationExtractor, isPairwise: Bool
     }
 
 
-    private fun generateIfConditionalBoundaryValue(_information: InformationExtractor) {
-        val allIfConditions = _information.ifConditions
+    private fun generateIfConditionalBoundaryValue() {
+        val allIfConditions = functionDefinition.ifConditions
 
-        allIfConditions.forEach { parameter, ifConditions ->
+        allIfConditions.forEach { (parameter, ifConditions) ->
             ifConditions.forEach { condition ->
                 //condition : HashMap<String, String>
                 val left = condition["left"]
@@ -98,7 +100,7 @@ class BoundaryValueAnalyzer(_information: InformationExtractor, isPairwise: Bool
                 var trueValue: Long = 0
                 var falseValue: Long = 0
                 val value: Long
-                if (Util.isNumber(left!!)) {
+                if (Util.isNumber(left)) {
                     value = java.lang.Long.parseLong(left)
                     when (operator) {
                         "<" -> {
@@ -160,11 +162,11 @@ class BoundaryValueAnalyzer(_information: InformationExtractor, isPairwise: Bool
         }
     }
 
-    private fun makeInputDataListWithPairwise(_information: InformationExtractor){
+    private fun makeInputDataListWithPairwise(){
         val pict = Pict()
         val model = Model()
         // 因子の取得
-        val parameters = _information.parameters
+        val parameters = functionDefinition.parameters
 
         // ファクターの追加
         for (prm in parameters){
@@ -186,8 +188,8 @@ class BoundaryValueAnalyzer(_information: InformationExtractor, isPairwise: Bool
         }
     }
 
-    private fun makeInputDataList(_information: InformationExtractor) {
-        val parameters = _information.parameters
+    private fun makeInputDataList() {
+        val parameters = functionDefinition.parameters
 
         // 最初の一つ目
         val firstPrm = parameters[0]
@@ -211,7 +213,7 @@ class BoundaryValueAnalyzer(_information: InformationExtractor, isPairwise: Bool
                     inputDataListInitialState.forEach { inputDataOriginal ->
                         //inputDataを複製
                         val inputData = HashMap<String, Long>()
-                        inputDataOriginal.forEach({ key, value -> inputData[key] = value })
+                        inputDataOriginal.forEach { (key, value) -> inputData[key] = value }
                         inputDataListTmp.add(inputData)
                     }
                     inputDataList.addAll(inputDataListTmp)

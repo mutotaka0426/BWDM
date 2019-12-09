@@ -22,7 +22,7 @@ internal class InformationExtractorTest {
 
         @Test
         fun getFunctionName() {
-            assertEquals("うるう年判定仕様", informationExtractor.functionName)
+            assertEquals("うるう年判定仕様", informationExtractor.explicitFunctions["うるう年判定仕様"]?.functionName)
         }
 
         @Test

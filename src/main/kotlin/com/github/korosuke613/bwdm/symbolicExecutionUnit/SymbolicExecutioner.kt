@@ -6,6 +6,7 @@ import com.github.korosuke613.bwdm.Util
 import com.microsoft.z3.*
 
 import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.ExpectedOutputDataGenerator.Companion.makeParsedCondition
+import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
 
 import java.util.ArrayList
 import java.util.HashMap
@@ -13,7 +14,7 @@ import java.util.function.Consumer
 
 typealias InputData = HashMap<String, String>
 
-class SymbolicExecutioner internal constructor(private val ie: InformationExtractor) {
+class SymbolicExecutioner internal constructor(private val functionDefinition: FunctionDefinition) {
     //各条件式は左辺右辺のうち片方のみが変数であるという制約付き
 
     //複数の変数があっても、条件式次第で一つの変数の値次第で、
@@ -26,7 +27,7 @@ class SymbolicExecutioner internal constructor(private val ie: InformationExtrac
     private val ctx: Context = Context()
 
     init {
-        val conditionAndReturnValueList = ie.conditionAndReturnValueList
+        val conditionAndReturnValueList = functionDefinition.conditionAndReturnValueList
 
         conditionAndReturnValueList.conditionAndReturnValues.forEach(Consumer<ConditionAndReturnValue> {
             this.doSymbolicExecution(it)
@@ -87,8 +88,8 @@ class SymbolicExecutioner internal constructor(private val ie: InformationExtrac
             conditionUnion = ctx.mkAnd(conditionUnion, expr)
         }
         expr = null
-        var parameters = ie.parameters
-        val argumentTypes = ie.argumentTypes
+        var parameters = functionDefinition.parameters
+        val argumentTypes = functionDefinition.argumentTypes
 
         for (i in parameters.indices) {
             if (argumentTypes[i] != "int") { //int型なら0以上の制限はいらない
@@ -104,7 +105,7 @@ class SymbolicExecutioner internal constructor(private val ie: InformationExtrac
         if (solver.check() == Status.SATISFIABLE) {
             val m = solver.model
 
-            parameters = ie.parameters
+            parameters = functionDefinition.parameters
             val inputData = InputData()
             parameters.forEach { p -> inputData[p] = m.evaluate(ctx.mkIntConst(p), false).toString() }
 

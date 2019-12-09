@@ -32,7 +32,7 @@ constructor(val vdmFilePath: String) {
 
     val instanceVariables: LinkedHashMap<String, TCInstanceVariableDefinition> = LinkedHashMap()
     val explicitOperations: LinkedHashMap<String, TCExplicitOperationDefinition> = LinkedHashMap()
-    private val explicitFunctions: LinkedHashMap<String, Function> = LinkedHashMap()
+    val explicitFunctions: LinkedHashMap<String, FunctionDefinition> = LinkedHashMap()
 
     init {
         val vdmFile = File(vdmFilePath)
@@ -66,7 +66,7 @@ constructor(val vdmFilePath: String) {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                val function = Function(tcFunctionDefinition)
+                val function = FunctionDefinition(tcFunctionDefinition)
                 explicitFunctions[function.functionName] = function
             }
         }

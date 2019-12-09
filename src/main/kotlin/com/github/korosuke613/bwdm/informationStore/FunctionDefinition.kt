@@ -7,20 +7,20 @@ import com.fujitsu.vdmj.tc.patterns.TCIdentifierPattern
 import com.github.korosuke613.bwdm.Util
 import java.io.IOException
 
-class Function
+class FunctionDefinition
 constructor(tcFunctionDefinition: TCExplicitFunctionDefinition) {
     private val ifConditionBodiesInCameForward: ArrayList<String> = ArrayList()
-    private lateinit var compositeParameters: ArrayList<String>
+    lateinit var compositeParameters: ArrayList<String>
     private var ifExpressionBody: String = ""
-    private var conditionAndReturnValueList: ConditionAndReturnValueList
+    var conditionAndReturnValueList: ConditionAndReturnValueList
     val parameters: ArrayList<String> = ArrayList()
-    private val argumentTypes: ArrayList<String> = ArrayList()
+    val argumentTypes: ArrayList<String> = ArrayList()
 
     /**
      * a parameter to ArrayList of HashMaps that is parsed each if-expression.
      * ArrayList of HashMap of parsed if-expr.
      */
-    private val ifConditions: HashMap<String, ArrayList<HashMap<String, String>>> = HashMap()
+    val ifConditions: HashMap<String, ArrayList<HashMap<String, String>>> = HashMap()
 
     /**
      * type of return value

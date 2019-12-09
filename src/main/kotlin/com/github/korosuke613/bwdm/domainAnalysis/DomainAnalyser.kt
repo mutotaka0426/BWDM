@@ -3,6 +3,7 @@ package com.github.korosuke613.bwdm.domainAnalysis
 import com.github.korosuke613.bwdm.Util
 import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.ExpectedOutputDataGenerator
 import com.github.korosuke613.bwdm.informationStore.ConditionAndReturnValueList
+import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
 import com.github.korosuke613.bwdm.informationStore.IfElseExprSyntaxTree
 import com.github.korosuke613.bwdm.informationStore.InformationExtractor
 import com.microsoft.z3.ArithExpr
@@ -12,7 +13,7 @@ import com.microsoft.z3.Status
 import java.util.*
 import kotlin.collections.ArrayList
 
-class DomainAnalyser(private val ie: InformationExtractor){
+class DomainAnalyser(private val functionDefinition: FunctionDefinition){
     val domains: ArrayList<DomainPoints> = ArrayList()
     val inputDataList: ArrayList<HashMap<String, Long>> = ArrayList()
     val expectedOutputDataGenerator: ExpectedOutputDataGenerator
@@ -21,7 +22,7 @@ class DomainAnalyser(private val ie: InformationExtractor){
     private val ctx: Context = Context()
 
     init {
-        for(condition in ie.conditionAndReturnValueList.conditionAndReturnValues) {
+        for(condition in functionDefinition.conditionAndReturnValueList.conditionAndReturnValues) {
             val domainPoints = DomainPoints(condition.returnStr.toString())
             generateInPoints(domainPoints, condition)
             generateOnPoints(domainPoints, condition)
@@ -31,8 +32,8 @@ class DomainAnalyser(private val ie: InformationExtractor){
         }
         createInputDataList()
         expectedOutputDataGenerator = ExpectedOutputDataGenerator(
-                ie,
-                Objects.requireNonNull<IfElseExprSyntaxTree>(ie.ifElseExprSyntaxTree).root,
+                functionDefinition,
+                Objects.requireNonNull<IfElseExprSyntaxTree>(functionDefinition.ifElseExprSyntaxTree).root,
                 inputDataList
         )
     }
@@ -74,7 +75,7 @@ class DomainAnalyser(private val ie: InformationExtractor){
         buf.append("-- $title\n")
         for ((k, p) in points.toSortedMap()) {
             buf.append("No.").append(i + 1).append(" : ")
-            for (prm in ie.parameters) {
+            for (prm in functionDefinition.parameters) {
                 buf.append(p.factors[prm]).append(" ")
             }
             buf.append("-> ").append(expectedOutputDataGenerator.expectedOutputDataList[expectedCount]).append("\n")
@@ -234,9 +235,9 @@ class DomainAnalyser(private val ie: InformationExtractor){
         }
         expr = null
 
-        for (i in ie.parameters.indices) {
-            if (ie.argumentTypes[i] != "int") { //int型なら0以上の制限はいらない
-                val _expr =  makeInequalityExpr("0", ">", ie.parameters[i], true)
+        for (i in functionDefinition.parameters.indices) {
+            if (functionDefinition.argumentTypes[i] != "int") { //int型なら0以上の制限はいらない
+                val _expr =  makeInequalityExpr("0", ">", functionDefinition.parameters[i], true)
                 if(expr == null){
                     expr = _expr
                 }else {
@@ -253,7 +254,7 @@ class DomainAnalyser(private val ie: InformationExtractor){
         val point = Point(name, type, bools)
         if (solver.check() == Status.SATISFIABLE) {
             val m = solver.model
-            ie.parameters.forEach { p ->
+            functionDefinition.parameters.forEach { p ->
                 val v = m.evaluate(ctx.mkIntConst(p), false)
                 point.factors[p] = v.toString().toInt()
             }
