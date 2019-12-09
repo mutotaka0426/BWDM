@@ -19,7 +19,7 @@ internal class IfElseExprSyntaxTreeTest {
     }
 
     @Test
-    fun ほげ() {
+    fun 謎のテストなぜならクラスにインスタンスがあるかどうかしか見てないから() {
         assert(IfElseExprSyntaxTree::class.java.isInstance(ifElseExprSyntaxTree))
     }
 
@@ -30,8 +30,9 @@ internal class IfElseExprSyntaxTreeTest {
     companion object {
         private var ifElseExprSyntaxTree: IfElseExprSyntaxTree? = null
         @BeforeAll
+        @JvmStatic
         @Throws(LexException::class, ParserException::class)
-        fun initAll() {
+        internal fun initAll() {
             val lexer = LexTokenReader(
                     File("./vdm_files/Arg2_Japanese.vdmpp"), Dialect.VDM_PP)
             val parser = DefinitionReader(lexer)

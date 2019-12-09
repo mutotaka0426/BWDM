@@ -35,7 +35,7 @@ constructor(val vdmFilePath: String) {
     private var ifExpressionBody: String? = null
     val ifConditionBodiesInCameForward: ArrayList<String>
 
-    val conditionAndReturnValueList: ConditionAndReturnValueList
+    lateinit var conditionAndReturnValueList: ConditionAndReturnValueList
     val argumentTypes: ArrayList<String> //int, nat, nat1
     val parameters: ArrayList<String> //a, b, c
     lateinit var compositeParameters: ArrayList<String>
@@ -139,9 +139,10 @@ constructor(val vdmFilePath: String) {
             }
         }
 
-        ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody!!)
-
-        conditionAndReturnValueList = ConditionAndReturnValueList(ifElseExprSyntaxTree!!.root)
+        if(functionName != null) {
+            ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody!!)
+            conditionAndReturnValueList = ConditionAndReturnValueList(ifElseExprSyntaxTree!!.root)
+        }
     }/* Initializing fields*/
 
     private fun parseIfConditions() {
