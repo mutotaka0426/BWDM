@@ -10,7 +10,10 @@ import com.fujitsu.vdmj.syntax.DefinitionReader
 import com.fujitsu.vdmj.syntax.ParserException
 import com.fujitsu.vdmj.tc.definitions.TCDefinition
 import com.fujitsu.vdmj.tc.definitions.TCExplicitFunctionDefinition
+import com.fujitsu.vdmj.tc.definitions.TCExplicitOperationDefinition
 import com.fujitsu.vdmj.tc.patterns.TCIdentifierPattern
+import com.fujitsu.vdmj.tc.definitions.TCInstanceVariableDefinition
+import com.fujitsu.vdmj.tc.lex.TCNameToken
 import java.io.File
 import java.io.IOException
 
@@ -36,6 +39,8 @@ constructor(val vdmFilePath: String) {
     val argumentTypes: ArrayList<String> //int, nat, nat1
     val parameters: ArrayList<String> //a, b, c
     lateinit var compositeParameters: ArrayList<String>
+    val instanceVariables: LinkedHashMap<String, TCInstanceVariableDefinition> = LinkedHashMap()
+    val explicitOperations: LinkedHashMap<String, TCExplicitOperationDefinition> = LinkedHashMap()
 
     /**
      * type of return value
@@ -48,6 +53,7 @@ constructor(val vdmFilePath: String) {
 
     var functionName: String? = null
         private set
+
 
     /**
      * a parameter to ArrayList of HashMaps that is parsed each if-expression.
@@ -76,6 +82,24 @@ constructor(val vdmFilePath: String) {
         val astDefinitions = parser.readDefinitions()
 
         astDefinitions.forEach { astDefinition: ASTDefinition ->
+            if(astDefinition.kind() == "instance variable"){
+                lateinit var tcInstanceVariableDefinition: TCInstanceVariableDefinition
+                try {
+                    tcInstanceVariableDefinition = ClassMapper.getInstance(TCDefinition.MAPPINGS).init().convert<TCInstanceVariableDefinition>(astDefinition)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                instanceVariables[tcInstanceVariableDefinition.name.toString()] = tcInstanceVariableDefinition
+            }
+            if (astDefinition.kind() == "explicit operation"){
+                lateinit var tcExplicitOperationDefinition: TCExplicitOperationDefinition
+                try {
+                    tcExplicitOperationDefinition = ClassMapper.getInstance(TCDefinition.MAPPINGS).init().convert<TCExplicitOperationDefinition>(astDefinition)
+                }catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                explicitOperations[tcExplicitOperationDefinition.name.toString()] = tcExplicitOperationDefinition
+            }
             if (astDefinition.kind() == "explicit function") {
                 var tcFunctionDefinition: TCExplicitFunctionDefinition? = null
                 try {

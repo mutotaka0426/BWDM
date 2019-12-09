@@ -1,0 +1,24 @@
+class Nest
+
+instance variables
+
+private rule1 : nat := 4;
+private rule2 : nat := 100;
+private rule3 : nat := 400;
+
+operations
+
+public うるう年判定仕様 : int ==> seq of char
+  うるう年判定仕様(年) ==
+    if(年 mod rule1 = 0) then
+      if(年 mod rule2 = 0) then
+        if(年 mod rule3 = 0) then
+          return "うるう年"
+        else
+          return "平年"
+      else
+        return "うるう年"
+    else
+      return "平年";
+
+end Nest
