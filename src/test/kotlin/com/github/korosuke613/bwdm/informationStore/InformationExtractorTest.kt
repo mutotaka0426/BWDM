@@ -53,7 +53,7 @@ internal class InformationExtractorTest {
 
         @Test
         fun getInstanceVariables() {
-            val expected: Array<String> = arrayOf("rule1", "rule2", "rule3")
+            val expected: Array<String> = arrayOf("rule1", "rule2", "rule3", "current_year")
 
             var i = 0
             informationExtractor.instanceVariables.values.forEach { instanceVariable: TCInstanceVariableDefinition ->
