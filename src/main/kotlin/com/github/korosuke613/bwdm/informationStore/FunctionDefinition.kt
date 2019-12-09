@@ -108,7 +108,10 @@ constructor(private val tcFunctionDefinition: TCExplicitFunctionDefinition) {
             compositeParameters.forEach { parameter ->
                 if (left == parameter) {
                     another_mod_parse(condition, parameter)
-                }else if(condition.contains(parameter)){
+                }
+            }
+            parameters.forEach { parameter ->
+                if(condition.contains(parameter)){
                     mod_parse(condition, parameter)
                 }
             }
