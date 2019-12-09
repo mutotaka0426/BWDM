@@ -8,12 +8,16 @@ import com.github.korosuke613.bwdm.Util
 import java.io.IOException
 
 class FunctionDefinition
-constructor(tcFunctionDefinition: TCExplicitFunctionDefinition) {
+constructor(private val tcFunctionDefinition: TCExplicitFunctionDefinition) {
     private val ifConditionBodiesInCameForward: ArrayList<String> = ArrayList()
     lateinit var compositeParameters: ArrayList<String>
     private var ifExpressionBody: String = ""
     var conditionAndReturnValueList: ConditionAndReturnValueList
+
+    // 仮引数のリスト
     val parameters: ArrayList<String> = ArrayList()
+
+    // 引数の型リスト
     val argumentTypes: ArrayList<String> = ArrayList()
 
     /**
@@ -35,10 +39,13 @@ constructor(tcFunctionDefinition: TCExplicitFunctionDefinition) {
         private set
 
     init {
+        // 引数の型を登録
         val tcFunctionType = tcFunctionDefinition.type
+        tcFunctionType.parameters.forEach { e -> argumentTypes.add(e.toString()) }
+
+        // IfElseを構文解析
         val tcExpression = tcFunctionDefinition.body
         ifExpressionBody = tcExpression.toString()
-        tcFunctionType.parameters.forEach { e -> argumentTypes.add(e.toString()) }
 
         try {
             ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody)
@@ -51,12 +58,9 @@ constructor(tcFunctionDefinition: TCExplicitFunctionDefinition) {
         }
 
         //parsing for parameters
-        val tcPatternListList = tcFunctionDefinition.paramPatternList
-        val tcPatternList = tcPatternListList.firstElement()
-        for (aTcPatternList in tcPatternList) {
-            val tcIdentifierPattern = aTcPatternList as TCIdentifierPattern
-            val parameter = tcIdentifierPattern.toString()
-            parameters.add(parameter)
+        val tcPatternList = tcFunctionDefinition.paramPatternList[0]  // 仮引数
+        for (parameter in tcPatternList) {
+            parameters.add(parameter.toString())
         }
         parseIfConditions()
 
