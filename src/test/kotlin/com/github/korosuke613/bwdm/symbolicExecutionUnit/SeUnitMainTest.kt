@@ -22,8 +22,15 @@ internal class SeUnitMainTest {
         }
 
         @Test
-        fun getFunctionName() {
-            assertEquals("problemFunction", informationExtractor.explicitFunctions["problemFunction"]?.functionName)
+        fun getAllTestcasesBySeTest() {
+            val except = """
+                No.1 : 96 -> "amod4=0anda>92"
+                No.2 : 4 -> "amod4=0and!a>92"
+                No.3 : 1 -> "!amod4=0"
+                
+            """.trimIndent()
+            val actual = seUnitMain.allTestcasesBySe
+            assertEquals(except, actual)
         }
     }
 }
