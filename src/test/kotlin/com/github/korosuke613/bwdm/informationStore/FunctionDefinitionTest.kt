@@ -67,11 +67,14 @@ internal class FunctionDefinitionTest {
     }
 
     @Test
-    fun ifConditionsTest(){
+    fun ifConditionsModTest(){
         val values = arrayListOf(
-                arrayListOf("年mod4", "0", "="),
-                arrayListOf("年mod100", "0", "="),
-                arrayListOf("年mod400", "0", "=")
+                arrayListOf("年", "4", "mod"),
+                arrayListOf("年", "4", "mod"),
+                arrayListOf("年", "100", "mod"),
+                arrayListOf("年", "100", "mod"),
+                arrayListOf("年", "400", "mod"),
+                arrayListOf("年", "400", "mod")
                 )
 
         var i = 0
