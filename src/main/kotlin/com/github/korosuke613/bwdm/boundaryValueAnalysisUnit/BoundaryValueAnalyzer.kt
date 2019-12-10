@@ -9,6 +9,7 @@ import java.util.stream.Collectors
 import com.github.korosuke613.pict4java.Factor
 import com.github.korosuke613.pict4java.Model
 import com.github.korosuke613.pict4java.Pict
+import java.lang.IllegalArgumentException
 
 typealias BoundaryValueList = HashMap<String, ArrayList<Long>>
 typealias InputDataList = ArrayList<HashMap<String, Long>>
@@ -167,6 +168,14 @@ constructor(private val functionDefinition: FunctionDefinition, isPairwise: Bool
         val model = Model()
         // 因子の取得
         val parameters = functionDefinition.parameters
+
+        // 引数の数が2個以下の場合、ペアワイズ法が適用できないので、
+        // 例外を出す
+        if (parameters.size <= 2){
+            throw IllegalArgumentException(
+                    "関数${functionDefinition.functionName}が受け取る引数の数が少ないのでペアワイズ法は適用できません。"
+            )
+        }
 
         // ファクターの追加
         for (prm in parameters){

@@ -1,19 +1,17 @@
 package com.github.korosuke613.bwdm.boundaryValueAnalysisUnit
 
-import com.github.korosuke613.bwdm.domainAnalysis.DomainAnalyser
 import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
 import com.github.korosuke613.bwdm.informationStore.IfElseExprSyntaxTree
-import com.github.korosuke613.bwdm.informationStore.InformationExtractor
 import java.util.*
 
-class BvaUnitMain(private val ie: FunctionDefinition, isPairwise: Boolean) {
+class BvaUnitMain(private val functionDefinition: FunctionDefinition, isPairwise: Boolean) {
     private val expectedOutputDataGenerator: ExpectedOutputDataGenerator
-    val boundaryValueAnalyzer: BoundaryValueAnalyzer = BoundaryValueAnalyzer(ie, isPairwise)
+    val boundaryValueAnalyzer: BoundaryValueAnalyzer = BoundaryValueAnalyzer(functionDefinition, isPairwise)
 
     val allTestcasesByBv: String
         get() {
             val buf = StringBuilder()
-            val parameters = ie.parameters
+            val parameters = functionDefinition.parameters
             val inputDataList = boundaryValueAnalyzer.inputDataList
             val expectedOutputDataList = expectedOutputDataGenerator.expectedOutputDataList
 
@@ -32,8 +30,8 @@ class BvaUnitMain(private val ie: FunctionDefinition, isPairwise: Boolean) {
 
     init {
         expectedOutputDataGenerator = ExpectedOutputDataGenerator(
-                ie,
-                Objects.requireNonNull<IfElseExprSyntaxTree>(ie.ifElseExprSyntaxTree).root,
+                functionDefinition,
+                Objects.requireNonNull<IfElseExprSyntaxTree>(functionDefinition.ifElseExprSyntaxTree).root,
                 boundaryValueAnalyzer.inputDataList
         )
     }
