@@ -13,6 +13,7 @@ jobs:
           java-version: 1.8
       - name: Build with Gradle
         run: |
+          LD_LIBRARY_PATH=./libs; export LD_LIBRARY_PATH
           ./gradlew test jacocoTestReport
       - uses: codecov/codecov-action@v1
         with:
