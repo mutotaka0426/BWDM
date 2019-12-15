@@ -4,5 +4,5 @@ coverage:
   range: "70...100"
 
 ignore:
-  - "**/workspace/**/*"
-  - "**/external/**/*"
+  - "src/main/java/workspace"
+  - "src/main/java/external"
