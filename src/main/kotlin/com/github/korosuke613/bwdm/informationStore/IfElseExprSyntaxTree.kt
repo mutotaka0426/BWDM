@@ -22,7 +22,9 @@ class IfElseExprSyntaxTree(_ifExpressionBoby: String) {
     private fun shapeIfElseBody(_ifElseBody: String) {
         ifElses = ArrayList()
         var ifElseBody = _ifElseBody
-        ifElseBody = ifElseBody.replace("(", "").replace(")", "").replace("if", "if\n").replace("else", "else\n").replace("then", "").replace("\n\n", "\n")
+        ifElseBody = ifElseBody.replace("(", "").replace(")", "")
+                .replace("if", "if\n").replace("else", "\nelse\n")
+                .replace("then", "").replace("\n\n", "\n")
         ifElseBody = "$ifElseBody\n;"
         ifElses = mutableListOf(*ifElseBody.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
         ifElses.forEachIndexed { index, it ->
@@ -30,6 +32,9 @@ class IfElseExprSyntaxTree(_ifExpressionBoby: String) {
             if (it.contains("""\s+(if|else|elseif)\s*""".toRegex()) ||
                     it.contains("""\s*(if|else|elseif)\s+""".toRegex())) {
                 ifElses[index] = it.replace(" ", "")
+            }
+            if (it.contains("""return\s.+""".toRegex())) {
+                ifElses[index] = it.replace("return ", "")
             }
         }
     }

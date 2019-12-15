@@ -28,7 +28,7 @@ constructor(val vdmFilePath: String) {
     //private val ifConditionBodies: HashMap<String, ArrayList<HashMap<String, String>>>
     val constantValues: LinkedHashMap<String, TCValueDefinition> = LinkedHashMap()
     val instanceVariables: LinkedHashMap<String, TCInstanceVariableDefinition> = LinkedHashMap()
-    val explicitOperations: LinkedHashMap<String, TCExplicitOperationDefinition> = LinkedHashMap()
+    val explicitOperations: LinkedHashMap<String, OperationDefinition> = LinkedHashMap()
     val explicitFunctions: LinkedHashMap<String, FunctionDefinition> = LinkedHashMap()
 
     init {
@@ -70,7 +70,8 @@ constructor(val vdmFilePath: String) {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                explicitOperations[tcExplicitOperationDefinition.name.toString()] = tcExplicitOperationDefinition
+                val operation = OperationDefinition(tcExplicitOperationDefinition, instanceVariables, constantValues)
+                explicitOperations[operation.operationName] = operation
             }
             if (astDefinition.kind() == "explicit function") {
                 lateinit var tcFunctionDefinition: TCExplicitFunctionDefinition

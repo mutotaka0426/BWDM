@@ -46,7 +46,7 @@ internal class InformationExtractorTest {
 
             var i = 0
             informationExtractor.explicitOperations.values.forEach { _ ->
-                assertEquals(expected[i], informationExtractor.explicitOperations[expected[i]]?.name.toString())
+                assertEquals(expected[i], informationExtractor.explicitOperations[expected[i]]!!.operationName)
                 i++
             }
         }

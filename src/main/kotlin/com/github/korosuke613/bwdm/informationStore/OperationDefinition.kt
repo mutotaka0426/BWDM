@@ -3,25 +3,32 @@ package com.github.korosuke613.bwdm.informationStore
 import com.fujitsu.vdmj.lex.LexException
 import com.fujitsu.vdmj.syntax.ParserException
 import com.fujitsu.vdmj.tc.definitions.TCExplicitOperationDefinition
+import com.fujitsu.vdmj.tc.definitions.TCInstanceVariableDefinition
+import com.fujitsu.vdmj.tc.definitions.TCValueDefinition
 import com.github.korosuke613.bwdm.Util
 import java.io.IOException
 
 class OperationDefinition
-constructor(private val tcOperationDefinition: TCExplicitOperationDefinition) {
+constructor(private val tcOperationDefinition: TCExplicitOperationDefinition,
+            private val instanceVariables: LinkedHashMap<String, TCInstanceVariableDefinition>,
+            constantValues: LinkedHashMap<String, TCValueDefinition>) {
     private val ifConditionBodiesInCameForward: ArrayList<String> = ArrayList()
 
     // +でつながった変数の式
-    lateinit var compositeParameters: ArrayList<String>
+    var compositeParameters: ArrayList<String> = arrayListOf()
 
 
     private var ifExpressionBody: String = ""
-    var conditionAndReturnValueList: ConditionAndReturnValueList
+    var conditionAndReturnValueList: ConditionAndReturnValueList? = null
 
     // 仮引数のリスト
     val parameters: ArrayList<String> = ArrayList()
 
     // 引数の型リスト
     val argumentTypes: ArrayList<String> = ArrayList()
+
+    // 利用しているメンバ変数のリスト
+    val usedInstanceVariables: ArrayList<String> = ArrayList()
 
     /**
      * a parameter to ArrayList of HashMaps that is parsed each if-expression.
@@ -41,6 +48,8 @@ constructor(private val tcOperationDefinition: TCExplicitOperationDefinition) {
     var operationName: String = tcOperationDefinition.name.name
         private set
 
+    var isSetter: Boolean = false
+
     init {
         // 引数の型を登録
         val tcOperationType = tcOperationDefinition.type
@@ -52,6 +61,8 @@ constructor(private val tcOperationDefinition: TCExplicitOperationDefinition) {
 
         try {
             ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody)
+        } catch (e: NotIfNodeException) {
+            isSetter = true
         } catch (e: ParserException) {
             e.printStackTrace()
         } catch (e: LexException) {
@@ -60,17 +71,31 @@ constructor(private val tcOperationDefinition: TCExplicitOperationDefinition) {
             e.printStackTrace()
         }
 
-        //parsing for parameters
-        val tcPatternList = tcOperationDefinition.paramPatternList[0]  // 仮引数
-        for (parameter in tcPatternList) {
-            parameters.add(parameter.toString())
+        if (!isSetter) {
+            //parsing for parameters
+            val tcPatternList = tcOperationDefinition.paramPatternList[0]  // 仮引数
+            setUsedInstanceVariables()
+
+            for (parameter in tcPatternList) {
+                parameters.add(parameter.toString())
+            }
+            for (variable in usedInstanceVariables) {
+                parameters.add(variable)
+            }
+
+            parseIfConditions()
+
+            ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody)
+            conditionAndReturnValueList = ConditionAndReturnValueList(ifElseExprSyntaxTree!!.root)
         }
+    }
 
-
-        parseIfConditions()
-
-        ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody)
-        conditionAndReturnValueList = ConditionAndReturnValueList(ifElseExprSyntaxTree!!.root)
+    private fun setUsedInstanceVariables() {
+        instanceVariables.forEach {
+            if (ifExpressionBody.contains(it.key)) {
+                usedInstanceVariables.add(it.key)
+            }
+        }
     }
 
     private fun parseIfConditions() {
@@ -121,7 +146,7 @@ constructor(private val tcOperationDefinition: TCExplicitOperationDefinition) {
         val operator = Util.getOperator(condition)
         val indexOfOperator = condition.indexOf(operator)
         val hm = HashMap<String, String>()
-        hm["left"] = condition.substring(0, indexOfOperator)
+        hm["left"] = condition.substring(0, indexOfOperator).replace(" ", "")
         hm["operator"] = operator
 
         //right-hand and surplus need branch depending on mod or other.
@@ -134,10 +159,10 @@ constructor(private val tcOperationDefinition: TCExplicitOperationDefinition) {
         fun modJudge(condition: String, operator: String, indexOfOperator: Int, hm: HashMap<String, String>) {
             if (operator == "mod") {
                 val indexOfEqual = condition.indexOf("=")
-                hm["right"] = condition.substring(indexOfOperator + 3, indexOfEqual)
-                hm["surplus"] = condition.substring(indexOfEqual + 1)
+                hm["right"] = condition.substring(indexOfOperator + 3, indexOfEqual).replace(" ", "")
+                hm["surplus"] = condition.substring(indexOfEqual + 1).replace(" ", "")
             } else {
-                hm["right"] = condition.substring(indexOfOperator + operator.length)
+                hm["right"] = condition.substring(indexOfOperator + operator.length).replace(" ", "")
             }
         }
     }
