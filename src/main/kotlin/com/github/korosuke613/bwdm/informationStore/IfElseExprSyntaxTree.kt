@@ -1,7 +1,6 @@
 package com.github.korosuke613.bwdm.informationStore
 
-import java.util.ArrayList
-import java.util.Arrays
+import java.util.*
 
 class IfElseExprSyntaxTree(_ifExpressionBoby: String) {
 
@@ -32,6 +31,9 @@ class IfElseExprSyntaxTree(_ifExpressionBoby: String) {
     //if式構文木を作る
     private fun generateIfElseSyntaxTree() {
         //rootの準備
+        if (ifElses[0] != "if") {
+            throw NotIfNodeException("if文ではありません")
+        }
         count++ //最初はifなので無視
         val currentLine = ifElses[count++] //これは最初のifの条件式
         //多分
