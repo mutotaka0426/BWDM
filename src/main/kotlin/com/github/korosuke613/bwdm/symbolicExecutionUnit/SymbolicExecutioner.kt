@@ -1,32 +1,28 @@
 package com.github.korosuke613.bwdm.symbolicExecutionUnit
 
-import com.github.korosuke613.bwdm.informationStore.InformationExtractor
-import com.github.korosuke613.bwdm.informationStore.ConditionAndReturnValueList.ConditionAndReturnValue
+import com.github.korosuke613.bwdm.Analyzer
 import com.github.korosuke613.bwdm.Util
-import com.microsoft.z3.*
-
 import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.ExpectedOutputDataGenerator.Companion.makeParsedCondition
-
-import java.util.ArrayList
-import java.util.HashMap
+import com.github.korosuke613.bwdm.informationStore.ConditionAndReturnValueList.ConditionAndReturnValue
+import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
+import com.microsoft.z3.*
+import java.util.*
 import java.util.function.Consumer
 
-typealias InputData = HashMap<String, String>
-
-class SymbolicExecutioner internal constructor(private val ie: InformationExtractor) {
+class SymbolicExecutioner
+(functionDefinition: FunctionDefinition) : Analyzer<String>(functionDefinition) {
     //各条件式は左辺右辺のうち片方のみが変数であるという制約付き
 
     //複数の変数があっても、条件式次第で一つの変数の値次第で、
     //残りの変数の値はどうでもいい場合がある
     //その場合、z3はevaluateした場合、変数名をそのまま返すので、
     //<String, String>としてある
-    val inputDataList: ArrayList<InputData> = ArrayList()
 
     private val expectedOutputDataList: ArrayList<String> = ArrayList()
     private val ctx: Context = Context()
 
     init {
-        val conditionAndReturnValueList = ie.conditionAndReturnValueList
+        val conditionAndReturnValueList = functionDefinition.conditionAndReturnValueList
 
         conditionAndReturnValueList.conditionAndReturnValues.forEach(Consumer<ConditionAndReturnValue> {
             this.doSymbolicExecution(it)
@@ -87,8 +83,8 @@ class SymbolicExecutioner internal constructor(private val ie: InformationExtrac
             conditionUnion = ctx.mkAnd(conditionUnion, expr)
         }
         expr = null
-        var parameters = ie.parameters
-        val argumentTypes = ie.argumentTypes
+        var parameters = functionDefinition.parameters
+        val argumentTypes = functionDefinition.argumentTypes
 
         for (i in parameters.indices) {
             if (argumentTypes[i] != "int") { //int型なら0以上の制限はいらない
@@ -104,8 +100,8 @@ class SymbolicExecutioner internal constructor(private val ie: InformationExtrac
         if (solver.check() == Status.SATISFIABLE) {
             val m = solver.model
 
-            parameters = ie.parameters
-            val inputData = InputData()
+            parameters = functionDefinition.parameters
+            val inputData = HashMap<String, String>()
             parameters.forEach { p -> inputData[p] = m.evaluate(ctx.mkIntConst(p), false).toString() }
 
             inputDataList.add(inputData)

@@ -1,41 +1,26 @@
 package com.github.korosuke613.bwdm.boundaryValueAnalysisUnit
 
-import com.github.korosuke613.bwdm.domainAnalysis.DomainAnalyser
+import com.github.korosuke613.bwdm.UnitMain
+import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
 import com.github.korosuke613.bwdm.informationStore.IfElseExprSyntaxTree
-import com.github.korosuke613.bwdm.informationStore.InformationExtractor
 import java.util.*
 
-class BvaUnitMain(private val ie: InformationExtractor, isPairwise: Boolean) {
+class BvaUnitMain
+(functionDefinition: FunctionDefinition, isPairwise: Boolean) : UnitMain<Long>(functionDefinition) {
     private val expectedOutputDataGenerator: ExpectedOutputDataGenerator
-    val boundaryValueAnalyzer: BoundaryValueAnalyzer = BoundaryValueAnalyzer(ie, isPairwise)
+    override val analyzer: BoundaryValueAnalyzer = BoundaryValueAnalyzer(functionDefinition, isPairwise)
 
-    val allTestcasesByBv: String
+    override val allTestCases: String
         get() {
-            val buf = StringBuilder()
-            val parameters = ie.parameters
-            val inputDataList = boundaryValueAnalyzer.inputDataList
-            val expectedOutputDataList = expectedOutputDataGenerator.expectedOutputDataList
-
-
-            for (i in expectedOutputDataList.indices) {
-                buf.append("No.").append(i + 1).append(" : ")
-                val inputData = inputDataList[i]
-                for (prm in parameters) {
-                    buf.append(inputData[prm]).append(" ")
-                }
-                buf.append("-> ").append(expectedOutputDataList[i]).append("\n")
-            }
-
-            return buf.toString()
+            return getTestCases(expectedOutputDataGenerator.expectedOutputDataList)
         }
 
     init {
         expectedOutputDataGenerator = ExpectedOutputDataGenerator(
-                ie,
-                Objects.requireNonNull<IfElseExprSyntaxTree>(ie.ifElseExprSyntaxTree).root,
-                boundaryValueAnalyzer.inputDataList
+                functionDefinition,
+                Objects.requireNonNull<IfElseExprSyntaxTree>(functionDefinition.ifElseExprSyntaxTree).root,
+                analyzer.inputDataList
         )
     }
-
 
 }

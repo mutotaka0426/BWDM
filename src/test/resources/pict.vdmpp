@@ -1,0 +1,35 @@
+class ProblemClass
+
+  functions
+
+  problemFunction : nat*nat*nat*nat*nat*nat*nat -> seq of char
+    problemFunction(a, b, c, d, e, f, g) ==
+      if(a > 4) then
+        if(b  <= 3) then
+          if(c < 13) then
+            if(b>11) then
+        	  "a>4 and b>11 and c<13"
+            else
+              if(e<4) then
+                "e<4"
+              else
+                if(g<11) then
+                  "g<11"
+                else
+       	          "a>4 and b>10 and c<13"
+          else
+            if(d>10) then
+              "d>10"
+            else
+              if(e<10) then
+    	        "e<10"
+    	      elseif(f>10) then
+    	        "f>10"
+              else
+    	        "a>4 and b>10 and c>=13"
+        else
+	        "a>4 and b<=10"
+      else
+        "a<=4";
+
+end ProblemClass

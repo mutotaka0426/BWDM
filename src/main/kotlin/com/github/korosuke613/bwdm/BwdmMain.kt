@@ -1,11 +1,12 @@
 package com.github.korosuke613.bwdm
 
-import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.BvaUnitMain
-import com.github.korosuke613.bwdm.informationStore.InformationExtractor
-import com.github.korosuke613.bwdm.symbolicExecutionUnit.SeUnitMain
-import com.github.korosuke613.bwdm.domainAnalysis.DomainAnalyser
 import com.fujitsu.vdmj.lex.LexException
 import com.fujitsu.vdmj.syntax.ParserException
+import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.BvaUnitMain
+import com.github.korosuke613.bwdm.domainAnalysis.DomainAnalyser
+import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
+import com.github.korosuke613.bwdm.informationStore.InformationExtractor
+import com.github.korosuke613.bwdm.symbolicExecutionUnit.SeUnitMain
 import external.TimeMeasure
 import org.kohsuke.args4j.CmdLineException
 import org.kohsuke.args4j.CmdLineParser
@@ -13,6 +14,7 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import java.util.*
+import kotlin.system.exitProcess
 
 
 /**
@@ -54,7 +56,7 @@ object BwdmMain {
             // 引数の型がおかしかったり、必須項目が足りないと例外
             System.err.println("Got Exception: " + e.message)
             parser.printUsage(System.err)
-            System.exit(1)
+            exitProcess(1)
         }
 
         //コマンド引数のパース
@@ -79,49 +81,52 @@ object BwdmMain {
         val tm = TimeMeasure()
         tm.start()
         extractInformation = InformationExtractor(shell.vdmFileName!!)
-        bvaUnitMain = BvaUnitMain(extractInformation, isPairwise = shell.showBvTestcasesWithPairwise)
-        seUnitMain = SeUnitMain(extractInformation)
-        domainAnalyser = DomainAnalyser(extractInformation)
-        if (shell.showStandardInfo) {
-            showStandardInfo()
-        }
-        if (shell.showBvsInfo) {
-            showBvsInfo()
-        }
-        if (shell.showSeConditionsInfo) {
-            showSeConditionInfo()
-        }
-        if (shell.showBvTestcases and !shell.showBvTestcasesWithPairwise) {
-            buf += "境界値分析によるテストケース\n"
-            buf += bvaUnitMain.allTestcasesByBv
-            buf += "\n"
-        } else if (shell.showBvTestcasesWithPairwise) {
-            buf += "境界値分析によるテストケース（ペアワイズ法適用）\n"
-            buf += bvaUnitMain.allTestcasesByBv
-            buf += "\n"
-        }
-        if (shell.showSeTestcases) {
-            buf += "記号実行によるテストケース\n"
-            buf += seUnitMain.allTestcasesBySe
-            buf += "\n"
-        }
-        if (shell.showDaTestcases) {
-            buf += "ドメインテストによるテストケース\n"
-            buf += domainAnalyser.allTestcasesByDa
-            buf += "\n"
-        }
-        if (shell.displayOnConsole) {
-            print(buf)
-        }
-        if (shell.writeFile) {
-            outputFile(extractInformation.vdmFilePath.replace("vdmpp", "tc"))
-        }else if (shell.writeFileName != null){
-            outputFile(shell.writeFileName!!)
-        }
+        extractInformation.explicitFunctions.values.forEach{ functionDefinition: FunctionDefinition ->
+            bvaUnitMain = BvaUnitMain(functionDefinition, isPairwise = shell.showBvTestcasesWithPairwise)
+            seUnitMain = SeUnitMain(functionDefinition)
+            if (shell.showStandardInfo) {
+                showStandardInfo(functionDefinition)
+            }
+            if (shell.showBvsInfo) {
+                showBvsInfo(functionDefinition)
+            }
+            if (shell.showSeConditionsInfo) {
+                showSeConditionInfo(functionDefinition)
+            }
+            if (shell.showBvTestcases and !shell.showBvTestcasesWithPairwise) {
+                buf += "境界値分析によるテストケース\n"
+                buf += bvaUnitMain.allTestCases
+                buf += "\n"
+            } else if (shell.showBvTestcasesWithPairwise) {
+                buf += "境界値分析によるテストケース（ペアワイズ法適用）\n"
+                buf += bvaUnitMain.allTestCases
+                buf += "\n"
+            }
+            if (shell.showSeTestcases) {
+                buf += "記号実行によるテストケース\n"
+                buf += seUnitMain.allTestCases
+                buf += "\n"
+            }
+            if (shell.showDaTestcases) {
+                buf += "ドメインテストによるテストケース\n"
+                domainAnalyser = DomainAnalyser(functionDefinition)
+                buf += domainAnalyser.allTestcasesByDa
+                buf += "\n"
+            }
+            if (shell.displayOnConsole) {
+                print(buf)
+            }
+            if (shell.writeFile) {
+                outputFile(extractInformation.vdmFilePath.replace("vdmpp", "tc"))
+            }else if (shell.writeFileName != null){
+                outputFile(shell.writeFileName!!)
+            }
 
-        tm.finish()
-        if (shell.printTimeMeasure) {
-            tm.printResult()
+            tm.finish()
+            if (shell.printTimeMeasure) {
+                tm.printResult()
+            }
+
         }
     }
 
@@ -150,42 +155,42 @@ object BwdmMain {
         fw.close()
     }
 
-    private fun showStandardInfo() {
-        buf += "ファイルパス : " + File(shell.vdmFileName).canonicalPath + "\n"
-        buf += "関数名 : " + extractInformation.functionName + "\n"
+    private fun showStandardInfo(functionDefinition: FunctionDefinition) {
+        buf += "ファイルパス : " + File(shell.vdmFileName!!).canonicalPath + "\n"
+        buf += "関数名 : " + functionDefinition.functionName + "\n"
         buf += "引数の型 : "
-        for (i in 0 until extractInformation.argumentTypes.size) {
-            buf += (extractInformation.parameters[i] + ":"
-                    + extractInformation.argumentTypes[i] + " ")
+        for (i in 0 until functionDefinition.argumentTypes.size) {
+            buf += (functionDefinition.parameters[i] + ":"
+                    + functionDefinition.argumentTypes[i] + " ")
         }
         buf += "\n"
-        buf += "戻り値の型 : " + extractInformation.returnValue + "\n"
-        val bvTestcaseNum = bvaUnitMain.boundaryValueAnalyzer.inputDataList.size
-        val seTestcaseNum = seUnitMain.se.inputDataList.size
+        buf += "戻り値の型 : " + functionDefinition.returnValue + "\n"
+        val bvTestcaseNum = bvaUnitMain.analyzer.inputDataList.size
+        val seTestcaseNum = seUnitMain.analyzer.inputDataList.size
         buf += "生成テストケース数 : " + (bvTestcaseNum + seTestcaseNum) + "件"
         buf += "(境界値分析:$bvTestcaseNum/記号実行:$seTestcaseNum)"
         buf += "\n\n"
     }
 
-    private fun showBvsInfo() {
+    private fun showBvsInfo(functionDefinition: FunctionDefinition) {
         buf += "各引数の境界値\n"
-        val bvsList: HashMap<*, *> = bvaUnitMain.boundaryValueAnalyzer.boundaryValueList
-        val parameters = extractInformation.parameters
+        val bvsList: HashMap<*, *> = bvaUnitMain.analyzer.boundaryValueList
+        val parameters = functionDefinition.parameters
         for (i in parameters.indices) {
             val currentPrm = parameters[i]
             val bvs: ArrayList<*> = bvsList[currentPrm] as ArrayList<*>
             buf += "$currentPrm : "
             for (bv in bvs) {
-                buf += bv.toString() + " "
+                buf += "$bv "
             }
             buf += "\n"
         }
         buf += "\n"
     }
 
-    private fun showSeConditionInfo() {
+    private fun showSeConditionInfo(functionDefinition: FunctionDefinition) {
         buf += "記号実行情報\n"
-        val carvList = extractInformation.conditionAndReturnValueList
+        val carvList = functionDefinition.conditionAndReturnValueList
         buf += "戻り値の数 : " + carvList.size + "\n"
 
         for (i in 0 until carvList.size) {

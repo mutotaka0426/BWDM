@@ -1,14 +1,13 @@
 package com.github.korosuke613.bwdm.boundaryValueAnalysisUnit
 
 import com.github.korosuke613.bwdm.Util
+import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
 import com.github.korosuke613.bwdm.informationStore.IfNode
-import com.github.korosuke613.bwdm.informationStore.InformationExtractor
 import com.github.korosuke613.bwdm.informationStore.Node
 import java.util.*
 
-typealias Expression = HashMap<String, String>
-
-class ExpectedOutputDataGenerator internal constructor(private val ie: InformationExtractor,
+class ExpectedOutputDataGenerator
+constructor(private val functionDefinition: FunctionDefinition,
                                                        _root: IfNode,
                                                        _inputDataList: ArrayList<HashMap<String, Long>>) {
     internal val expectedOutputDataList: ArrayList<String> = ArrayList()
@@ -31,7 +30,7 @@ class ExpectedOutputDataGenerator internal constructor(private val ie: Informati
             // 条件式のパース
             val parsedCondition = makeParsedCondition(_node.conditionOrReturnStr)
             //各条件式には一つの変数(parameter)しか登場しない
-            ie.compositeParameters.forEach { prm ->
+            functionDefinition.compositeParameters.forEach { prm ->
                 //条件式中の変数とprmが一致したらinputDataを代入して真偽判定
                 if (parsedCondition["right"] == prm || parsedCondition["left"] == prm) {
                     val conditionJudgeResult = judge(parsedCondition, _inputData, prm)
@@ -54,7 +53,7 @@ class ExpectedOutputDataGenerator internal constructor(private val ie: Informati
 
     }
 
-    private fun judge(_parsedCondition: Expression,
+    private fun judge(_parsedCondition: HashMap<String, String>,
                       _inputData: HashMap<String, Long>,
                       _parameter: String): Boolean {
         val result: Boolean
@@ -131,9 +130,9 @@ class ExpectedOutputDataGenerator internal constructor(private val ie: Informati
         for (i in _inputDataList.indices) {
             val currentInputData = _inputDataList[i]
 
-            for (j in 0 until ie.parameters.size) {
-                val currentTyp = ie.argumentTypes[j]
-                val currentPrm = ie.parameters[j]
+            for (j in 0 until functionDefinition.parameters.size) {
+                val currentTyp = functionDefinition.argumentTypes[j]
+                val currentPrm = functionDefinition.parameters[j]
                 val currentVl = currentInputData[currentPrm]
 
                 when (currentTyp) {
@@ -155,14 +154,14 @@ class ExpectedOutputDataGenerator internal constructor(private val ie: Informati
 
     companion object {
 
-        fun makeParsedCondition(_condition: String): Expression {
-            val parsedCondition = Expression()
+        fun makeParsedCondition(_condition: String): HashMap<String, String> {
+            val parsedCondition = HashMap<String, String>()
             val operator = Util.getOperator(_condition)
             val indexOfoperator = _condition.indexOf(operator)
 
             parsedCondition["left"] = _condition.substring(0, indexOfoperator)
             parsedCondition["operator"] = operator
-            InformationExtractor.modJudge(_condition, operator, indexOfoperator, parsedCondition)
+            FunctionDefinition.modJudge(_condition, operator, indexOfoperator, parsedCondition)
             return parsedCondition
         }
     }
