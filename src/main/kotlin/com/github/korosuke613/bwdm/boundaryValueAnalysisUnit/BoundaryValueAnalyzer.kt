@@ -1,9 +1,7 @@
 package com.github.korosuke613.bwdm.boundaryValueAnalysisUnit
 
-//import com.github.korosuke613.pict-java
 import com.github.korosuke613.bwdm.Util
 import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
-import com.github.korosuke613.bwdm.informationStore.InformationExtractor
 import java.util.*
 import java.util.stream.Collectors
 import com.github.korosuke613.pict4java.Factor
@@ -11,14 +9,11 @@ import com.github.korosuke613.pict4java.Model
 import com.github.korosuke613.pict4java.Pict
 import java.lang.IllegalArgumentException
 
-typealias BoundaryValueList = HashMap<String, ArrayList<Long>>
-typealias InputDataList = ArrayList<HashMap<String, Long>>
-
 class BoundaryValueAnalyzer
 constructor(private val functionDefinition: FunctionDefinition, isPairwise: Boolean = true) {
 
-    val boundaryValueList: BoundaryValueList = HashMap()
-    val inputDataList: InputDataList = ArrayList()
+    val boundaryValueList: HashMap<String, ArrayList<Long>> = HashMap()
+    val inputDataList: ArrayList<HashMap<String, Long>> = ArrayList()
 
     init {
         //generation of instance of each parameter
@@ -218,7 +213,7 @@ constructor(private val functionDefinition: FunctionDefinition, isPairwise: Bool
                 val inputDataListInitialState = ArrayList(inputDataList)
 
                 for (i in 0 until currentBvs!!.size - 1) {
-                    val inputDataListTmp = InputDataList()
+                    val inputDataListTmp = ArrayList<HashMap<String, Long>>()
                     inputDataListInitialState.forEach { inputDataOriginal ->
                         //inputDataを複製
                         val inputData = HashMap<String, Long>()
