@@ -1,16 +1,19 @@
 class Nest
 
+values
+
+public static rule1 : nat = 4;
+public static rule2 : nat = 100;
+public static rule3 : nat = 400;
+
 instance variables
 
-private rule1 : nat := 4;
-private rule2 : nat := 100;
-private rule3 : nat := 400;
 private current_year : nat := 2000;
 
 operations
 
 public 西暦設定 : int ==> int
-  西暦設定(年) == current_yer := 年;
+  西暦設定(年) == current_year := 年;
 
 public うるう年判定 : () ==> seq of char
   うるう年判定() ==

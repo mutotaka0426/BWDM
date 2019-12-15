@@ -7,10 +7,7 @@ import com.fujitsu.vdmj.lex.LexTokenReader
 import com.fujitsu.vdmj.mapper.ClassMapper
 import com.fujitsu.vdmj.syntax.DefinitionReader
 import com.fujitsu.vdmj.syntax.ParserException
-import com.fujitsu.vdmj.tc.definitions.TCDefinition
-import com.fujitsu.vdmj.tc.definitions.TCExplicitFunctionDefinition
-import com.fujitsu.vdmj.tc.definitions.TCExplicitOperationDefinition
-import com.fujitsu.vdmj.tc.definitions.TCInstanceVariableDefinition
+import com.fujitsu.vdmj.tc.definitions.*
 import java.io.File
 import java.io.IOException
 
@@ -29,7 +26,7 @@ constructor(val vdmFilePath: String) {
      * ArrayList of ifConditions of each parameter.
      */
     //private val ifConditionBodies: HashMap<String, ArrayList<HashMap<String, String>>>
-
+    val constantValues: LinkedHashMap<String, TCValueDefinition> = LinkedHashMap()
     val instanceVariables: LinkedHashMap<String, TCInstanceVariableDefinition> = LinkedHashMap()
     val explicitOperations: LinkedHashMap<String, TCExplicitOperationDefinition> = LinkedHashMap()
     val explicitFunctions: LinkedHashMap<String, FunctionDefinition> = LinkedHashMap()
@@ -48,6 +45,15 @@ constructor(val vdmFilePath: String) {
         }
 
         astDefinitions.forEach { astDefinition: ASTDefinition ->
+            if (astDefinition.kind() == "value") {
+                lateinit var tcValueDefinition: TCValueDefinition
+                try {
+                    tcValueDefinition = ClassMapper.getInstance(TCDefinition.MAPPINGS).init().convert<TCValueDefinition>(astDefinition)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                constantValues[tcValueDefinition.pattern.toString()] = tcValueDefinition
+            }
             if (astDefinition.kind() == "instance variable") {
                 lateinit var tcInstanceVariableDefinition: TCInstanceVariableDefinition
                 try {

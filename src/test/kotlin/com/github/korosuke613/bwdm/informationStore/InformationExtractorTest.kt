@@ -1,6 +1,7 @@
 package com.github.korosuke613.bwdm.informationStore
 
 import com.fujitsu.vdmj.tc.definitions.TCInstanceVariableDefinition
+import com.fujitsu.vdmj.tc.definitions.TCValueDefinition
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -52,11 +53,22 @@ internal class InformationExtractorTest {
 
         @Test
         fun getInstanceVariables() {
-            val expected: Array<String> = arrayOf("rule1", "rule2", "rule3", "current_year")
+            val expected: Array<String> = arrayOf("current_year")
 
             var i = 0
             informationExtractor.instanceVariables.values.forEach { instanceVariable: TCInstanceVariableDefinition ->
                 assertEquals(expected[i], instanceVariable.name.toString())
+                i++
+            }
+        }
+
+        @Test
+        fun getConstantValues() {
+            val expected: Array<String> = arrayOf("rule1", "rule2", "rule3")
+
+            var i = 0
+            informationExtractor.constantValues.values.forEach { constantValue: TCValueDefinition ->
+                assertEquals(expected[i], constantValue.pattern.toString())
                 i++
             }
         }
