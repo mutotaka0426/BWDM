@@ -3,7 +3,6 @@ package com.github.korosuke613.bwdm.informationStore
 import com.fujitsu.vdmj.lex.LexException
 import com.fujitsu.vdmj.syntax.ParserException
 import com.fujitsu.vdmj.tc.definitions.TCExplicitFunctionDefinition
-import com.fujitsu.vdmj.tc.patterns.TCIdentifierPattern
 import com.github.korosuke613.bwdm.Util
 import java.io.IOException
 
@@ -122,8 +121,8 @@ constructor(private val tcFunctionDefinition: TCExplicitFunctionDefinition) {
         val operator = Util.getOperator(condition)
         val indexOfOperator = condition.indexOf(operator)
         val hm = HashMap<String, String>()
-        hm["left"] = condition.substring(0, indexOfOperator)
-        hm["operator"] = operator
+        hm["left"] = condition.substring(0, indexOfOperator).replace(" ", "")
+        hm["operator"] = operator.replace(" ", "")
 
         //right-hand and surplus need branch depending on mod or other.
         modJudge(condition, operator, indexOfOperator, hm)
@@ -135,10 +134,10 @@ constructor(private val tcFunctionDefinition: TCExplicitFunctionDefinition) {
         fun modJudge(condition: String, operator: String, indexOfOperator: Int, hm: HashMap<String, String>) {
             if (operator == "mod") {
                 val indexOfEqual = condition.indexOf("=")
-                hm["right"] = condition.substring(indexOfOperator + 3, indexOfEqual)
-                hm["surplus"] = condition.substring(indexOfEqual + 1)
+                hm["right"] = condition.substring(indexOfOperator + 3, indexOfEqual).replace(" ", "")
+                hm["surplus"] = condition.substring(indexOfEqual + 1).replace(" ", "")
             } else {
-                hm["right"] = condition.substring(indexOfOperator + operator.length)
+                hm["right"] = condition.substring(indexOfOperator + operator.length).replace(" ", "")
             }
         }
     }

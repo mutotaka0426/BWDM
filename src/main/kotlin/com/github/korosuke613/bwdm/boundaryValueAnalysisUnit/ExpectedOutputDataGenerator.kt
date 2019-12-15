@@ -159,8 +159,8 @@ constructor(private val functionDefinition: FunctionDefinition,
             val operator = Util.getOperator(_condition)
             val indexOfoperator = _condition.indexOf(operator)
 
-            parsedCondition["left"] = _condition.substring(0, indexOfoperator)
-            parsedCondition["operator"] = operator
+            parsedCondition["left"] = _condition.substring(0, indexOfoperator).replace(" ", "")
+            parsedCondition["operator"] = operator.replace(" ", "")
             FunctionDefinition.modJudge(_condition, operator, indexOfoperator, parsedCondition)
             return parsedCondition
         }

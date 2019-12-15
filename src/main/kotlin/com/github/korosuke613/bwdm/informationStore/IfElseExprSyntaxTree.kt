@@ -6,7 +6,7 @@ class IfElseExprSyntaxTree(_ifExpressionBoby: String) {
 
     lateinit var root: IfNode
         internal set
-    internal lateinit var ifElses: List<String>
+    internal lateinit var ifElses: MutableList<String>
     private var count = 0
 
 
@@ -22,9 +22,16 @@ class IfElseExprSyntaxTree(_ifExpressionBoby: String) {
     private fun shapeIfElseBody(_ifElseBody: String) {
         ifElses = ArrayList()
         var ifElseBody = _ifElseBody
-        ifElseBody = ifElseBody.replace("(", "").replace(")", "").replace("if", "if\n").replace("else", "else\n").replace("then", "").replace(" ", "")
+        ifElseBody = ifElseBody.replace("(", "").replace(")", "").replace("if", "if\n").replace("else", "else\n").replace("then", "").replace("\n\n", "\n")
         ifElseBody = "$ifElseBody\n;"
-        ifElses = Arrays.asList(*ifElseBody.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+        ifElses = mutableListOf(*ifElseBody.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+        ifElses.forEachIndexed { index, it ->
+            ifElses[index] = it.trim()
+            if (it.contains("""\s+(if|else|elseif)\s*""".toRegex()) ||
+                    it.contains("""\s*(if|else|elseif)\s+""".toRegex())) {
+                ifElses[index] = it.replace(" ", "")
+            }
+        }
     }
 
 

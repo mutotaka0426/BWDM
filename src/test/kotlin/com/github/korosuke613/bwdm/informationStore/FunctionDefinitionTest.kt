@@ -44,7 +44,7 @@ internal class FunctionDefinitionTest {
     @Test
     fun conditionAndReturnValuesTest(){
         val returnStr = arrayListOf("\"うるう年\"", "\"平年\"", "\"うるう年\"", "\"平年\"")
-        val conditionNames = arrayListOf("年mod400=0", "年mod100=0", "年mod4=0")
+        val conditionNames = arrayListOf("年 mod 400 = 0", "年 mod 100 = 0", "年 mod 4 = 0")
         val conditions = arrayListOf(
                 arrayListOf(conditionNames[0], conditionNames[1], conditionNames[2]),
                 arrayListOf(conditionNames[0], conditionNames[1], conditionNames[2]),
@@ -70,10 +70,7 @@ internal class FunctionDefinitionTest {
     fun ifConditionsModTest(){
         val values = arrayListOf(
                 arrayListOf("年", "4", "mod"),
-                arrayListOf("年", "4", "mod"),
                 arrayListOf("年", "100", "mod"),
-                arrayListOf("年", "100", "mod"),
-                arrayListOf("年", "400", "mod"),
                 arrayListOf("年", "400", "mod")
                 )
 
