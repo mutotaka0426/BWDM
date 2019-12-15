@@ -40,6 +40,13 @@ constructor(val vdmFilePath: String) {
         val parser = DefinitionReader(lexer)
         val astDefinitions = parser.readDefinitions()
 
+        if (astDefinitions.size == 0){
+            // VDM++のシンタックスエラーを例外で出す
+            // number:2013はwarningレベルなので除外
+            val errors = parser.errors.filter { it.number != 2013 }
+            throw ParserException(errors[0].number, errors[0].message, errors[0].location, 0)
+        }
+
         astDefinitions.forEach { astDefinition: ASTDefinition ->
             if (astDefinition.kind() == "instance variable") {
                 lateinit var tcInstanceVariableDefinition: TCInstanceVariableDefinition
