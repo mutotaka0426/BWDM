@@ -14,6 +14,7 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import java.util.*
+import kotlin.system.exitProcess
 
 
 /**
@@ -55,7 +56,7 @@ object BwdmMain {
             // 引数の型がおかしかったり、必須項目が足りないと例外
             System.err.println("Got Exception: " + e.message)
             parser.printUsage(System.err)
-            System.exit(1)
+            exitProcess(1)
         }
 
         //コマンド引数のパース
@@ -155,7 +156,7 @@ object BwdmMain {
     }
 
     private fun showStandardInfo(functionDefinition: FunctionDefinition) {
-        buf += "ファイルパス : " + File(shell.vdmFileName).canonicalPath + "\n"
+        buf += "ファイルパス : " + File(shell.vdmFileName!!).canonicalPath + "\n"
         buf += "関数名 : " + functionDefinition.functionName + "\n"
         buf += "引数の型 : "
         for (i in 0 until functionDefinition.argumentTypes.size) {
@@ -180,7 +181,7 @@ object BwdmMain {
             val bvs: ArrayList<*> = bvsList[currentPrm] as ArrayList<*>
             buf += "$currentPrm : "
             for (bv in bvs) {
-                buf += bv.toString() + " "
+                buf += "$bv "
             }
             buf += "\n"
         }
