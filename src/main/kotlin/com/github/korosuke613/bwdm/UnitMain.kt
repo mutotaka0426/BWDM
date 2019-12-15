@@ -5,8 +5,10 @@ import java.util.*
 
 abstract class UnitMain<K>(private val functionDefinition: FunctionDefinition) {
     abstract val allTestCases: String
-    fun getTestCases(inputDataList: ArrayList<HashMap<String, K>>, outputDataList: ArrayList<String>): String {
+    abstract val analyzer: Analyzer<K>
+    fun getTestCases(outputDataList: ArrayList<String>): String {
         val buf = StringBuilder()
+        val inputDataList = analyzer.inputDataList
         val parameters = functionDefinition.parameters
 
         for (i in outputDataList.indices) {

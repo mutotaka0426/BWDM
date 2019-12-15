@@ -164,8 +164,8 @@ object BwdmMain {
         }
         buf += "\n"
         buf += "戻り値の型 : " + functionDefinition.returnValue + "\n"
-        val bvTestcaseNum = bvaUnitMain.bva.inputDataList.size
-        val seTestcaseNum = seUnitMain.se.inputDataList.size
+        val bvTestcaseNum = bvaUnitMain.analyzer.inputDataList.size
+        val seTestcaseNum = seUnitMain.analyzer.inputDataList.size
         buf += "生成テストケース数 : " + (bvTestcaseNum + seTestcaseNum) + "件"
         buf += "(境界値分析:$bvTestcaseNum/記号実行:$seTestcaseNum)"
         buf += "\n\n"
@@ -173,7 +173,7 @@ object BwdmMain {
 
     private fun showBvsInfo(functionDefinition: FunctionDefinition) {
         buf += "各引数の境界値\n"
-        val bvsList: HashMap<*, *> = bvaUnitMain.bva.boundaryValueList
+        val bvsList: HashMap<*, *> = bvaUnitMain.analyzer.boundaryValueList
         val parameters = functionDefinition.parameters
         for (i in parameters.indices) {
             val currentPrm = parameters[i]

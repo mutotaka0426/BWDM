@@ -9,8 +9,6 @@ import com.microsoft.z3.*
 import java.util.*
 import java.util.function.Consumer
 
-typealias InputData = HashMap<String, String>
-
 class SymbolicExecutioner
 (functionDefinition: FunctionDefinition) : Analyzer<String>(functionDefinition) {
     //各条件式は左辺右辺のうち片方のみが変数であるという制約付き
@@ -103,7 +101,7 @@ class SymbolicExecutioner
             val m = solver.model
 
             parameters = functionDefinition.parameters
-            val inputData = InputData()
+            val inputData = HashMap<String, String>()
             parameters.forEach { p -> inputData[p] = m.evaluate(ctx.mkIntConst(p), false).toString() }
 
             inputDataList.add(inputData)

@@ -8,18 +8,18 @@ import java.util.*
 class BvaUnitMain
 (functionDefinition: FunctionDefinition, isPairwise: Boolean) : UnitMain<Long>(functionDefinition) {
     private val expectedOutputDataGenerator: ExpectedOutputDataGenerator
-    val bva: BoundaryValueAnalyzer = BoundaryValueAnalyzer(functionDefinition, isPairwise)
+    override val analyzer: BoundaryValueAnalyzer = BoundaryValueAnalyzer(functionDefinition, isPairwise)
 
     override val allTestCases: String
         get() {
-            return getTestCases(bva.inputDataList, expectedOutputDataGenerator.expectedOutputDataList)
+            return getTestCases(expectedOutputDataGenerator.expectedOutputDataList)
         }
 
     init {
         expectedOutputDataGenerator = ExpectedOutputDataGenerator(
                 functionDefinition,
                 Objects.requireNonNull<IfElseExprSyntaxTree>(functionDefinition.ifElseExprSyntaxTree).root,
-                bva.inputDataList
+                analyzer.inputDataList
         )
     }
 

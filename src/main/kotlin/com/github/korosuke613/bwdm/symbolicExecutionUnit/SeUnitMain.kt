@@ -6,10 +6,10 @@ import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
 
 class SeUnitMain
 (functionDefinition: FunctionDefinition) : UnitMain<String>(functionDefinition) {
-    val se: SymbolicExecutioner = SymbolicExecutioner(functionDefinition)
+    override val analyzer: SymbolicExecutioner = SymbolicExecutioner(functionDefinition)
 
     override val allTestCases: String
         get() {
-            return getTestCases(se.inputDataList, se.getExpectedOutputDataList())
+            return getTestCases(analyzer.getExpectedOutputDataList())
         }
 }
