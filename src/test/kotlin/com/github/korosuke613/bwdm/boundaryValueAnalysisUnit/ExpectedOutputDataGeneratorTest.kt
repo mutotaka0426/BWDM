@@ -99,14 +99,12 @@ internal class ExpectedOutputDataGeneratorTest {
 
         @Test
         fun sizeTest() {
-            val expectedSmall = 70
-            val expectedBig = 73
-            assertAll(
-                    { assertTrue(expectedSmall <= expectedOutputDataGenerator.expectedOutputDataList.size) },
-                    { assertTrue(expectedBig >= expectedOutputDataGenerator.expectedOutputDataList.size) },
-                    { assertTrue(expectedSmall <= bva.inputDataList.size) },
-                    { assertTrue(expectedBig >= bva.inputDataList.size) }
-            )
+            val expectedSmall = 65
+            val expectedBig = 75
+            assertTrue(expectedSmall <= expectedOutputDataGenerator.expectedOutputDataList.size)
+            assertTrue(expectedBig >= expectedOutputDataGenerator.expectedOutputDataList.size)
+            assertTrue(expectedSmall <= bva.inputDataList.size)
+            assertTrue(expectedBig >= bva.inputDataList.size)
         }
 
         // Pictの計算結果が毎回変わるため、テストできない。seed固定の方法とかありそう

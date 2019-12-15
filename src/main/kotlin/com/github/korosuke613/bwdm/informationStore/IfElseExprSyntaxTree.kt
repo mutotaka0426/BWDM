@@ -1,13 +1,12 @@
 package com.github.korosuke613.bwdm.informationStore
 
-import java.util.ArrayList
-import java.util.Arrays
+import java.util.*
 
 class IfElseExprSyntaxTree(_ifExpressionBoby: String) {
 
     lateinit var root: IfNode
         internal set
-    internal lateinit var ifElses: List<String>
+    internal lateinit var ifElses: MutableList<String>
     private var count = 0
 
 
@@ -23,15 +22,30 @@ class IfElseExprSyntaxTree(_ifExpressionBoby: String) {
     private fun shapeIfElseBody(_ifElseBody: String) {
         ifElses = ArrayList()
         var ifElseBody = _ifElseBody
-        ifElseBody = ifElseBody.replace("(", "").replace(")", "").replace("if", "if\n").replace("else", "else\n").replace("then", "").replace(" ", "")
+        ifElseBody = ifElseBody.replace("(", "").replace(")", "")
+                .replace("if", "if\n").replace("else", "\nelse\n")
+                .replace("then", "").replace("\n\n", "\n")
         ifElseBody = "$ifElseBody\n;"
-        ifElses = Arrays.asList(*ifElseBody.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+        ifElses = mutableListOf(*ifElseBody.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+        ifElses.forEachIndexed { index, it ->
+            ifElses[index] = it.trim()
+            if (it.contains("""\s+(if|else|elseif)\s*""".toRegex()) ||
+                    it.contains("""\s*(if|else|elseif)\s+""".toRegex())) {
+                ifElses[index] = it.replace(" ", "")
+            }
+            if (it.contains("""return\s.+""".toRegex())) {
+                ifElses[index] = it.replace("return ", "")
+            }
+        }
     }
 
 
     //if式構文木を作る
     private fun generateIfElseSyntaxTree() {
         //rootの準備
+        if (ifElses[0] != "if") {
+            throw NotIfNodeException("if文ではありません")
+        }
         count++ //最初はifなので無視
         val currentLine = ifElses[count++] //これは最初のifの条件式
         //多分
