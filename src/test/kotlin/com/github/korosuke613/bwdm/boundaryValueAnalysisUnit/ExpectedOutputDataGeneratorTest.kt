@@ -4,8 +4,10 @@ import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
 import com.github.korosuke613.bwdm.informationStore.IfElseExprSyntaxTree
 import com.github.korosuke613.bwdm.informationStore.InformationExtractor
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertAll
 import java.util.*
 
 internal class ExpectedOutputDataGeneratorTest {
@@ -55,8 +57,10 @@ internal class ExpectedOutputDataGeneratorTest {
         @Test
         fun sizeTest() {
             val expected = 540
-            assertEquals(expected, expectedOutputDataGenerator.expectedOutputDataList.size)
-            assertEquals(expected, bva.inputDataList.size)
+            assertAll(
+                    { assertEquals(expected, expectedOutputDataGenerator.expectedOutputDataList.size) },
+                    { assertEquals(expected, bva.inputDataList.size) }
+            )
         }
 
         @Test
@@ -95,9 +99,14 @@ internal class ExpectedOutputDataGeneratorTest {
 
         @Test
         fun sizeTest() {
-            val expected = 72
-            assertEquals(expected, expectedOutputDataGenerator.expectedOutputDataList.size)
-            assertEquals(expected, bva.inputDataList.size)
+            val expectedSmall = 70
+            val expectedBig = 73
+            assertAll(
+                    { assertTrue(expectedSmall <= expectedOutputDataGenerator.expectedOutputDataList.size) },
+                    { assertTrue(expectedBig >= expectedOutputDataGenerator.expectedOutputDataList.size) },
+                    { assertTrue(expectedSmall <= bva.inputDataList.size) },
+                    { assertTrue(expectedBig >= bva.inputDataList.size) }
+            )
         }
 
         // Pictの計算結果が毎回変わるため、テストできない。seed固定の方法とかありそう
@@ -114,8 +123,10 @@ internal class ExpectedOutputDataGeneratorTest {
                     41 to "\"d>10\""
             )
             expected.forEach { (key, it) ->
-                assertEquals(it, expectedOutputDataGenerator.expectedOutputDataList[key])
-                assertEquals(inputDataList[key], bva.inputDataList[key])
+                assertAll(
+                        { assertEquals(it, expectedOutputDataGenerator.expectedOutputDataList[key]) },
+                        { assertEquals(inputDataList[key], bva.inputDataList[key]) }
+                )
             }
         }
     }
