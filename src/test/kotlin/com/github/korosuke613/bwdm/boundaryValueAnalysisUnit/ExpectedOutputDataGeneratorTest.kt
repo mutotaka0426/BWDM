@@ -53,6 +53,13 @@ internal class ExpectedOutputDataGeneratorTest {
         }
 
         @Test
+        fun sizeTest() {
+            val expected = 540
+            assertEquals(expected, expectedOutputDataGenerator.expectedOutputDataList.size)
+            assertEquals(expected, bva.inputDataList.size)
+        }
+
+        @Test
         fun collectTestCasesTest() {
             val inputDataList = mapOf(
                     89 to mapOf<String, Long>("a" to 20, "b" to -2, "c" to 4294967296),
@@ -73,4 +80,44 @@ internal class ExpectedOutputDataGeneratorTest {
             }
         }
     }
+
+    @Nested
+    inner class Pict {
+        init {
+            val fd = createFunction("pict.vdmpp", "problemFunction")
+            bva = BoundaryValueAnalyzer(fd!!, true)
+            expectedOutputDataGenerator = ExpectedOutputDataGenerator(
+                    fd,
+                    Objects.requireNonNull<IfElseExprSyntaxTree>(fd.ifElseExprSyntaxTree).root,
+                    bva.inputDataList
+            )
+        }
+
+        @Test
+        fun sizeTest() {
+            val expected = 72
+            assertEquals(expected, expectedOutputDataGenerator.expectedOutputDataList.size)
+            assertEquals(expected, bva.inputDataList.size)
+        }
+
+        // Pictの計算結果が毎回変わるため、テストできない。seed固定の方法とかありそう
+        fun collectTestCasesTest() {
+            val inputDataList = mapOf(
+                    3 to mapOf<String, Long>("a" to 5, "b" to 12, "c" to 0, "d" to 4294967295, "e" to 4294967294, "f" to 0, "g" to -1),
+                    5 to mapOf<String, Long>("a" to 4, "b" to 12, "c" to 13, "d" to 0, "e" to 0, "f" to 11, "g" to 10),
+                    41 to mapOf<String, Long>("a" to 4294967294, "b" to 0, "c" to 4294967294, "d" to 11, "e" to 4294967294, "f" to 10, "g" to 10)
+            )
+
+            val expected = mapOf(
+                    3 to "Undefined Action",
+                    5 to "\"a<=4\"",
+                    41 to "\"d>10\""
+            )
+            expected.forEach { (key, it) ->
+                assertEquals(it, expectedOutputDataGenerator.expectedOutputDataList[key])
+                assertEquals(inputDataList[key], bva.inputDataList[key])
+            }
+        }
+    }
+
 }
