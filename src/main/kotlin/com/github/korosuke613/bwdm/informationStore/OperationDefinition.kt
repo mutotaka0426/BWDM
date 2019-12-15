@@ -11,7 +11,7 @@ import java.io.IOException
 class OperationDefinition
 constructor(private val tcOperationDefinition: TCExplicitOperationDefinition,
             private val instanceVariables: LinkedHashMap<String, TCInstanceVariableDefinition>,
-            constantValues: LinkedHashMap<String, TCValueDefinition>) {
+            private val constantValues: LinkedHashMap<String, TCValueDefinition>) {
     private val ifConditionBodiesInCameForward: ArrayList<String> = ArrayList()
 
     // +でつながった変数の式
@@ -107,6 +107,11 @@ constructor(private val tcOperationDefinition: TCExplicitOperationDefinition,
             var element = ifElses[i]
             if (element == "if") {
                 element = ifElses[i + 1]
+                constantValues.forEach {
+                    if (element.contains(it.key)) {
+                        element = element.replace(it.key, it.value.exp.toString())
+                    }
+                }
                 ifConditionBodiesInCameForward.add(element)
                 val operator = Util.getOperator(element)
                 val indexOfOperator = element.indexOf(operator)

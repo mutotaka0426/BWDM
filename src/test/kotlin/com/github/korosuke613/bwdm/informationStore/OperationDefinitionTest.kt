@@ -42,9 +42,9 @@ internal class OperationDefinitionTest {
     @Test
     fun ifConditionsModTest() {
         val values = arrayListOf(
-                arrayListOf("current_year", "rule1", "mod"),
-                arrayListOf("current_year", "rule2", "mod"),
-                arrayListOf("current_year", "rule3", "mod")
+                arrayListOf("current_year", "4", "mod"),
+                arrayListOf("current_year", "100", "mod"),
+                arrayListOf("current_year", "400", "mod")
         )
 
         var i = 0
