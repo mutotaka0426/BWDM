@@ -1,27 +1,24 @@
 package com.github.korosuke613.bwdm.symbolicExecutionUnit
 
-import com.github.korosuke613.bwdm.informationStore.InformationExtractor
-import com.github.korosuke613.bwdm.informationStore.ConditionAndReturnValueList.ConditionAndReturnValue
+import com.github.korosuke613.bwdm.Analyzer
 import com.github.korosuke613.bwdm.Util
-import com.microsoft.z3.*
-
 import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.ExpectedOutputDataGenerator.Companion.makeParsedCondition
+import com.github.korosuke613.bwdm.informationStore.ConditionAndReturnValueList.ConditionAndReturnValue
 import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
-
-import java.util.ArrayList
-import java.util.HashMap
+import com.microsoft.z3.*
+import java.util.*
 import java.util.function.Consumer
 
 typealias InputData = HashMap<String, String>
 
-class SymbolicExecutioner internal constructor(private val functionDefinition: FunctionDefinition) {
+class SymbolicExecutioner
+(functionDefinition: FunctionDefinition) : Analyzer<String>(functionDefinition) {
     //各条件式は左辺右辺のうち片方のみが変数であるという制約付き
 
     //複数の変数があっても、条件式次第で一つの変数の値次第で、
     //残りの変数の値はどうでもいい場合がある
     //その場合、z3はevaluateした場合、変数名をそのまま返すので、
     //<String, String>としてある
-    val inputDataList: ArrayList<InputData> = ArrayList()
 
     private val expectedOutputDataList: ArrayList<String> = ArrayList()
     private val ctx: Context = Context()

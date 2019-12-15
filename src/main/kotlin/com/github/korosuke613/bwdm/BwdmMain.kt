@@ -1,12 +1,12 @@
 package com.github.korosuke613.bwdm
 
-import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.BvaUnitMain
-import com.github.korosuke613.bwdm.informationStore.InformationExtractor
-import com.github.korosuke613.bwdm.symbolicExecutionUnit.SeUnitMain
-import com.github.korosuke613.bwdm.domainAnalysis.DomainAnalyser
 import com.fujitsu.vdmj.lex.LexException
 import com.fujitsu.vdmj.syntax.ParserException
+import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.BvaUnitMain
+import com.github.korosuke613.bwdm.domainAnalysis.DomainAnalyser
 import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
+import com.github.korosuke613.bwdm.informationStore.InformationExtractor
+import com.github.korosuke613.bwdm.symbolicExecutionUnit.SeUnitMain
 import external.TimeMeasure
 import org.kohsuke.args4j.CmdLineException
 import org.kohsuke.args4j.CmdLineParser
@@ -94,16 +94,16 @@ object BwdmMain {
             }
             if (shell.showBvTestcases and !shell.showBvTestcasesWithPairwise) {
                 buf += "境界値分析によるテストケース\n"
-                buf += bvaUnitMain.allTestcasesByBv
+                buf += bvaUnitMain.allTestCases
                 buf += "\n"
             } else if (shell.showBvTestcasesWithPairwise) {
                 buf += "境界値分析によるテストケース（ペアワイズ法適用）\n"
-                buf += bvaUnitMain.allTestcasesByBv
+                buf += bvaUnitMain.allTestCases
                 buf += "\n"
             }
             if (shell.showSeTestcases) {
                 buf += "記号実行によるテストケース\n"
-                buf += seUnitMain.allTestcasesBySe
+                buf += seUnitMain.allTestCases
                 buf += "\n"
             }
             if (shell.showDaTestcases) {
@@ -164,7 +164,7 @@ object BwdmMain {
         }
         buf += "\n"
         buf += "戻り値の型 : " + functionDefinition.returnValue + "\n"
-        val bvTestcaseNum = bvaUnitMain.boundaryValueAnalyzer.inputDataList.size
+        val bvTestcaseNum = bvaUnitMain.bva.inputDataList.size
         val seTestcaseNum = seUnitMain.se.inputDataList.size
         buf += "生成テストケース数 : " + (bvTestcaseNum + seTestcaseNum) + "件"
         buf += "(境界値分析:$bvTestcaseNum/記号実行:$seTestcaseNum)"
@@ -173,7 +173,7 @@ object BwdmMain {
 
     private fun showBvsInfo(functionDefinition: FunctionDefinition) {
         buf += "各引数の境界値\n"
-        val bvsList: HashMap<*, *> = bvaUnitMain.boundaryValueAnalyzer.boundaryValueList
+        val bvsList: HashMap<*, *> = bvaUnitMain.bva.boundaryValueList
         val parameters = functionDefinition.parameters
         for (i in parameters.indices) {
             val currentPrm = parameters[i]

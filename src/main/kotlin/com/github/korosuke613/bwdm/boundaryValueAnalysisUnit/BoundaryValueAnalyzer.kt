@@ -1,28 +1,22 @@
 package com.github.korosuke613.bwdm.boundaryValueAnalysisUnit
 
+import com.github.korosuke613.bwdm.Analyzer
 import com.github.korosuke613.bwdm.Util
 import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
-import java.util.*
-import java.util.stream.Collectors
 import com.github.korosuke613.pict4java.Factor
 import com.github.korosuke613.pict4java.Model
 import com.github.korosuke613.pict4java.Pict
-import java.lang.IllegalArgumentException
+import java.util.*
+import java.util.stream.Collectors
 
 class BoundaryValueAnalyzer
-constructor(private val functionDefinition: FunctionDefinition, isPairwise: Boolean = true) {
-
+(functionDefinition: FunctionDefinition, isPairwise: Boolean = true) : Analyzer<Long>(functionDefinition) {
     val boundaryValueList: HashMap<String, ArrayList<Long>> = HashMap()
-    val inputDataList: ArrayList<HashMap<String, Long>> = ArrayList()
 
     init {
-        //generation of instance of each parameter
         functionDefinition.parameters.forEach { p -> boundaryValueList[p] = ArrayList() }
-
         generateTypeBoundaryValue()
         generateIfConditionalBoundaryValue()
-
-        //remove overlapped values
         val parameters = functionDefinition.parameters
         for (i in 0 until boundaryValueList.size) {
             val parameter = parameters[i]
@@ -31,13 +25,12 @@ constructor(private val functionDefinition: FunctionDefinition, isPairwise: Bool
 
             boundaryValueList[parameter] = bvs
         }
-        if(isPairwise) {
+        if (isPairwise) {
             makeInputDataListWithPairwise()
-        }else{
+        } else {
             makeInputDataList()
         }
     }
-
 
     private fun generateTypeBoundaryValue() {
         val parameters = functionDefinition.parameters
@@ -158,7 +151,7 @@ constructor(private val functionDefinition: FunctionDefinition, isPairwise: Bool
         }
     }
 
-    private fun makeInputDataListWithPairwise(){
+    private fun makeInputDataListWithPairwise() {
         val pict = Pict()
         val model = Model()
         // 因子の取得
@@ -166,14 +159,14 @@ constructor(private val functionDefinition: FunctionDefinition, isPairwise: Bool
 
         // 引数の数が2個以下の場合、ペアワイズ法が適用できないので、
         // 例外を出す
-        if (parameters.size <= 2){
+        if (parameters.size <= 2) {
             throw IllegalArgumentException(
                     "関数${functionDefinition.functionName}が受け取る引数の数が少ないのでペアワイズ法は適用できません。"
             )
         }
 
         // ファクターの追加
-        for (prm in parameters){
+        for (prm in parameters) {
             val bvs = boundaryValueList[prm]
             val factor = Factor(named_level = bvs!!.map { it.toString() }, name = prm)
             model.addFactor(factor)
@@ -185,7 +178,7 @@ constructor(private val functionDefinition: FunctionDefinition, isPairwise: Bool
 
         for (test in tests) {
             val hash = HashMap<String, Long>()
-            for((index, param) in test.withIndex()){
+            for ((index, param) in test.withIndex()) {
                 hash[model.factors[index].name] = param!!.toLong()
             }
             inputDataList.add(hash)

@@ -29,7 +29,7 @@ internal class SeUnitMainTest {
                 No.3 : 1 -> "!amod4=0"
                 
             """.trimIndent()
-            val actual = seUnitMain.allTestcasesBySe
+            val actual = seUnitMain.allTestCases
             assertEquals(except, actual)
         }
     }
