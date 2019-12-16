@@ -81,7 +81,7 @@ constructor(val vdmFilePath: String) {
                     e.printStackTrace()
                 }
                 val function = FunctionDefinition(tcFunctionDefinition)
-                explicitFunctions[function.functionName] = function
+                explicitFunctions[function.name] = function
             }
         }
     }/* Initializing fields*/

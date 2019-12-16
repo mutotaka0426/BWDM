@@ -157,7 +157,7 @@ object BwdmMain {
 
     private fun showStandardInfo(functionDefinition: FunctionDefinition) {
         buf += "ファイルパス : " + File(shell.vdmFileName!!).canonicalPath + "\n"
-        buf += "関数名 : " + functionDefinition.functionName + "\n"
+        buf += "関数名 : " + functionDefinition.name + "\n"
         buf += "引数の型 : "
         for (i in 0 until functionDefinition.argumentTypes.size) {
             buf += (functionDefinition.parameters[i] + ":"
@@ -191,7 +191,7 @@ object BwdmMain {
     private fun showSeConditionInfo(functionDefinition: FunctionDefinition) {
         buf += "記号実行情報\n"
         val carvList = functionDefinition.conditionAndReturnValueList
-        buf += "戻り値の数 : " + carvList.size + "\n"
+        buf += "戻り値の数 : " + carvList!!.size + "\n"
 
         for (i in 0 until carvList.size) {
             buf += "制約 : "

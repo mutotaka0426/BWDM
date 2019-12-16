@@ -58,7 +58,7 @@ internal class FunctionDefinitionTest {
         )
 
         var i = 0
-        function.conditionAndReturnValueList.conditionAndReturnValues.forEach { returnValue ->
+        function.conditionAndReturnValueList!!.conditionAndReturnValues.forEach { returnValue ->
             assertEquals(returnStr[i], returnValue.returnStr)
             assertEquals(conditions[i], returnValue.conditions)
             assertEquals(boolList[i], returnValue.bools)
@@ -85,6 +85,6 @@ internal class FunctionDefinitionTest {
 
     @Test
     fun getFunctionName() {
-        assertEquals("うるう年判定仕様", function.functionName)
+        assertEquals("うるう年判定仕様", function.name)
     }
 }

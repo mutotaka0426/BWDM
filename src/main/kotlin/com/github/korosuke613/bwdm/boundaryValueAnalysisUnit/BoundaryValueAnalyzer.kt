@@ -161,7 +161,7 @@ class BoundaryValueAnalyzer
         // 例外を出す
         if (parameters.size <= 2) {
             throw IllegalArgumentException(
-                    "関数${functionDefinition.functionName}が受け取る引数の数が少ないのでペアワイズ法は適用できません。"
+                    "関数${functionDefinition.name}が受け取る引数の数が少ないのでペアワイズ法は適用できません。"
             )
         }
 

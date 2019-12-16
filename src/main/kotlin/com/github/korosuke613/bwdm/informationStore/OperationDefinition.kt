@@ -17,7 +17,7 @@ class OperationDefinition
 
     override var returnValue: String = tcDefinition.type.result.toString()
 
-    var isSetter: Boolean = false
+    private var isSetter: Boolean = false
 
     init {
         // 引数の型を登録
@@ -45,8 +45,7 @@ class OperationDefinition
 
     override fun setIfElseSyntaxTree() {
         //parsing for parameters
-        val tcOperation = tcDefinition as TCExplicitOperationDefinition
-        val tcPatternList = tcOperation.paramPatternList[0] // 仮引数
+        val tcPatternList = (tcDefinition as TCExplicitOperationDefinition).paramPatternList[0] // 仮引数
         setUsedInstanceVariables()
 
         for (parameter in tcPatternList) {
@@ -70,7 +69,7 @@ class OperationDefinition
         }
     }
 
-    private fun parseIfConditions() {
+    override fun parseIfConditions() {
         val ifElses = ifElseExprSyntaxTree!!.ifElses
 
         compositeParameters = ArrayList(parameters)

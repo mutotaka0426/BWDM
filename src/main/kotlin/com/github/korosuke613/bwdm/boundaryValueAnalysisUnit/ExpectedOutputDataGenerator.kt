@@ -1,6 +1,7 @@
 package com.github.korosuke613.bwdm.boundaryValueAnalysisUnit
 
 import com.github.korosuke613.bwdm.Util
+import com.github.korosuke613.bwdm.informationStore.Definition
 import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
 import com.github.korosuke613.bwdm.informationStore.IfNode
 import com.github.korosuke613.bwdm.informationStore.Node
@@ -161,7 +162,7 @@ constructor(private val functionDefinition: FunctionDefinition,
 
             parsedCondition["left"] = _condition.substring(0, indexOfoperator).replace(" ", "")
             parsedCondition["operator"] = operator.replace(" ", "")
-            FunctionDefinition.modJudge(_condition, operator, indexOfoperator, parsedCondition)
+            Definition.modJudge(_condition, operator, indexOfoperator, parsedCondition)
             return parsedCondition
         }
     }

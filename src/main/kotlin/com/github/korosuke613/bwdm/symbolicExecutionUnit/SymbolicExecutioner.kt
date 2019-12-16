@@ -24,7 +24,7 @@ class SymbolicExecutioner
     init {
         val conditionAndReturnValueList = functionDefinition.conditionAndReturnValueList
 
-        conditionAndReturnValueList.conditionAndReturnValues.forEach(Consumer<ConditionAndReturnValue> {
+        conditionAndReturnValueList!!.conditionAndReturnValues.forEach(Consumer<ConditionAndReturnValue> {
             this.doSymbolicExecution(it)
         })
     }

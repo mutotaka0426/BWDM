@@ -3,11 +3,11 @@ package com.github.korosuke613.bwdm.informationStore
 import com.fujitsu.vdmj.tc.definitions.TCDefinition
 import com.github.korosuke613.bwdm.Util
 
-abstract class Definition(open val tcDefinition: TCDefinition) {
-    protected val ifConditionBodiesInCameForward: ArrayList<String> = ArrayList()
+abstract class Definition(val tcDefinition: TCDefinition) {
+    private val ifConditionBodiesInCameForward: ArrayList<String> = ArrayList()
 
     // +でつながった変数の式
-    protected var compositeParameters: ArrayList<String> = arrayListOf()
+    var compositeParameters: ArrayList<String> = arrayListOf()
 
     protected var ifExpressionBody: String = ""
 
@@ -36,6 +36,7 @@ abstract class Definition(open val tcDefinition: TCDefinition) {
         protected set
 
     abstract fun setIfElseSyntaxTree()
+    abstract fun parseIfConditions()
 
     protected fun createCompositParameters(element: String) {
         ifConditionBodiesInCameForward.add(element)

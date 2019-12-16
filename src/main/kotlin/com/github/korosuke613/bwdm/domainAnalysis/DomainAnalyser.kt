@@ -5,7 +5,6 @@ import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.ExpectedOutputDataG
 import com.github.korosuke613.bwdm.informationStore.ConditionAndReturnValueList
 import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
 import com.github.korosuke613.bwdm.informationStore.IfElseExprSyntaxTree
-import com.github.korosuke613.bwdm.informationStore.InformationExtractor
 import com.microsoft.z3.ArithExpr
 import com.microsoft.z3.BoolExpr
 import com.microsoft.z3.Context
@@ -22,7 +21,7 @@ class DomainAnalyser(private val functionDefinition: FunctionDefinition){
     private val ctx: Context = Context()
 
     init {
-        for(condition in functionDefinition.conditionAndReturnValueList.conditionAndReturnValues) {
+        for (condition in functionDefinition.conditionAndReturnValueList!!.conditionAndReturnValues) {
             val domainPoints = DomainPoints(condition.returnStr.toString())
             generateInPoints(domainPoints, condition)
             generateOnPoints(domainPoints, condition)
