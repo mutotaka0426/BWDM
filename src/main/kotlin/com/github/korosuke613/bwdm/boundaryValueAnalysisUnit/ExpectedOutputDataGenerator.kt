@@ -2,15 +2,14 @@ package com.github.korosuke613.bwdm.boundaryValueAnalysisUnit
 
 import com.github.korosuke613.bwdm.Util
 import com.github.korosuke613.bwdm.informationStore.Definition
-import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
 import com.github.korosuke613.bwdm.informationStore.IfNode
 import com.github.korosuke613.bwdm.informationStore.Node
 import java.util.*
 
 class ExpectedOutputDataGenerator
-constructor(private val functionDefinition: FunctionDefinition,
-                                                       _root: IfNode,
-                                                       _inputDataList: ArrayList<HashMap<String, Long>>) {
+constructor(private val definition: Definition,
+            _root: IfNode,
+            _inputDataList: ArrayList<HashMap<String, Long>>) {
     internal val expectedOutputDataList: ArrayList<String> = ArrayList()
 
     init {
@@ -31,7 +30,7 @@ constructor(private val functionDefinition: FunctionDefinition,
             // 条件式のパース
             val parsedCondition = makeParsedCondition(_node.conditionOrReturnStr)
             //各条件式には一つの変数(parameter)しか登場しない
-            functionDefinition.compositeParameters.forEach { prm ->
+            definition.compositeParameters.forEach { prm ->
                 //条件式中の変数とprmが一致したらinputDataを代入して真偽判定
                 if (parsedCondition["right"] == prm || parsedCondition["left"] == prm) {
                     val conditionJudgeResult = judge(parsedCondition, _inputData, prm)
@@ -131,9 +130,9 @@ constructor(private val functionDefinition: FunctionDefinition,
         for (i in _inputDataList.indices) {
             val currentInputData = _inputDataList[i]
 
-            for (j in 0 until functionDefinition.parameters.size) {
-                val currentTyp = functionDefinition.argumentTypes[j]
-                val currentPrm = functionDefinition.parameters[j]
+            for (j in 0 until definition.parameters.size) {
+                val currentTyp = definition.argumentTypes[j]
+                val currentPrm = definition.parameters[j]
                 val currentVl = currentInputData[currentPrm]
 
                 when (currentTyp) {

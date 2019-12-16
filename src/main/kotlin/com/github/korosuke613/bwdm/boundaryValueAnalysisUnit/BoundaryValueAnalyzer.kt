@@ -2,7 +2,7 @@ package com.github.korosuke613.bwdm.boundaryValueAnalysisUnit
 
 import com.github.korosuke613.bwdm.Analyzer
 import com.github.korosuke613.bwdm.Util
-import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
+import com.github.korosuke613.bwdm.informationStore.Definition
 import com.github.korosuke613.pict4java.Factor
 import com.github.korosuke613.pict4java.Model
 import com.github.korosuke613.pict4java.Pict
@@ -10,14 +10,14 @@ import java.util.*
 import java.util.stream.Collectors
 
 class BoundaryValueAnalyzer
-(functionDefinition: FunctionDefinition, isPairwise: Boolean = true) : Analyzer<Long>(functionDefinition) {
+(definition: Definition, isPairwise: Boolean = true) : Analyzer<Long>(definition) {
     val boundaryValueList: HashMap<String, ArrayList<Long>> = HashMap()
 
     init {
-        functionDefinition.parameters.forEach { p -> boundaryValueList[p] = ArrayList() }
+        definition.parameters.forEach { p -> boundaryValueList[p] = ArrayList() }
         generateTypeBoundaryValue()
         generateIfConditionalBoundaryValue()
-        val parameters = functionDefinition.parameters
+        val parameters = definition.parameters
         for (i in 0 until boundaryValueList.size) {
             val parameter = parameters[i]
             var bvs = boundaryValueList[parameter]!!
@@ -33,8 +33,8 @@ class BoundaryValueAnalyzer
     }
 
     private fun generateTypeBoundaryValue() {
-        val parameters = functionDefinition.parameters
-        val argumentTypes = functionDefinition.argumentTypes
+        val parameters = definition.parameters
+        val argumentTypes = definition.argumentTypes
 
         for (i in argumentTypes.indices) {
             val parameter = parameters[i]
@@ -73,7 +73,7 @@ class BoundaryValueAnalyzer
 
 
     private fun generateIfConditionalBoundaryValue() {
-        val allIfConditions = functionDefinition.ifConditions
+        val allIfConditions = definition.ifConditions
 
         allIfConditions.forEach { (parameter, ifConditions) ->
             ifConditions.forEach { condition ->
@@ -155,13 +155,13 @@ class BoundaryValueAnalyzer
         val pict = Pict()
         val model = Model()
         // 因子の取得
-        val parameters = functionDefinition.parameters
+        val parameters = definition.parameters
 
         // 引数の数が2個以下の場合、ペアワイズ法が適用できないので、
         // 例外を出す
         if (parameters.size <= 2) {
             throw IllegalArgumentException(
-                    "関数${functionDefinition.name}が受け取る引数の数が少ないのでペアワイズ法は適用できません。"
+                    "関数${definition.name}が受け取る引数の数が少ないのでペアワイズ法は適用できません。"
             )
         }
 
@@ -186,7 +186,7 @@ class BoundaryValueAnalyzer
     }
 
     private fun makeInputDataList() {
-        val parameters = functionDefinition.parameters
+        val parameters = definition.parameters
 
         // 最初の一つ目
         val firstPrm = parameters[0]

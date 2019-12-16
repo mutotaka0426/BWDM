@@ -83,8 +83,8 @@ class SymbolicExecutioner
             conditionUnion = ctx.mkAnd(conditionUnion, expr)
         }
         expr = null
-        var parameters = functionDefinition.parameters
-        val argumentTypes = functionDefinition.argumentTypes
+        var parameters = definition.parameters
+        val argumentTypes = definition.argumentTypes
 
         for (i in parameters.indices) {
             if (argumentTypes[i] != "int") { //int型なら0以上の制限はいらない
@@ -100,7 +100,7 @@ class SymbolicExecutioner
         if (solver.check() == Status.SATISFIABLE) {
             val m = solver.model
 
-            parameters = functionDefinition.parameters
+            parameters = definition.parameters
             val inputData = HashMap<String, String>()
             parameters.forEach { p -> inputData[p] = m.evaluate(ctx.mkIntConst(p), false).toString() }
 
