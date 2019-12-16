@@ -17,7 +17,7 @@ internal class OperationDefinitionTest {
     @Test
     fun conditionAndReturnValuesTest() {
         val returnStr = arrayListOf("\"うるう年\"", "\"平年\"", "\"うるう年\"", "\"平年\"")
-        val conditionNames = arrayListOf("current_year mod rule3 = 0", "current_year mod rule2 = 0", "current_year mod rule1 = 0")
+        val conditionNames = arrayListOf("current_year mod 400 = 0", "current_year mod 100 = 0", "current_year mod 4 = 0")
         val conditions = arrayListOf(
                 arrayListOf(conditionNames[0], conditionNames[1], conditionNames[2]),
                 arrayListOf(conditionNames[0], conditionNames[1], conditionNames[2]),
