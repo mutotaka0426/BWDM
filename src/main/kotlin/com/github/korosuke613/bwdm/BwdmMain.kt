@@ -7,6 +7,7 @@ import com.github.korosuke613.bwdm.domainAnalysis.DomainAnalyser
 import com.github.korosuke613.bwdm.informationStore.Definition
 import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
 import com.github.korosuke613.bwdm.informationStore.InformationExtractor
+import com.github.korosuke613.bwdm.informationStore.OperationDefinition
 import com.github.korosuke613.bwdm.symbolicExecutionUnit.SeUnitMain
 import external.TimeMeasure
 import org.kohsuke.args4j.CmdLineException
@@ -82,6 +83,9 @@ object BwdmMain {
         extractInformation = InformationExtractor(shell.vdmFileName!!)
         extractInformation.explicitFunctions.values.forEach{ functionDefinition: FunctionDefinition ->
             generateTest(functionDefinition)
+        }
+        extractInformation.explicitOperations.values.forEach { operationDefinition: OperationDefinition ->
+            generateTest(operationDefinition)
         }
     }
 

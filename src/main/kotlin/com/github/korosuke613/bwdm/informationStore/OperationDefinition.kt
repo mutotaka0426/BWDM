@@ -13,7 +13,7 @@ class OperationDefinition
  private val constantValues: LinkedHashMap<String, TCValueDefinition>) : Definition(tcDefinition) {
 
     // 利用しているメンバ変数のリスト
-    private val usedInstanceVariables: ArrayList<String> = ArrayList()
+    private val usedInstanceVariables: LinkedHashMap<String, String> = linkedMapOf()
 
     override var returnValue: String = tcDefinition.type.result.toString()
 
@@ -52,7 +52,8 @@ class OperationDefinition
             parameters.add(parameter.toString())
         }
         for (variable in usedInstanceVariables) {
-            parameters.add(variable)
+            parameters.add(variable.key)
+            argumentTypes.add(variable.value)
         }
 
         parseIfConditions()
@@ -64,7 +65,7 @@ class OperationDefinition
     private fun setUsedInstanceVariables() {
         instanceVariables.forEach {
             if (ifExpressionBody.contains(it.key)) {
-                usedInstanceVariables.add(it.key)
+                usedInstanceVariables[it.key] = it.value.type.toString()
             }
         }
     }
