@@ -1,12 +1,12 @@
 package com.github.korosuke613.bwdm.symbolicExecutionUnit
 
 import com.github.korosuke613.bwdm.UnitMain
-import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
+import com.github.korosuke613.bwdm.informationStore.Definition
 
 
 class SeUnitMain
-(functionDefinition: FunctionDefinition) : UnitMain<String>(functionDefinition) {
-    override val analyzer: SymbolicExecutioner = SymbolicExecutioner(functionDefinition)
+(definition: Definition) : UnitMain<String>(definition) {
+    override val analyzer: SymbolicExecutioner = SymbolicExecutioner(definition)
 
     override val allTestCases: String
         get() {

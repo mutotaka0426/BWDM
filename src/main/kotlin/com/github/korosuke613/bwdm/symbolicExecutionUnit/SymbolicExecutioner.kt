@@ -4,13 +4,13 @@ import com.github.korosuke613.bwdm.Analyzer
 import com.github.korosuke613.bwdm.Util
 import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.ExpectedOutputDataGenerator.Companion.makeParsedCondition
 import com.github.korosuke613.bwdm.informationStore.ConditionAndReturnValueList.ConditionAndReturnValue
-import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
+import com.github.korosuke613.bwdm.informationStore.Definition
 import com.microsoft.z3.*
 import java.util.*
 import java.util.function.Consumer
 
 class SymbolicExecutioner
-(functionDefinition: FunctionDefinition) : Analyzer<String>(functionDefinition) {
+(definition: Definition) : Analyzer<String>(definition) {
     //各条件式は左辺右辺のうち片方のみが変数であるという制約付き
 
     //複数の変数があっても、条件式次第で一つの変数の値次第で、
@@ -22,7 +22,7 @@ class SymbolicExecutioner
     private val ctx: Context = Context()
 
     init {
-        val conditionAndReturnValueList = functionDefinition.conditionAndReturnValueList
+        val conditionAndReturnValueList = definition.conditionAndReturnValueList
 
         conditionAndReturnValueList!!.conditionAndReturnValues.forEach(Consumer<ConditionAndReturnValue> {
             this.doSymbolicExecution(it)
