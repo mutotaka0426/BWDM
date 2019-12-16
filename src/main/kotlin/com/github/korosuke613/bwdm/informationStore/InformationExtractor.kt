@@ -71,7 +71,7 @@ constructor(val vdmFilePath: String) {
                     e.printStackTrace()
                 }
                 val operation = OperationDefinition(tcExplicitOperationDefinition, instanceVariables, constantValues)
-                explicitOperations[operation.operationName] = operation
+                explicitOperations[operation.name] = operation
             }
             if (astDefinition.kind() == "explicit function") {
                 lateinit var tcFunctionDefinition: TCExplicitFunctionDefinition

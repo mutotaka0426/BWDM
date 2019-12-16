@@ -58,6 +58,6 @@ internal class OperationDefinitionTest {
 
     @Test
     fun getFunctionName() {
-        assertEquals("うるう年判定", operation.operationName)
+        assertEquals("うるう年判定", operation.name)
     }
 }
