@@ -17,8 +17,6 @@ class OperationDefinition
 
     override var returnValue: String = tcDefinition.type.result.toString()
 
-    private var isSetter: Boolean = false
-
     init {
         // 引数の型を登録
         tcDefinition.type.parameters.forEach { e -> argumentTypes.add(e.toString()) }
@@ -27,6 +25,12 @@ class OperationDefinition
         ifExpressionBody = tcDefinition.body.toString()
 
         try {
+            // 定数を実数に置き換え
+            constantValues.forEach {
+                if (ifExpressionBody.contains(it.key)) {
+                    ifExpressionBody = ifExpressionBody.replace(it.key, it.value.exp.toString())
+                }
+            }
             ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody)
         } catch (e: NotIfNodeException) {
             isSetter = true
@@ -58,7 +62,6 @@ class OperationDefinition
 
         parseIfConditions()
 
-        ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody)
         conditionAndReturnValueList = ConditionAndReturnValueList(ifElseExprSyntaxTree!!.root)
     }
 
@@ -84,6 +87,7 @@ class OperationDefinition
                 constantValues.forEach {
                     if (element.contains(it.key)) {
                         element = element.replace(it.key, it.value.exp.toString())
+                        ifElses[i + 1] = element
                     }
                 }
                 createCompositParameters(element)

@@ -35,6 +35,8 @@ abstract class Definition(val tcDefinition: TCDefinition) {
     var ifElseExprSyntaxTree: IfElseExprSyntaxTree? = null
         protected set
 
+    var isSetter: Boolean = false
+
     abstract fun setIfElseSyntaxTree()
     abstract fun parseIfConditions()
 

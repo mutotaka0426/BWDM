@@ -90,6 +90,11 @@ object BwdmMain {
     }
 
     private fun generateTest(definition: Definition) {
+        if (definition.isSetter) {
+            // operationはセッターであるためテストしない
+            return
+        }
+
         val tm = TimeMeasure()
         tm.start()
         bvaUnitMain = BvaUnitMain(definition, isPairwise = shell.showBvTestcasesWithPairwise)
