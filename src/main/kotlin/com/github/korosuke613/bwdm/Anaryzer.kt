@@ -1,8 +1,8 @@
 package com.github.korosuke613.bwdm
 
-import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
+import com.github.korosuke613.bwdm.informationStore.Definition
 
-abstract class Analyzer<K>(val functionDefinition: FunctionDefinition) {
+abstract class Analyzer<K>(val definition: Definition) {
     val inputDataList: ArrayList<HashMap<String, K>> = ArrayList()
-    val parameters = functionDefinition.parameters
+    val parameters = definition.parameters
 }

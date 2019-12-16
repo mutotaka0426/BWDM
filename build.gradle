@@ -59,7 +59,7 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'bwdm.BwdmMain'
+        attributes 'Main-Class': 'com.github.korosuke613.bwdm.BwdmMain'
     }
 }
 

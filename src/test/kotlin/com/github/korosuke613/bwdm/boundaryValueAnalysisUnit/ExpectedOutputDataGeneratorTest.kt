@@ -3,6 +3,7 @@ package com.github.korosuke613.bwdm.boundaryValueAnalysisUnit
 import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
 import com.github.korosuke613.bwdm.informationStore.IfElseExprSyntaxTree
 import com.github.korosuke613.bwdm.informationStore.InformationExtractor
+import com.github.korosuke613.bwdm.informationStore.OperationDefinition
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Nested
@@ -20,6 +21,14 @@ internal class ExpectedOutputDataGeneratorTest {
         val filePath = if (resource?.path == null) "" else resource.path
         val information = InformationExtractor(filePath)
         return information.explicitFunctions[className]
+    }
+
+    fun createOperation(fileName: String, _className: String? = null): OperationDefinition? {
+        val className = _className ?: fileName.split(".")[0]
+        val resource = InformationExtractor::class.java.classLoader.getResource(fileName)
+        val filePath = if (resource?.path == null) "" else resource.path
+        val information = InformationExtractor(filePath)
+        return information.explicitOperations[className]
     }
 
     @Nested
@@ -128,5 +137,69 @@ internal class ExpectedOutputDataGeneratorTest {
             }
         }
     }
+
+    @Nested
+    inner class Operation {
+        init {
+            val fd = createOperation("operation.vdmpp", "うるう年判定")
+            bva = BoundaryValueAnalyzer(fd!!, false)
+            expectedOutputDataGenerator = ExpectedOutputDataGenerator(
+                    fd,
+                    Objects.requireNonNull<IfElseExprSyntaxTree>(fd.ifElseExprSyntaxTree).root,
+                    bva.inputDataList
+            )
+        }
+
+        @Test
+        fun makeParsedConditionTest() {
+            fun createMap(left: String, right: String, ope: String): Map<String, String> {
+                return mapOf("left" to left, "right" to right, "operator" to ope)
+            }
+
+            val expected = arrayOf(
+                    createMap("a", "10", "<="),
+                    createMap("b", "-10", ">="),
+                    createMap("b", "-3", "<="),
+                    createMap("a", "20", "<")
+            )
+
+            val condition = arrayOf("a<=10", "b>=-10", "b<=-3", "a<20")
+
+            expected.forEachIndexed { i, it ->
+                assertEquals(it, ExpectedOutputDataGenerator.makeParsedCondition(condition[i]))
+            }
+        }
+
+        @Test
+        fun sizeTest() {
+            val expected = 13
+            assertAll(
+                    { assertEquals(expected, expectedOutputDataGenerator.expectedOutputDataList.size) },
+                    { assertEquals(expected, bva.inputDataList.size) }
+            )
+        }
+
+        @Test
+        fun collectTestCasesTest() {
+            val inputDataList = mapOf(
+                    0 to mapOf<String, Long>("current_year" to 4294967295),
+                    1 to mapOf<String, Long>("current_year" to 4294967294),
+                    5 to mapOf<String, Long>("current_year" to 4),
+                    12 to mapOf<String, Long>("current_year" to 401)
+            )
+
+            val expected = mapOf(
+                    0 to "Undefined Action",
+                    1 to "\"平年\"",
+                    5 to "\"うるう年\"",
+                    12 to "\"平年\""
+            )
+            expected.forEach { (key, it) ->
+                assertEquals(it, expectedOutputDataGenerator.expectedOutputDataList[key])
+                assertEquals(inputDataList[key], bva.inputDataList[key])
+            }
+        }
+    }
+
 
 }

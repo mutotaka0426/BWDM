@@ -4,13 +4,13 @@ import com.github.korosuke613.bwdm.Analyzer
 import com.github.korosuke613.bwdm.Util
 import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.ExpectedOutputDataGenerator.Companion.makeParsedCondition
 import com.github.korosuke613.bwdm.informationStore.ConditionAndReturnValueList.ConditionAndReturnValue
-import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
+import com.github.korosuke613.bwdm.informationStore.Definition
 import com.microsoft.z3.*
 import java.util.*
 import java.util.function.Consumer
 
 class SymbolicExecutioner
-(functionDefinition: FunctionDefinition) : Analyzer<String>(functionDefinition) {
+(definition: Definition) : Analyzer<String>(definition) {
     //各条件式は左辺右辺のうち片方のみが変数であるという制約付き
 
     //複数の変数があっても、条件式次第で一つの変数の値次第で、
@@ -22,9 +22,9 @@ class SymbolicExecutioner
     private val ctx: Context = Context()
 
     init {
-        val conditionAndReturnValueList = functionDefinition.conditionAndReturnValueList
+        val conditionAndReturnValueList = definition.conditionAndReturnValueList
 
-        conditionAndReturnValueList.conditionAndReturnValues.forEach(Consumer<ConditionAndReturnValue> {
+        conditionAndReturnValueList!!.conditionAndReturnValues.forEach(Consumer<ConditionAndReturnValue> {
             this.doSymbolicExecution(it)
         })
     }
@@ -83,8 +83,8 @@ class SymbolicExecutioner
             conditionUnion = ctx.mkAnd(conditionUnion, expr)
         }
         expr = null
-        var parameters = functionDefinition.parameters
-        val argumentTypes = functionDefinition.argumentTypes
+        var parameters = definition.parameters
+        val argumentTypes = definition.argumentTypes
 
         for (i in parameters.indices) {
             if (argumentTypes[i] != "int") { //int型なら0以上の制限はいらない
@@ -100,7 +100,7 @@ class SymbolicExecutioner
         if (solver.check() == Status.SATISFIABLE) {
             val m = solver.model
 
-            parameters = functionDefinition.parameters
+            parameters = definition.parameters
             val inputData = HashMap<String, String>()
             parameters.forEach { p -> inputData[p] = m.evaluate(ctx.mkIntConst(p), false).toString() }
 

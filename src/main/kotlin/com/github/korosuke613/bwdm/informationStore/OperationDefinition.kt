@@ -5,61 +5,32 @@ import com.fujitsu.vdmj.syntax.ParserException
 import com.fujitsu.vdmj.tc.definitions.TCExplicitOperationDefinition
 import com.fujitsu.vdmj.tc.definitions.TCInstanceVariableDefinition
 import com.fujitsu.vdmj.tc.definitions.TCValueDefinition
-import com.github.korosuke613.bwdm.Util
 import java.io.IOException
 
 class OperationDefinition
-constructor(private val tcOperationDefinition: TCExplicitOperationDefinition,
-            private val instanceVariables: LinkedHashMap<String, TCInstanceVariableDefinition>,
-            private val constantValues: LinkedHashMap<String, TCValueDefinition>) {
-    private val ifConditionBodiesInCameForward: ArrayList<String> = ArrayList()
-
-    // +でつながった変数の式
-    var compositeParameters: ArrayList<String> = arrayListOf()
-
-
-    private var ifExpressionBody: String = ""
-    var conditionAndReturnValueList: ConditionAndReturnValueList? = null
-
-    // 仮引数のリスト
-    val parameters: ArrayList<String> = ArrayList()
-
-    // 引数の型リスト
-    val argumentTypes: ArrayList<String> = ArrayList()
+(tcDefinition: TCExplicitOperationDefinition,
+ private val instanceVariables: LinkedHashMap<String, TCInstanceVariableDefinition>,
+ private val constantValues: LinkedHashMap<String, TCValueDefinition>) : Definition(tcDefinition) {
 
     // 利用しているメンバ変数のリスト
-    val usedInstanceVariables: ArrayList<String> = ArrayList()
+    private val usedInstanceVariables: LinkedHashMap<String, String> = linkedMapOf()
 
-    /**
-     * a parameter to ArrayList of HashMaps that is parsed each if-expression.
-     * ArrayList of HashMap of parsed if-expr.
-     */
-    val ifConditions: HashMap<String, ArrayList<HashMap<String, String>>> = HashMap()
-
-    /**
-     * type of return value
-     */
-    var returnValue: String = tcOperationDefinition.type.result.toString()
-        private set
-
-    var ifElseExprSyntaxTree: IfElseExprSyntaxTree? = null
-        private set
-
-    var operationName: String = tcOperationDefinition.name.name
-        private set
-
-    var isSetter: Boolean = false
+    override var returnValue: String = tcDefinition.type.result.toString()
 
     init {
         // 引数の型を登録
-        val tcOperationType = tcOperationDefinition.type
-        tcOperationType.parameters.forEach { e -> argumentTypes.add(e.toString()) }
+        tcDefinition.type.parameters.forEach { e -> argumentTypes.add(e.toString()) }
 
         // IfElseを構文解析
-        val tcExpression = tcOperationDefinition.body
-        ifExpressionBody = tcExpression.toString()
+        ifExpressionBody = tcDefinition.body.toString()
 
         try {
+            // 定数を実数に置き換え
+            constantValues.forEach {
+                if (ifExpressionBody.contains(it.key)) {
+                    ifExpressionBody = ifExpressionBody.replace(it.key, it.value.exp.toString())
+                }
+            }
             ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody)
         } catch (e: NotIfNodeException) {
             isSetter = true
@@ -72,33 +43,37 @@ constructor(private val tcOperationDefinition: TCExplicitOperationDefinition,
         }
 
         if (!isSetter) {
-            //parsing for parameters
-            val tcPatternList = tcOperationDefinition.paramPatternList[0]  // 仮引数
-            setUsedInstanceVariables()
-
-            for (parameter in tcPatternList) {
-                parameters.add(parameter.toString())
-            }
-            for (variable in usedInstanceVariables) {
-                parameters.add(variable)
-            }
-
-            parseIfConditions()
-
-            ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody)
-            conditionAndReturnValueList = ConditionAndReturnValueList(ifElseExprSyntaxTree!!.root)
+            setIfElseSyntaxTree()
         }
+    }
+
+    override fun setIfElseSyntaxTree() {
+        //parsing for parameters
+        val tcPatternList = (tcDefinition as TCExplicitOperationDefinition).paramPatternList[0] // 仮引数
+        setUsedInstanceVariables()
+
+        for (parameter in tcPatternList) {
+            parameters.add(parameter.toString())
+        }
+        for (variable in usedInstanceVariables) {
+            parameters.add(variable.key)
+            argumentTypes.add(variable.value)
+        }
+
+        parseIfConditions()
+
+        conditionAndReturnValueList = ConditionAndReturnValueList(ifElseExprSyntaxTree!!.root)
     }
 
     private fun setUsedInstanceVariables() {
         instanceVariables.forEach {
             if (ifExpressionBody.contains(it.key)) {
-                usedInstanceVariables.add(it.key)
+                usedInstanceVariables[it.key] = it.value.type.toString()
             }
         }
     }
 
-    private fun parseIfConditions() {
+    override fun parseIfConditions() {
         val ifElses = ifElseExprSyntaxTree!!.ifElses
 
         compositeParameters = ArrayList(parameters)
@@ -107,68 +82,19 @@ constructor(private val tcOperationDefinition: TCExplicitOperationDefinition,
             var element = ifElses[i]
             if (element == "if") {
                 element = ifElses[i + 1]
+
+                // 定数を実数に置き換え
                 constantValues.forEach {
                     if (element.contains(it.key)) {
                         element = element.replace(it.key, it.value.exp.toString())
+                        ifElses[i + 1] = element
                     }
                 }
-                ifConditionBodiesInCameForward.add(element)
-                val operator = Util.getOperator(element)
-                val indexOfOperator = element.indexOf(operator)
-                val left = element.substring(0, indexOfOperator)
-
-                // 左辺に+が含まれていたらそれも仮引数リストに加え入れる。
-                if (Util.getOperator(left) == "+") {
-                    compositeParameters.add(left)
-                }
+                createCompositParameters(element)
             }
         }
 
-        //initializing of collection instances of each parameter
-        compositeParameters.forEach { s ->
-            ifConditions[s] = ArrayList()
-        }
-
-        //parsing of each if-condition, and store in ifConditions
-        ifConditionBodiesInCameForward.forEach { condition ->
-            val operator = Util.getOperator(condition)
-            val indexOfOperator = condition.indexOf(operator)
-            val left = condition.substring(0, indexOfOperator)
-            compositeParameters.forEach { parameter ->
-                if (left == parameter) {
-                    parse(condition, parameter)
-                }
-            }
-            parameters.forEach { parameter ->
-                if (condition.contains(parameter)) {
-                    parse(condition, parameter)
-                }
-            }
-        }
-    }
-
-    private fun parse(condition: String, parameter: String) {
-        val operator = Util.getOperator(condition)
-        val indexOfOperator = condition.indexOf(operator)
-        val hm = HashMap<String, String>()
-        hm["left"] = condition.substring(0, indexOfOperator).replace(" ", "")
-        hm["operator"] = operator
-
-        //right-hand and surplus need branch depending on mod or other.
-        modJudge(condition, operator, indexOfOperator, hm)
-        val al = ifConditions[parameter]
-        al!!.add(hm)
-    }
-
-    companion object {
-        fun modJudge(condition: String, operator: String, indexOfOperator: Int, hm: HashMap<String, String>) {
-            if (operator == "mod") {
-                val indexOfEqual = condition.indexOf("=")
-                hm["right"] = condition.substring(indexOfOperator + 3, indexOfEqual).replace(" ", "")
-                hm["surplus"] = condition.substring(indexOfEqual + 1).replace(" ", "")
-            } else {
-                hm["right"] = condition.substring(indexOfOperator + operator.length).replace(" ", "")
-            }
-        }
+        initializeIfconditions()
+        createIfCondition()
     }
 }

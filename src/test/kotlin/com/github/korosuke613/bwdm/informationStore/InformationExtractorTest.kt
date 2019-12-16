@@ -22,7 +22,7 @@ internal class InformationExtractorTest {
 
         @Test
         fun getFunctionName() {
-            assertEquals("うるう年判定仕様", informationExtractor.explicitFunctions["うるう年判定仕様"]?.functionName)
+            assertEquals("うるう年判定仕様", informationExtractor.explicitFunctions["うるう年判定仕様"]?.name)
         }
 
         @Test
@@ -46,7 +46,7 @@ internal class InformationExtractorTest {
 
             var i = 0
             informationExtractor.explicitOperations.values.forEach { _ ->
-                assertEquals(expected[i], informationExtractor.explicitOperations[expected[i]]!!.operationName)
+                assertEquals(expected[i], informationExtractor.explicitOperations[expected[i]]!!.name)
                 i++
             }
         }
