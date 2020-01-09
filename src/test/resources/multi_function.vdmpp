@@ -1,0 +1,25 @@
+class 判定
+
+functions
+
+public うるう年判定 : int -> seq of char
+  うるう年判定(年) ==
+    if(年 mod 4 = 0) then
+      if(年 mod 100 = 0) then
+        if(年 mod 400 = 0) then
+          "うるう年"
+        else
+          "平年"
+      else
+        "うるう年"
+    else
+      "平年";
+
+public 成人判定 : nat -> seq of char
+  成人判定(年齢) ==
+    if(年齢 <= 20) then
+      "未成年"
+    else
+      "成人";
+
+end 判定
