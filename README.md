@@ -45,5 +45,5 @@ $ gradle run -Pargs="./vdm_files/problem.vdmpp"
 ## build
 
 ```bash
-$ gradle jar
+$ DYLD_LIBRARY_PATH=./libs;LD_LIBRARY_PATH=./libs; export LD_LIBRARY_PATH; gradle jar
 ```
