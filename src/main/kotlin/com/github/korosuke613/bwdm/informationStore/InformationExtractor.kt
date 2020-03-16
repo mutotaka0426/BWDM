@@ -80,7 +80,7 @@ constructor(val vdmFilePath: String) {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                val function = FunctionDefinition(tcFunctionDefinition)
+                val function = FunctionDefinition(tcFunctionDefinition, constantValues)
                 explicitFunctions[function.name] = function
             }
         }

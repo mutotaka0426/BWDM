@@ -8,6 +8,7 @@ import com.fujitsu.vdmj.mapper.ClassMapper
 import com.fujitsu.vdmj.syntax.DefinitionReader
 import com.fujitsu.vdmj.tc.definitions.TCDefinition
 import com.fujitsu.vdmj.tc.definitions.TCExplicitFunctionDefinition
+import com.fujitsu.vdmj.tc.definitions.TCValueDefinition
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -36,7 +37,8 @@ internal class FunctionDefinitionTest {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                function = FunctionDefinition(tcFunctionDefinition)
+                val constantValues: LinkedHashMap<String, TCValueDefinition> = LinkedHashMap()
+                function = FunctionDefinition(tcFunctionDefinition, constantValues)
             }
         }
     }

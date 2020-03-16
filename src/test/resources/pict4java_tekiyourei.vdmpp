@@ -1,0 +1,16 @@
+class SampleClass
+functions
+
+sampleFunction : int*nat*nat -> seq of char
+sampleFunction(a, b, c)==
+  if(a < 100) then
+    if(b > 2018) then
+      "aは100未満かつbは2018より大きい"
+    else
+      "aは100未満かつbは2018以下"
+  elseif(c < 12) then
+    "aは100以上かつcは12未満"
+  else
+    "aは100以上かつcは12以上";
+
+end SampleClass
