@@ -4,16 +4,25 @@ import com.fujitsu.vdmj.lex.LexException
 import com.fujitsu.vdmj.syntax.ParserException
 import com.fujitsu.vdmj.tc.definitions.TCExplicitFunctionDefinition
 import com.fujitsu.vdmj.tc.definitions.TCValueDefinition
+import com.fujitsu.vdmj.tc.definitions.TCTypeDefinition
 import java.io.IOException
 
 class FunctionDefinition
 (tcDefinition: TCExplicitFunctionDefinition,
- private val constantValues: LinkedHashMap<String, TCValueDefinition>) : Definition(tcDefinition) {
+ private val constantValues: LinkedHashMap<String, TCValueDefinition>, private val types: LinkedHashMap<String, TCTypeDefinition>) : Definition(tcDefinition) {
     override var returnValue: String = tcDefinition.type.result.toString()
 
     init {
         // 引数の型を登録
-        tcDefinition.type.parameters.forEach { e -> argumentTypes.add(e.toString()) }
+        tcDefinition.type.parameters.forEach { e ->
+			var argumentType = e.toString()
+        	types.forEach {
+          	    if (argumentType == it.key) {
+                	argumentType = it.value.type.toDetailedString()
+            	}
+        	}
+			argumentTypes.add(argumentType)
+		}
 
         // IfElseを構文解析
         ifExpressionBody = tcDefinition.body.toString()

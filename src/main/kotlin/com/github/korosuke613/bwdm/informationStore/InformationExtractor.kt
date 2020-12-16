@@ -30,6 +30,7 @@ constructor(val vdmFilePath: String) {
     val instanceVariables: LinkedHashMap<String, TCInstanceVariableDefinition> = LinkedHashMap()
     val explicitOperations: LinkedHashMap<String, OperationDefinition> = LinkedHashMap()
     val explicitFunctions: LinkedHashMap<String, FunctionDefinition> = LinkedHashMap()
+    val types: LinkedHashMap<String, TCTypeDefinition> = LinkedHashMap()
 
     init {
         val vdmFile = File(vdmFilePath)
@@ -80,9 +81,19 @@ constructor(val vdmFilePath: String) {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                val function = FunctionDefinition(tcFunctionDefinition, constantValues)
+                val function = FunctionDefinition(tcFunctionDefinition, constantValues, types)
                 explicitFunctions[function.name] = function
             }
+			if (astDefinition.kind() == "type") {
+				lateinit var tcTypeDefinition: TCTypeDefinition
+                try {
+                    tcTypeDefinition = ClassMapper.getInstance(TCDefinition.MAPPINGS).init().convert<TCTypeDefinition>(astDefinition)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+				var unresolvedType = "(unresolved ${tcTypeDefinition.type.toString()})"
+				types[unresolvedType] = tcTypeDefinition
+			}
         }
     }/* Initializing fields*/
 }

@@ -77,6 +77,8 @@ public class HelloVDMJ4 {
                 TCExpression tc_pre = tcefd.precondition;
                 TCExpression tc_post = tcefd.postcondition;
 
+                System.out.println("引数:" + tcefd.type.parameters);
+                System.out.println("戻り値:" + tcefd.type.result);
                 System.out.println("関数本体:" + tcefd.body);
                 System.out.println("事前条件:" + tc_pre.toString());
                 System.out.println("事後条件:" + tc_post.toString());
@@ -92,8 +94,9 @@ public class HelloVDMJ4 {
                 //型定義を取り出して、型用のクラスに入れる
                 TCType type = tctd.type;
 
-                System.out.println("型定義全部" + tctd.toString());
-                System.out.println("型" + type.toString());
+                System.out.println("型定義全部:" + tctd.toString());
+                System.out.println("型名:" + type.toString());
+                System.out.println("型:" + type.toDetailedString());
                 System.out.println();
             }
         });

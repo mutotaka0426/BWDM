@@ -1,0 +1,25 @@
+class ProblemClass
+
+types
+
+test = nat;
+test2 = int;
+
+values
+
+public Four : int = 4;
+public NinetyTwo : int = 92;
+
+functions
+
+problemFunction : test -> seq of char
+  problemFunction(a) ==
+    if(a mod Four = 0) then
+      if(a > NinetyTwo) then
+        "a mod Four = 0 and a > 92"
+      else
+        "a mod Four = 0 and !(a > 92)"
+    else
+      "!(a mod Four = 0)";
+
+end ProblemClass
