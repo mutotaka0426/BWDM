@@ -3,26 +3,47 @@ class problem_example
 
 types
 
-stack= token;
-prime_numbers = seq of int;
-initeger_numbers ::
-        positive_numbers : nat1
-        ZERO : int
-        negative_numbers : int;
+    test = nat
+    inv t == t > 2;
+    stack= token;
+    prime_numbers = seq of int;
+    initeger_numbers ::
+            positive_numbers : nat1
+            ZERO : int
+            negative_numbers : int;
+
+instance variables
+
+    private my_data : test :=500;
+    private my_data2 : test := 0;
+    inv my_data > 10;
+
+operations
+
+    addEven : nat ==> ()
+        addEven(a) == my_data := my_data + a
+        pre a mod 2 = 0
+        post my_data mod 2 = 0;
+
+    doubleData : () ==> ()
+        doubleData() == (my_data := my_data * 2;
+        my_data2 := 1)
+        pre my_data mod 2 = 0
+        post my_data mod 2 = my_data~ mod 2;
 
 functions
 
-problem_function : nat -> seq of char
-    problem_function(a) ==
-        if(a mod 4 = 0) then
-            if(a > 92) then
-      	    	 "96, 100, 104, ..."
-	    else
-	          "..., 84, 88, 92"
-	else
-	    "others"
+    problem_function : test -> seq of char
+        problem_function(a) ==
+            if(a mod 4 = 0) then
+                if(a > 92) then
+          	    	 "96, 100, 104, ..."
+    	    else
+    	          "..., 84, 88, 92"
+    	else
+    	    "others"
 
-	pre a > 5
-	post 10 > a;
+    	pre a > 5
+    	post 10 > a;
 
 end problem_example

@@ -180,7 +180,8 @@ object BwdmMain {
         buf += "戻り値の型 : " + definition.returnValue + "\n"
         val bvTestcaseNum = bvaUnitMain.analyzer.inputDataList.size
         val seTestcaseNum = seUnitMain.analyzer.inputDataList.size
-        buf += "生成テストケース数 : " + (bvTestcaseNum + seTestcaseNum) + "件"
+		val obTestcaseNum = 0
+        buf += "生成テストケース数 : " + (bvTestcaseNum + seTestcaseNum +obTestcaseNum) + "件"
         buf += "(境界値分析:$bvTestcaseNum/記号実行:$seTestcaseNum)"
         buf += "\n\n"
     }

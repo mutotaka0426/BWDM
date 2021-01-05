@@ -71,7 +71,7 @@ constructor(val vdmFilePath: String) {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                val operation = OperationDefinition(tcExplicitOperationDefinition, instanceVariables, constantValues)
+                val operation = OperationDefinition(tcExplicitOperationDefinition, instanceVariables, constantValues, types)
                 explicitOperations[operation.name] = operation
             }
             if (astDefinition.kind() == "explicit function") {
@@ -91,8 +91,7 @@ constructor(val vdmFilePath: String) {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-				var unresolvedType = "(unresolved ${tcTypeDefinition.type.toString()})"
-				types[unresolvedType] = tcTypeDefinition
+				types[tcTypeDefinition.type.toString()] = tcTypeDefinition
 			}
         }
     }/* Initializing fields*/

@@ -4,6 +4,7 @@ import com.github.korosuke613.bwdm.Util
 import com.github.korosuke613.bwdm.informationStore.Definition
 import com.github.korosuke613.bwdm.informationStore.IfNode
 import com.github.korosuke613.bwdm.informationStore.Node
+import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.ConditionAnalyzer
 import java.util.*
 
 class ExpectedOutputDataGenerator
@@ -135,14 +136,17 @@ constructor(private val definition: Definition,
                 val currentPrm = definition.parameters[j]
                 val currentVl = currentInputData[currentPrm]
 
+				var invariantExpression = definition.typeInvariants[j]
+				invariantExpression = invariantExpression.replace(currentPrm, currentVl.toString())
+
                 when (currentTyp) {
-                    "int" -> if (currentVl == BoundaryValueAnalyzer.intMax + 1 || currentVl == BoundaryValueAnalyzer.intMin - 1) {
+                    "int" -> if (currentVl == BoundaryValueAnalyzer.intMax + 1 || currentVl == BoundaryValueAnalyzer.intMin - 1 || !ConditionAnalyzer.evaluteExpression(invariantExpression)) {
                         expectedOutputDataList[i] = "Undefined Action"
                     }
-                    "nat" -> if (currentVl == BoundaryValueAnalyzer.natMax + 1 || currentVl == BoundaryValueAnalyzer.natMin - 1) {
+                    "nat" -> if (currentVl == BoundaryValueAnalyzer.natMax + 1 || currentVl == BoundaryValueAnalyzer.natMin - 1 || !ConditionAnalyzer.evaluteExpression(invariantExpression)) {
                         expectedOutputDataList[i] = "Undefined Action"
                     }
-                    "nat1" -> if (currentVl == BoundaryValueAnalyzer.nat1Max + 1 || currentVl == BoundaryValueAnalyzer.nat1Min - 1) {
+                    "nat1" -> if (currentVl == BoundaryValueAnalyzer.nat1Max + 1 || currentVl == BoundaryValueAnalyzer.nat1Min - 1 || !ConditionAnalyzer.evaluteExpression(invariantExpression)) {
                         expectedOutputDataList[i] = "Undefined Action"
                     }
                 }//nothing to do

@@ -5,12 +5,15 @@ import com.fujitsu.vdmj.syntax.ParserException
 import com.fujitsu.vdmj.tc.definitions.TCExplicitOperationDefinition
 import com.fujitsu.vdmj.tc.definitions.TCInstanceVariableDefinition
 import com.fujitsu.vdmj.tc.definitions.TCValueDefinition
+import com.fujitsu.vdmj.tc.definitions.TCTypeDefinition
 import java.io.IOException
+import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.ConditionAnalyzer
 
 class OperationDefinition
 (tcDefinition: TCExplicitOperationDefinition,
  private val instanceVariables: LinkedHashMap<String, TCInstanceVariableDefinition>,
- private val constantValues: LinkedHashMap<String, TCValueDefinition>) : Definition(tcDefinition) {
+ private val constantValues: LinkedHashMap<String, TCValueDefinition>,
+ private val types: LinkedHashMap<String, TCTypeDefinition>) : Definition(tcDefinition) {
 
     // 利用しているメンバ変数のリスト
     private val usedInstanceVariables: LinkedHashMap<String, String> = linkedMapOf()
@@ -19,7 +22,18 @@ class OperationDefinition
 
     init {
         // 引数の型を登録
-        tcDefinition.type.parameters.forEach { e -> argumentTypes.add(e.toString()) }
+        tcDefinition.type.parameters.forEach { e ->
+			var argumentType = e.toString()
+			// 型定義を使用してる場合実際の型に変換する
+			if(argumentType.startsWith("(unresolved ")) {
+        		types.forEach {
+        	  	    if (argumentType == it.key) {
+        	        	argumentType = it.value.type.toDetailedString()
+        	    	}
+        		}
+			}
+			argumentTypes.add(argumentType) 
+		}
 
         // IfElseを構文解析
         ifExpressionBody = tcDefinition.body.toString()
@@ -60,6 +74,7 @@ class OperationDefinition
             argumentTypes.add(variable.value)
         }
 
+		setTypeInvariant()
         parseIfConditions()
 
         conditionAndReturnValueList = ConditionAndReturnValueList(ifElseExprSyntaxTree!!.root)
@@ -68,8 +83,17 @@ class OperationDefinition
     private fun setUsedInstanceVariables() {
         instanceVariables.forEach {
             if (ifExpressionBody.contains(it.key)) {
-                usedInstanceVariables[it.key] = it.value.type.toString()
-            }
+				var instanceVariableType = it.value.type.toString()
+				// 型定義を使用してる場合実際の型に変換する
+				if(instanceVariableType.startsWith("(unresolved ")) {
+				    types.forEach { t ->
+						if(t.key == instanceVariableType) {
+						    instanceVariableType = t.value.type.toDetailedString()
+						}
+					}
+				} 
+                usedInstanceVariables[it.key] = instanceVariableType 
+			}
         }
     }
 
@@ -97,4 +121,28 @@ class OperationDefinition
         initializeIfconditions()
         createIfCondition()
     }
+
+	override fun setTypeInvariant() {
+		for(i in parameters.indices) {
+			var parameter = parameters[i]
+			var argumentType = argumentTypes[i]
+			typeInvariants.add("")
+			types.forEach { 
+				if(it.key == argumentType) {
+					argumentTypes[i] = it.value.type.toDetailedString()
+
+					var type = it.value
+					// 型の不変条件式をセット
+					if(type.invPattern != null){
+						var expression = type.invExpression.toString()
+						expression = expression.replace(type.invPattern.toString(), parameter)
+						expression = ConditionAnalyzer.summarizeExpression(expression)
+
+						typeInvariants[i] = expression
+                		createCompositParameters(expression)
+					}
+				}
+			}
+		}
+	}
 }

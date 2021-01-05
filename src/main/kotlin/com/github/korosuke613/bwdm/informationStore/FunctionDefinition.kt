@@ -6,6 +6,7 @@ import com.fujitsu.vdmj.tc.definitions.TCExplicitFunctionDefinition
 import com.fujitsu.vdmj.tc.definitions.TCValueDefinition
 import com.fujitsu.vdmj.tc.definitions.TCTypeDefinition
 import java.io.IOException
+import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.ConditionAnalyzer
 
 class FunctionDefinition
 (tcDefinition: TCExplicitFunctionDefinition,
@@ -16,13 +17,11 @@ class FunctionDefinition
         // 引数の型を登録
         tcDefinition.type.parameters.forEach { e ->
 			var argumentType = e.toString()
-        	types.forEach {
-          	    if (argumentType == it.key) {
-                	argumentType = it.value.type.toDetailedString()
-            	}
-        	}
+			argumentType = argumentType.removePrefix("(unresolved ")
+			argumentType = argumentType.removeSuffix(")")
 			argumentTypes.add(argumentType)
 		}
+
 
         // IfElseを構文解析
         ifExpressionBody = tcDefinition.body.toString()
@@ -53,6 +52,7 @@ class FunctionDefinition
             parameters.add(parameter.toString())
         }
 
+		setTypeInvariant()
         parseIfConditions()
         ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody)
         conditionAndReturnValueList = ConditionAndReturnValueList(ifElseExprSyntaxTree!!.root)
@@ -82,4 +82,28 @@ class FunctionDefinition
         initializeIfconditions()
         createIfCondition()
     }
+
+	override fun setTypeInvariant() {
+		for(i in parameters.indices) {
+			var parameter = parameters[i]
+			var argumentType = argumentTypes[i]
+			typeInvariants.add("")
+			types.forEach { 
+				if(it.key == argumentType) {
+					argumentTypes[i] = it.value.type.toDetailedString()
+
+					var type = it.value
+					// 型の不変条件式をセット
+					if(type.invPattern != null){
+						var expression = type.invExpression.toString()
+						expression = expression.replace(type.invPattern.toString(), parameter)
+						expression = ConditionAnalyzer.summarizeExpression(expression)
+
+						typeInvariants[i] = expression
+                		createCompositParameters(expression)
+					}
+				}
+			}
+		}
+	}
 }

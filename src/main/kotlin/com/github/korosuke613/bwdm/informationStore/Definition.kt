@@ -32,6 +32,9 @@ abstract class Definition(val tcDefinition: TCDefinition) {
     // 引数の型リスト
     val argumentTypes: ArrayList<String> = ArrayList()
 
+	// 型定義リスト
+	val typeInvariants: ArrayList<String> = ArrayList()
+
     var ifElseExprSyntaxTree: IfElseExprSyntaxTree? = null
         protected set
 
@@ -39,6 +42,7 @@ abstract class Definition(val tcDefinition: TCDefinition) {
 
     abstract fun setIfElseSyntaxTree()
     abstract fun parseIfConditions()
+    abstract fun setTypeInvariant()
 
     protected fun createCompositParameters(element: String) {
         ifConditionBodiesInCameForward.add(element)

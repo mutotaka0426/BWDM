@@ -19,6 +19,7 @@ class Util {
             return when {
                 condition.contains("<=") -> "<="
                 condition.contains(">=") -> ">="
+               // condition.contains("<>") -> "<>"
                 condition.contains("<") -> "<"
                 condition.contains(">") -> ">"
                 condition.contains("mod") -> "mod"
