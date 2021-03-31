@@ -1,0 +1,16 @@
+class singleNumber
+
+types
+	singleNumber = nat
+	inv s == s <= 9;
+
+functions
+
+	Evenness : singleNumber -> seq of char
+		Evenness(num) ==
+			if(num mod 2 = 0) then
+				"num is even"
+			else
+				"num is odd";
+
+end singleNumber

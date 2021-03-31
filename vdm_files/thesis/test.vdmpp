@@ -1,0 +1,21 @@
+class 成績評価
+
+functions
+	成績評価 : nat -> seq of char
+		成績評価(テスト点) ==
+			if(テスト点 >= 60) then
+				if(テスト点 >= 70) then
+					if(テスト点 >= 80) then
+						if(テスト点 >= 90) then
+							"秀"
+						else
+							"優"
+					else
+						"良"
+				else
+					"可"
+			else
+				"不可"
+	pre テスト点 <= 100;
+
+end 成績評価

@@ -30,6 +30,8 @@ class DomainAnalyser(private val definition: Definition) {
             domains.add(domainPoints)
         }
         createInputDataList()
+ 
+		println(inputDataList)
         expectedOutputDataGenerator = ExpectedOutputDataGenerator(
                 definition,
                 Objects.requireNonNull<IfElseExprSyntaxTree>(definition.ifElseExprSyntaxTree).root,
@@ -77,6 +79,9 @@ class DomainAnalyser(private val definition: Definition) {
             for (prm in definition.parameters) {
                 buf.append(p.factors[prm]).append(" ")
             }
+			println("てすと")
+println(expectedOutputDataGenerator.expectedOutputDataList)
+			//println(expectedOutputDataGenerator.expectedOuputDataList)
             buf.append("-> ").append(expectedOutputDataGenerator.expectedOutputDataList[expectedCount]).append("\n")
             expectedCount++
             i++

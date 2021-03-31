@@ -32,17 +32,22 @@ abstract class Definition(val tcDefinition: TCDefinition) {
     // 引数の型リスト
     val argumentTypes: ArrayList<String> = ArrayList()
 
-	// 型定義リスト
-	val typeInvariants: ArrayList<String> = ArrayList()
+	// 入力値の条件式リスト(型の不変条件と事前条件)
+	val inputConditions: ArrayList<String> = ArrayList()
 
+	// 期待値の条件式リスト(クラス不変条件と事後条件)
+	val outputConditions: ArrayList<String> = ArrayList()
+	
     var ifElseExprSyntaxTree: IfElseExprSyntaxTree? = null
         protected set
 
     var isSetter: Boolean = false
 
+    var isObjectSetter: Boolean = true 
+
     abstract fun setIfElseSyntaxTree()
     abstract fun parseIfConditions()
-    abstract fun setTypeInvariant()
+    abstract fun setInputConditions()
 
     protected fun createCompositParameters(element: String) {
         ifConditionBodiesInCameForward.add(element)
@@ -98,8 +103,9 @@ abstract class Definition(val tcDefinition: TCDefinition) {
         fun modJudge(condition: String, operator: String, indexOfOperator: Int, hm: HashMap<String, String>) {
             if (operator == "mod") {
                 val indexOfEqual = condition.indexOf("=")
-                hm["right"] = condition.substring(indexOfOperator + 3, indexOfEqual).replace(" ", "")
-                hm["surplus"] = condition.substring(indexOfEqual + 1).replace(" ", "")
+				hm["left"] = hm["left"]!!.replace("(", "")
+                hm["right"] = condition.substring(indexOfOperator + 3, indexOfEqual).replace(" ", "").replace(")", "")
+                hm["surplus"] = condition.substring(indexOfEqual + 1).replace(" ", "").replace(")", "")
             } else {
                 hm["right"] = condition.substring(indexOfOperator + operator.length).replace(" ", "")
             }

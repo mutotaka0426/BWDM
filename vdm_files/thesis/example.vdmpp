@@ -1,0 +1,31 @@
+class sample
+
+instance variables
+	private object : nat;
+
+operations
+	setObject : nat ==> ()
+		setObject(a) == object := a;
+
+	sampleOperation : () ==> seq of char
+		sampleOperation() ==
+			if(object < 100) then
+				return "objectは100未満"
+			else
+				return "objectは100以上";
+
+functions
+	sampleFunction : nat * int -> seq of char
+		sampleFunction(a, b) ==
+			if(a < 100) then
+				if(b < 100) then
+					"a と b は100未満"
+				else
+					"a が100未満，b が100以上"
+			else
+				if(b < 100) then
+					"a が100以上，b が100未満"
+				else
+					"a と b は100以上";
+
+end sample

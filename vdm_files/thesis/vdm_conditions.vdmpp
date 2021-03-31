@@ -8,7 +8,7 @@ types
 functions
 	生まれ判定 : 「年」 * 「月」 -> seq of char
 		生まれ判定(年, 月) ==
-		    if(年 <= 2019) then
+			if(年 <= 2019) then
 				if(月 < 4) then
 					"平成の早生まれ"
 				else
@@ -16,7 +16,7 @@ functions
 						"令和の遅生まれ"
 					else
 						"平成の遅生まれ"
-		    else
+			else
 				if(月 < 4) then
 					"令和の早生まれ"
 				else

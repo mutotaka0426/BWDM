@@ -6,13 +6,15 @@ import com.fujitsu.vdmj.tc.definitions.TCExplicitFunctionDefinition
 import com.fujitsu.vdmj.tc.definitions.TCValueDefinition
 import com.fujitsu.vdmj.tc.definitions.TCTypeDefinition
 import java.io.IOException
-import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.ConditionAnalyzer
+import com.github.korosuke613.bwdm.ConditionAnalyzer
+import com.github.korosuke613.bwdm.replaceVariable
+import com.github.korosuke613.bwdm.alignParentheses
 
 class FunctionDefinition
 (tcDefinition: TCExplicitFunctionDefinition,
  private val constantValues: LinkedHashMap<String, TCValueDefinition>, private val types: LinkedHashMap<String, TCTypeDefinition>) : Definition(tcDefinition) {
     override var returnValue: String = tcDefinition.type.result.toString()
-
+	
     init {
         // 引数の型を登録
         tcDefinition.type.parameters.forEach { e ->
@@ -22,6 +24,22 @@ class FunctionDefinition
 			argumentTypes.add(argumentType)
 		}
 
+		// 事前条件式をセット
+		var precondition = tcDefinition.precondition?.toString() ?: "" 
+		if(precondition != ""){	
+			val precondition = ConditionAnalyzer.expressionTree(precondition)
+			inputConditions.add(precondition)
+			precondition.split(" and ", " or ").forEach {
+				// 括弧を揃えて一番外側の括弧を外す
+				val pre = it.alignParentheses().removePrefix("(").removeSuffix(")")
+				createCompositParameters(pre)
+			}
+		}
+
+		// 事後条件をセット
+		if(tcDefinition.postcondition != null){
+			outputConditions.add(tcDefinition.postcondition.toString())
+		}
 
         // IfElseを構文解析
         ifExpressionBody = tcDefinition.body.toString()
@@ -30,7 +48,7 @@ class FunctionDefinition
             // 定数を実数に置き換え
             constantValues.forEach {
                 if (ifExpressionBody.contains(it.key)) {
-                    ifExpressionBody = ifExpressionBody.replace(it.key, it.value.exp.toString())
+                    ifExpressionBody = ifExpressionBody.replaceVariable(it.key, it.value.exp.toString())
                 }
             }
             ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody)
@@ -52,7 +70,7 @@ class FunctionDefinition
             parameters.add(parameter.toString())
         }
 
-		setTypeInvariant()
+		setInputConditions()
         parseIfConditions()
         ifElseExprSyntaxTree = IfElseExprSyntaxTree(ifExpressionBody)
         conditionAndReturnValueList = ConditionAndReturnValueList(ifElseExprSyntaxTree!!.root)
@@ -71,7 +89,7 @@ class FunctionDefinition
                 // 定数を実数に置き換え
                 constantValues.forEach {
                     if (element.contains(it.key)) {
-                        element = element.replace(it.key, it.value.exp.toString())
+                        element = element.replaceVariable(it.key, it.value.exp.toString())
                         ifElses[i + 1] = element
                     }
                 }
@@ -83,11 +101,11 @@ class FunctionDefinition
         createIfCondition()
     }
 
-	override fun setTypeInvariant() {
+	override fun setInputConditions() {
 		for(i in parameters.indices) {
-			var parameter = parameters[i]
-			var argumentType = argumentTypes[i]
-			typeInvariants.add("")
+			val parameter = parameters[i]
+			val argumentType = argumentTypes[i]
+
 			types.forEach { 
 				if(it.key == argumentType) {
 					argumentTypes[i] = it.value.type.toDetailedString()
@@ -96,11 +114,15 @@ class FunctionDefinition
 					// 型の不変条件式をセット
 					if(type.invPattern != null){
 						var expression = type.invExpression.toString()
-						expression = expression.replace(type.invPattern.toString(), parameter)
-						expression = ConditionAnalyzer.summarizeExpression(expression)
+						expression = expression.replaceVariable(type.invPattern.toString(), parameter)
+						expression = ConditionAnalyzer.expressionTree(expression)
+						inputConditions.add(expression)
 
-						typeInvariants[i] = expression
-                		createCompositParameters(expression)
+						expression.split(" and ", " or ").forEach {
+							// 括弧を揃えて一番外側の括弧を外す
+							val exp = it.alignParentheses().removePrefix("(").removeSuffix(")")
+                			createCompositParameters(exp)
+						}
 					}
 				}
 			}

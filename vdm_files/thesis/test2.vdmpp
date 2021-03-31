@@ -1,0 +1,16 @@
+class 不変条件と事後条件の確認
+
+types
+	twoDigits = nat
+	inv v == v >= 10;
+	
+functions
+	Evenness : twoDigits -> seq of char
+		Evenness(num) ==
+			if(num mod 2 = 0) then
+				"num is even"
+			else
+				"num is odd"
+		post num < 100;
+
+end 不変条件と事後条件の確認

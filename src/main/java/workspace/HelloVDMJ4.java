@@ -97,12 +97,12 @@ public class HelloVDMJ4 {
                 TCExpression tco_post = tceod.postcondition;
 
                 System.out.println("操作名:" + tceod.name);
+                System.out.println("仮引数:" + tceod.parameterPatterns);
                 System.out.println("引数:" + tceod.type.parameters);
                 System.out.println("戻り値:" + tceod.type.result);
                 System.out.println("関数本体:" + tceod.body);
                 System.out.println("事前条件:" + tco_pre);
                 System.out.println("事後条件:" + tco_post);
-                System.out.println("????:");
                 System.out.println();
             } else if (astd.kind().equals("type")) { //もしも型定義がきたらTCTypeDefinitionに入れる
                 TCTypeDefinition tctd = null;
@@ -134,13 +134,23 @@ public class HelloVDMJ4 {
                 System.out.println("型:" + tcid.type.toString());
                 System.out.println("値:" + tcid.expression);
                 System.out.println();
+        } else if (astd.kind().equals("invariant")) {
+            TCClassInvariantDefinition tci = null;
+            try {
+                tci = ClassMapper.getInstance(TCDefinition.MAPPINGS).init().convert(astd);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        });
 
-        extractInformationByVDMJ();
+            System.out.println("不変条件:" + tci.expression);
+            System.out.println();
+        }
+    });
+
+    extractInformationByVDMJ();
 
 
-    }
+}
 
 
 }

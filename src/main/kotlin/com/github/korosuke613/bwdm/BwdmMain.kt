@@ -3,12 +3,14 @@ package com.github.korosuke613.bwdm
 import com.fujitsu.vdmj.lex.LexException
 import com.fujitsu.vdmj.syntax.ParserException
 import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.BvaUnitMain
+import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.ObjectStateAnalyzer
 import com.github.korosuke613.bwdm.domainAnalysis.DomainAnalyser
 import com.github.korosuke613.bwdm.informationStore.Definition
 import com.github.korosuke613.bwdm.informationStore.FunctionDefinition
 import com.github.korosuke613.bwdm.informationStore.InformationExtractor
 import com.github.korosuke613.bwdm.informationStore.OperationDefinition
 import com.github.korosuke613.bwdm.symbolicExecutionUnit.SeUnitMain
+
 import external.TimeMeasure
 import org.kohsuke.args4j.CmdLineException
 import org.kohsuke.args4j.CmdLineParser
@@ -90,42 +92,54 @@ object BwdmMain {
     }
 
     private fun generateTest(definition: Definition) {
-        if (definition.isSetter) {
+        if (definition.isSetter && definition.isObjectSetter) {
             // operationはセッターであるためテストしない
             return
         }
 
+		buf = ""
         val tm = TimeMeasure()
         tm.start()
-        bvaUnitMain = BvaUnitMain(definition, isPairwise = shell.showBvTestcasesWithPairwise)
-        seUnitMain = SeUnitMain(definition)
-        if (shell.showStandardInfo) {
-            showStandardInfo(definition)
-        }
-        if (shell.showBvsInfo) {
-            showBvsInfo(definition)
-        }
-        if (shell.showSeConditionsInfo) {
-            showSeConditionInfo(definition)
-        }
-        if (shell.showBvTestcases and !shell.showBvTestcasesWithPairwise) {
-            buf += "境界値分析によるテストケース\n"
-            buf += bvaUnitMain.allTestCases
-            buf += "\n"
-        } else if (shell.showBvTestcasesWithPairwise) {
-            buf += "境界値分析によるテストケース（ペアワイズ法適用）\n"
-            buf += bvaUnitMain.allTestCases
-            buf += "\n"
-        }
-        if (shell.showSeTestcases) {
-            buf += "記号実行によるテストケース\n"
-            buf += seUnitMain.allTestCases
-            buf += "\n"
-        }
-        if (shell.showDaTestcases) {
-            buf += "ドメインテストによるテストケース\n"
-            domainAnalyser = DomainAnalyser(definition)
-            buf += domainAnalyser.allTestcasesByDa
+
+		if(!definition.isSetter) {
+        	bvaUnitMain = BvaUnitMain(definition, isPairwise = shell.showBvTestcasesWithPairwise)
+        	seUnitMain = SeUnitMain(definition)
+			
+        	if (shell.showStandardInfo) {
+        	    showStandardInfo(definition)
+        	}
+        	if (shell.showBvsInfo) {
+        	    showBvsInfo(definition)
+        	}
+        	if (shell.showSeConditionsInfo) {
+        	    showSeConditionInfo(definition)
+        	}
+
+        	if (shell.showBvTestcases and !shell.showBvTestcasesWithPairwise) {
+        	    buf += "境界値分析によるテストケース\n"
+        	    buf += bvaUnitMain.allTestCases
+        	    buf += "\n"
+        	} else if (shell.showBvTestcasesWithPairwise) {
+        	    buf += "境界値分析によるテストケース（ペアワイズ法適用）\n"
+        	    buf += bvaUnitMain.allTestCases
+        	    buf += "\n"
+        	}
+        	if (shell.showSeTestcases) {
+        	    buf += "記号実行によるテストケース\n"
+        	    buf += seUnitMain.allTestCases
+        	    buf += "\n"
+        	}
+        	if (shell.showDaTestcases) {
+        	    buf += "ドメインテストによるテストケース\n"
+        	    domainAnalyser = DomainAnalyser(definition)
+        	    buf += domainAnalyser.allTestcasesByDa
+        	    buf += "\n"
+        	}
+		}
+        if (!definition.isObjectSetter && definition is OperationDefinition) {
+        	val osaUnitMain = ObjectStateAnalyzer(definition, isPairwise = shell.showBvTestcasesWithPairwise)
+            buf += "オブジェクトの状態に対するテストケース\n"
+        	buf += osaUnitMain.allTestCases
             buf += "\n"
         }
         if (shell.displayOnConsole) {

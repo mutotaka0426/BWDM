@@ -4,7 +4,8 @@ import com.github.korosuke613.bwdm.Util
 import com.github.korosuke613.bwdm.informationStore.Definition
 import com.github.korosuke613.bwdm.informationStore.IfNode
 import com.github.korosuke613.bwdm.informationStore.Node
-import com.github.korosuke613.bwdm.boundaryValueAnalysisUnit.ConditionAnalyzer
+import com.github.korosuke613.bwdm.ConditionAnalyzer
+import com.github.korosuke613.bwdm.replaceVariable
 import java.util.*
 
 class ExpectedOutputDataGenerator
@@ -16,7 +17,7 @@ constructor(private val definition: Definition,
     init {
 
         //inputData:seq of HashMapの各要素に入力データを挿入
-        _inputDataList.forEach { inputData -> extractExpectedOutputDataRecursively(_root, inputData) }
+		_inputDataList.forEach { inputData -> extractExpectedOutputDataRecursively(_root, inputData) }
 
         //各要素が型の範囲外の値だった場合、Undefined Actionを期待出力にする
         makeExpectedOutputDataofOutoftype(_inputDataList)
@@ -77,7 +78,7 @@ constructor(private val definition: Definition,
             result = if (_parsedCondition["operator"] == "mod") {
                 judgeMod(
                         _inputData[_parameter], //左辺：変数
-                        java.lang.Long.valueOf(_parsedCondition["right"]), //右辺：数字
+                        java.lang.Long.valueOf(_parsedCondition["right"]!!.replace("(", "").replace(")", "")), //右辺：数字
                         java.lang.Long.valueOf(_parsedCondition["surplus"])
                 )
             } else {
@@ -130,28 +131,51 @@ constructor(private val definition: Definition,
 
         for (i in _inputDataList.indices) {
             val currentInputData = _inputDataList[i]
+			val currentInputCon = ArrayList<String>(definition.inputConditions)
+			val currentOutputCon = ArrayList<String>(definition.outputConditions)
 
             for (j in 0 until definition.parameters.size) {
                 val currentTyp = definition.argumentTypes[j]
                 val currentPrm = definition.parameters[j]
                 val currentVl = currentInputData[currentPrm]
 
-				var invariantExpression = definition.typeInvariants[j]
-				invariantExpression = invariantExpression.replace(currentPrm, currentVl.toString())
+				for(k in 0 until currentInputCon.size) { 
+					currentInputCon[k] = currentInputCon[k].replaceVariable(currentPrm, currentVl.toString())
+				}
+				for(l in 0 until currentOutputCon.size) { 
+					currentOutputCon[l] = currentInputCon[l].replaceVariable(currentPrm, currentVl.toString())
+				}
 
                 when (currentTyp) {
-                    "int" -> if (currentVl == BoundaryValueAnalyzer.intMax + 1 || currentVl == BoundaryValueAnalyzer.intMin - 1 || !ConditionAnalyzer.evaluteExpression(invariantExpression)) {
+                    "int" -> if (currentVl == BoundaryValueAnalyzer.intMax + 1 || currentVl == BoundaryValueAnalyzer.intMin - 1) {
                         expectedOutputDataList[i] = "Undefined Action"
                     }
-                    "nat" -> if (currentVl == BoundaryValueAnalyzer.natMax + 1 || currentVl == BoundaryValueAnalyzer.natMin - 1 || !ConditionAnalyzer.evaluteExpression(invariantExpression)) {
+                    "nat" -> if (currentVl == BoundaryValueAnalyzer.natMax + 1 || currentVl == BoundaryValueAnalyzer.natMin - 1) {
                         expectedOutputDataList[i] = "Undefined Action"
                     }
-                    "nat1" -> if (currentVl == BoundaryValueAnalyzer.nat1Max + 1 || currentVl == BoundaryValueAnalyzer.nat1Min - 1 || !ConditionAnalyzer.evaluteExpression(invariantExpression)) {
+                    "nat1" -> if (currentVl == BoundaryValueAnalyzer.nat1Max + 1 || currentVl == BoundaryValueAnalyzer.nat1Min - 1) {
                         expectedOutputDataList[i] = "Undefined Action"
                     }
                 }//nothing to do
 
             }
+			// 入力が事前条件・型の不変条件に反しているときはUndefined Action	
+			run {
+				currentInputCon.forEach { 
+					if(!ConditionAnalyzer.evaluateExpression(it)) {
+						expectedOutputDataList[i] = "Undefined Action"
+						return@run
+					}
+				}
+			}
+			run {
+				currentOutputCon.forEach { 
+					if(!ConditionAnalyzer.evaluateExpression(it)) {
+						expectedOutputDataList[i] = "Undefined Action"
+						return@run
+					}
+				}
+			}
         }
 
     }

@@ -31,6 +31,7 @@ constructor(val vdmFilePath: String) {
     val explicitOperations: LinkedHashMap<String, OperationDefinition> = LinkedHashMap()
     val explicitFunctions: LinkedHashMap<String, FunctionDefinition> = LinkedHashMap()
     val types: LinkedHashMap<String, TCTypeDefinition> = LinkedHashMap()
+    var invariant: String = ""
 
     init {
         val vdmFile = File(vdmFilePath)
@@ -71,7 +72,7 @@ constructor(val vdmFilePath: String) {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                val operation = OperationDefinition(tcExplicitOperationDefinition, instanceVariables, constantValues, types)
+                val operation = OperationDefinition(tcExplicitOperationDefinition, instanceVariables, constantValues, types, invariant)
                 explicitOperations[operation.name] = operation
             }
             if (astDefinition.kind() == "explicit function") {
@@ -92,6 +93,15 @@ constructor(val vdmFilePath: String) {
                     e.printStackTrace()
                 }
 				types[tcTypeDefinition.type.toString()] = tcTypeDefinition
+			}
+			if (astDefinition.kind() == "invariant") {
+				lateinit var tcInvariantDefinition: TCClassInvariantDefinition
+				try {
+					tcInvariantDefinition = ClassMapper.getInstance(TCDefinition.MAPPINGS).init().convert<TCClassInvariantDefinition>(astDefinition)
+				} catch (e: Exception) {
+					e.printStackTrace()
+				}
+				invariant = tcInvariantDefinition.expression.toString()
 			}
         }
     }/* Initializing fields*/
